@@ -1,0 +1,64 @@
+{
+    "joueur": {
+        "nom": "SKR",
+        "race": "Démon",
+        "arme": {
+            "nom": "Katana",
+            "bonus_vitesse": 1,
+            "bonus_attaque": 0,
+            "bonus_vie": 0,
+            "bonus_defense": 0,
+            "bonus_critique": 5
+        },
+        "vie_max": 160,
+        "vie": 160,
+        "base_vitesse": 34,
+        "vitesse": 34,
+        "base_attaque": 30,
+        "attaque": 30,
+        "base_defense": 30.0,
+        "defense": 30.0,
+        "chance_critique": 12.6,
+        "xp_a_donner": 0,
+        "effets": [
+            {
+                "nom": "Charge Démons",
+                "description": "Attaque augmentée",
+                "duree": 1,
+                "duree_actuelle": 0,
+                "condition": "tour",
+                "effet_attaque": 10,
+                "effet_defense": 0,
+                "effet_vitesse": 0,
+                "effet_vie": 0,
+                "effet_critique": 0,
+                "actif": false,
+                "deja_applique": false
+            },
+            {
+                "nom": "Charge Démons",
+                "description": "Attaque augmentée",
+                "duree": 1,
+                "duree_actuelle": 0,
+                "condition": "tour",
+                "effet_attaque": 10,
+                "effet_defense": 0,
+                "effet_vitesse": 0,
+                "effet_vie": 0,
+                "effet_critique": 0,
+                "actif": false,
+                "deja_applique": false
+            }
+        ],
+        "xp": 100,
+        "niveau": 2,
+        "inventaire": [],
+        "force": 10,
+        "agilite": 13,
+        "vitalite": 10,
+        "points_attributs_disponibles": 0
+    },
+    "etat_du_monde": {
+        "grotte_visitee": true
+    }
+}
