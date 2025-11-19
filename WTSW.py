@@ -2,8 +2,17 @@
 # Point d'entrée principal du jeu
 
 # Importation depuis la nouvelle structure modulaire
-from menus import menu_principal, sauvegarder_jeu, charger_jeu, allouer_points_attributs, menu_personnage
+from menus import (
+    menu_principal,
+    sauvegarder_jeu,
+    charger_jeu,
+    allouer_points_attributs,
+    menu_personnage,
+    menu_capitale,
+    menu_exploration_valdoria,
+)
 from combat import deroulement_combat
+from world import teleporter_joueur_vers_capitale
 
 if __name__ == "__main__":
     joueur_principal = None
@@ -13,37 +22,58 @@ if __name__ == "__main__":
         print("\n--- DÉBUT DE L'AVENTURE ---")
 
         while joueur_principal.est_vivant:
+            print("\n" + "="*60)
+            print("--- MENU PRINCIPAL ---")
+            print("="*60)
             print("\nQue voulez-vous faire ?")
-            print("1. Explorer la Grotte (Combattre des monstres)") # Renommé et mis en 1
-            print("2. Accéder au Menu Personnage") # Nouvelle option pour le menu détaillé du joueur
-            print("3. Sauvegarder la partie") # Décalé
-            print("4. Quitter le jeu") # Décalé
+            print("1. Explorer Valdoria")  # Nouveau : exploration avec chapitres
+            print("2. Accéder à votre Capitale")  # Nouveau : menu de la capitale
+            print("3. Accéder au Menu Personnage")
+            print("4. Sauvegarder la partie")
+            print("5. Quitter le jeu")
 
-            choix_aventure = input("Votre choix : ")
+            choix_aventure = input("\nVotre choix : ")
 
             if choix_aventure == '1':
-                # --- MODIFICATION ICI ---
-                # On passe maintenant une liste d'IDs d'ennemis, pas des instances
-                ennemis_a_combattre_ids = ["gobelin_basique"] # Liste des IDs d'ennemis
-                # ennemis_a_combattre_ids = ["gobelin_basique", "orc_furieux"] # Exemple avec plusieurs ennemis
+                # Nouveau système d'exploration avec chapitres
+                menu_exploration_valdoria(joueur_principal)
 
-                # deroulement_combat va maintenant créer de nouvelles instances d'ennemis
-                # à partir de ces IDs avec leur vie pleine.
-                deroulement_combat(joueur_principal, ennemis_a_combattre_ids)
-
+                # Si le joueur est mort après l'exploration, la téléportation a déjà été gérée
                 if not joueur_principal.est_vivant:
-                    print("Game Over. Votre aventure se termine ici.")
-                    break
+                    # S'assurer que la téléportation a bien eu lieu
+                    if not teleporter_joueur_vers_capitale(joueur_principal):
+                        print("Erreur : Impossible de vous téléporter vers votre capitale.")
+                        print("Game Over. Votre aventure se termine ici.")
+                        break
+                    # Le joueur est maintenant soigné et peut continuer à jouer
+                    continue
 
             elif choix_aventure == '2':
-                menu_personnage(joueur_principal)
+                # Nouveau menu de capitale (commerce, craft, quêtes, téléportation)
+                menu_capitale(joueur_principal)
+
+                # Si le joueur est mort (peu probable dans un menu, mais possible)
                 if not joueur_principal.est_vivant:
-                    print("Game Over. Votre aventure se termine ici.")
-                    break
+                    if not teleporter_joueur_vers_capitale(joueur_principal):
+                        print("Erreur : Impossible de vous téléporter vers votre capitale.")
+                        print("Game Over. Votre aventure se termine ici.")
+                        break
+                    continue
 
             elif choix_aventure == '3':
-                sauvegarder_jeu(joueur_principal)
+                menu_personnage(joueur_principal)
+                # Si le joueur est mort dans le menu personnage
+                if not joueur_principal.est_vivant:
+                    if not teleporter_joueur_vers_capitale(joueur_principal):
+                        print("Erreur : Impossible de vous téléporter vers votre capitale.")
+                        print("Game Over. Votre aventure se termine ici.")
+                        break
+                    continue
+
             elif choix_aventure == '4':
+                sauvegarder_jeu(joueur_principal)
+
+            elif choix_aventure == '5':
                 print("Quitter l'aventure. Votre progression actuelle n'est pas sauvegardée si vous n'avez pas sauvegardé manuellement.")
                 break
             else:
