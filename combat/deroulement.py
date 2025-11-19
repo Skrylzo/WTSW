@@ -9,6 +9,7 @@ from data.ennemis import DEFINITIONS_ENNEMIS
 from data.objets import DEFINITIONS_OBJETS
 from .calculs import calculer_degats_finaux, esquive, creer_barre_vie
 from .selection import choisir_cible, choisir_capacite
+from world import teleporter_joueur_vers_capitale
 
 def debut_combat(joueur, ennemis):
     print("\n--- DÉBUT DU COMBAT ---")
@@ -345,4 +346,10 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
         if not butin_trouve:
             print("Aucun butin trouvé.")
     else:
+        # Le joueur a été vaincu (même après vérification des effets de réincarnation)
         print(f"{joueur.nom} a été vaincu...")
+        # Téléporter le joueur vers sa capitale (soins gratuits, restauration des ressources)
+        print("\nVous êtes transporté vers votre capitale...")
+        teleporter_joueur_vers_capitale(joueur)
+        # Note : Après téléportation, le joueur est soigné et est_vivant = True
+        # La boucle principale pourra continuer normalement
