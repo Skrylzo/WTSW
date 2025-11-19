@@ -209,6 +209,7 @@ class Personnage(BaseCombatant):
 
         self.arme = arme
         self.inventaire = {}  # Dictionnaire {nom_objet: Objet} pour gérer les quantités
+        self.or_ = 100  # Or de départ pour le commerce
 
         self.capacites_apprises = []
         self._initialiser_capacites()
@@ -558,7 +559,8 @@ class Personnage(BaseCombatant):
             "arme": self.arme.nom if self.arme else None,
             "capacites_apprises_ids": [cap.id for cap in self.capacites_apprises],
             "effets_actifs": [effet.__dict__ for effet in self.effets_actifs],
-            "inventaire": [objet.to_dict() for objet in self.inventaire.values()]
+            "inventaire": [objet.to_dict() for objet in self.inventaire.values()],
+            "or_": getattr(self, 'or_', 100)  # Sauvegarder l'or (100 par défaut si absent)
         }
         return data
 
@@ -605,6 +607,7 @@ class Personnage(BaseCombatant):
         perso.mana = data.get("mana", 0.0) # Gérer les anciennes sauvegardes sans mana
         perso.energie = data.get("energie", 0.0)
         perso.rage = data.get("rage", 0.0)
+        perso.or_ = data.get("or_", 100)  # Charger l'or (100 par défaut pour anciennes sauvegardes)
 
         # Les capacités sont déjà initialisées dans __init__, il faut juste s'assurer que celles apprises sont les bonnes
         perso.capacites_apprises = [] # On vide celles par défaut
