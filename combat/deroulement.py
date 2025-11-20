@@ -11,6 +11,32 @@ from .calculs import calculer_degats_finaux, esquive, creer_barre_vie
 from .selection import choisir_cible, choisir_capacite
 from world import teleporter_joueur_vers_capitale
 
+
+def calculer_or_ennemi(ennemi_data, xp_a_donner):
+    """
+    Calcule l'or donné par un ennemi.
+    Utilise or_a_donner si défini (manuel), sinon valeur par défaut basée sur les stats.
+
+    IMPORTANT : Pour un équilibrage manuel, définir "or_a_donner" dans DEFINITIONS_ENNEMIS
+    pour chaque ennemi. La valeur par défaut est seulement un fallback.
+
+    :param ennemi_data: Dict de DEFINITIONS_ENNEMIS pour cet ennemi
+    :param xp_a_donner: XP donnée par cet ennemi (non utilisée pour le calcul d'or maintenant)
+    :return: Montant d'or calculé
+    """
+    # Valeur manuelle définie (prioritaire pour équilibrage)
+    if "or_a_donner" in ennemi_data:
+        return ennemi_data["or_a_donner"]
+
+    # Valeur par défaut basée sur les stats (fallback si or_a_donner non défini)
+    # Formule : vie_max + attaque*2 + defense (pour éviter les erreurs si champ manquant)
+    vie_max = ennemi_data.get("vie_max", 30)
+    attaque = ennemi_data.get("attaque", 10)
+    defense = ennemi_data.get("defense", 5)
+
+    or_par_defaut = int(vie_max + attaque * 2 + defense * 1.5)
+    return max(1, or_par_defaut)  # Minimum 1 pièce d'or
+
 def debut_combat(joueur, ennemis):
     print("\n--- DÉBUT DU COMBAT ---")
     # Appliquer les effets avec condition "debut"
@@ -270,40 +296,51 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
     print("\n--- FIN DU COMBAT ---")
     if joueur.est_vivant:
         print(f"{joueur.nom} est victorieux !")
-        # Calculer l'XP gagnée uniquement des ennemis qui ont été vaincus
-        # Utiliser les ennemis initiaux pour avoir la liste complète
-        total_xp_gagnee = sum(e.xp_a_donner for e in ennemis_initiaux if not e.est_vivant)
-        if total_xp_gagnee > 0:
-            joueur.gagner_xp(total_xp_gagnee)
 
-        print("\n--- Butin ---")
-        butin_trouve = False
-        for ennemi in ennemis_initiaux:
-            if not ennemi.est_vivant and ennemi.loot_table:
-                print(f"\nButin de {ennemi.nom}:")
+        # Calculer les récompenses pour chaque ennemi vaincu
+        ennemis_vaincus = [e for e in ennemis_initiaux if not e.est_vivant]
+        total_xp_gagnee = 0
+        total_or_gagne = 0
+        objets_obtenus = []  # Liste pour stocker les objets obtenus
+
+        print("\n--- Récompenses ---")
+
+        # Détail par ennemi
+        for ennemi in ennemis_vaincus:
+            xp_ennemi = ennemi.xp_a_donner
+            total_xp_gagnee += xp_ennemi
+
+            # Calculer l'or pour cet ennemi
+            ennemi_data = DEFINITIONS_ENNEMIS.get(ennemi.id_ennemi, {})
+            or_ennemi = calculer_or_ennemi(ennemi_data, xp_ennemi)
+            total_or_gagne += or_ennemi
+
+            # Afficher les récompenses de cet ennemi
+            print(f"\n{ennemi.nom}:")
+            print(f"  ✓ +{xp_ennemi} XP")
+            print(f"  ✓ +{or_ennemi} pièces d'or")
+
+            # Gérer le loot de cet ennemi
+            if ennemi.loot_table:
+                objets_ennemi = []
                 for loot_entry in ennemi.loot_table:
                     # Gérer les deux formats : string (100% chance) ou dict (chance personnalisée)
                     if isinstance(loot_entry, str):
-                        # Format simple : string = 100% de chance
                         nom_loot = loot_entry
                         chance_drop = 100
                     elif isinstance(loot_entry, dict):
-                        # Format avancé : dict avec nom et chance
                         nom_loot = loot_entry.get("nom", "")
                         chance_drop = loot_entry.get("chance", 100)
-                        # Valider la chance (entre 1 et 100)
                         chance_drop = max(1, min(100, chance_drop))
                     else:
-                        # Format invalide, ignorer
                         continue
 
                     # Vérifier si l'objet est dropé selon la probabilité
                     roll = random.randint(1, 100)
                     if roll > chance_drop:
-                        # L'objet n'est pas dropé
                         continue
 
-                    # Vérifier la quantité avant ajout pour afficher le message approprié
+                    # Vérifier la quantité avant ajout
                     quantite_avant = joueur.compter_objet(nom_loot)
 
                     # Chercher l'objet dans DEFINITIONS_OBJETS par nom
@@ -326,25 +363,60 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
                         # Fallback : créer un objet par défaut si non trouvé dans DEFINITIONS_OBJETS
                         nouvel_objet = Objet(
                             nom=nom_loot,
-                            type_objet="matériau",  # Par défaut, les loots sont des matériaux
+                            type_objet="matériau",
                             quantite=1,
                             description=""
                         )
 
-                    # Ajouter l'objet à l'inventaire (gère automatiquement les quantités)
+                    # Ajouter l'objet à l'inventaire
                     joueur.ajouter_objet(nouvel_objet)
 
-                    # Afficher un message clair
+                    # Afficher l'objet obtenu
                     quantite_apres = joueur.compter_objet(nom_loot)
                     if quantite_avant == 0:
                         print(f"  ✓ {nom_loot} ajouté à l'inventaire")
                     else:
                         print(f"  ✓ {nom_loot} (quantité: {quantite_avant} → {quantite_apres})")
 
-                    butin_trouve = True
+                    objets_ennemi.append(nom_loot)
+                    objets_obtenus.append(nom_loot)
 
-        if not butin_trouve:
-            print("Aucun butin trouvé.")
+                if not objets_ennemi:
+                    print("  (Aucun objet obtenu)")
+            else:
+                print("  (Aucun objet obtenu)")
+
+        # Distribuer XP et Or au joueur
+        if total_xp_gagnee > 0:
+            joueur.gagner_xp(total_xp_gagnee)
+
+        if total_or_gagne > 0:
+            # Import local pour éviter la dépendance circulaire
+            from menus.capitale import ajouter_or, obtenir_or_joueur
+            ajouter_or(joueur, total_or_gagne)
+
+        # Afficher le total
+        print(f"\n{'='*40}")
+        print("--- RÉSUMÉ DES RÉCOMPENSES ---")
+        print(f"{'='*40}")
+        print(f"Total XP gagnée : {total_xp_gagnee}")
+        print(f"Total or gagné : {total_or_gagne} pièces")
+        # Import local pour éviter la dépendance circulaire
+        from menus.capitale import obtenir_or_joueur
+        print(f"Or actuel : {obtenir_or_joueur(joueur)} pièces")
+        if objets_obtenus:
+            objets_unique = {}
+            for obj in objets_obtenus:
+                objets_unique[obj] = objets_unique.get(obj, 0) + 1
+            print(f"Objets obtenus : {len(objets_obtenus)} objet(s)")
+            for nom_obj, qte in objets_unique.items():
+                if qte > 1:
+                    print(f"  - {nom_obj} x{qte}")
+                else:
+                    print(f"  - {nom_obj}")
+        else:
+            print("Aucun objet obtenu.")
+        print(f"{'='*40}")
     else:
         # Le joueur a été vaincu (même après vérification des effets de réincarnation)
         print(f"{joueur.nom} a été vaincu...")

@@ -13,6 +13,7 @@ from data.ennemis import DEFINITIONS_ENNEMIS
 
 VALDORIA_DIR = Path(__file__).resolve().parents[1] / "Valdoria"
 BIOMES_PRE_GENERES_FILE = Path(__file__).parent / "biomes_valdoria.py"
+ENNEMIS_FILE = Path(__file__).resolve().parents[1] / "data" / "ennemis.py"
 ROYAUME_NAME_MAP = {
     "aerthos": "Aerthos",
     "khazak-dum": "Khazak-Dûm",
@@ -190,14 +191,31 @@ def parser_detail_file(path: Path) -> Dict[str, str]:
 
 
 def creer_ennemi_si_absent(nom: str, slug: str, is_boss: bool = False) -> str:
+    """
+    Crée un ennemi dans DEFINITIONS_ENNEMIS s'il n'existe pas déjà.
+
+    IMPORTANT : Si l'ennemi existe déjà dans DEFINITIONS_ENNEMIS (défini manuellement
+    dans data/ennemis.py), il n'est PAS écrasé. Cela permet de personnaliser les ennemis
+    générés depuis le lore.
+
+    :param nom: Nom de l'ennemi
+    :param slug: Slug/ID de l'ennemi
+    :param is_boss: True si c'est un boss, False si c'est un mob
+    :return: Le slug de l'ennemi
+    """
     if not nom:
         return slug
 
+    # Si l'ennemi existe déjà (défini manuellement dans data/ennemis.py), on le garde tel quel
     if slug in DEFINITIONS_ENNEMIS:
         return slug
 
+    # Sinon, créer l'ennemi avec des stats par défaut
     stats = DEFAULT_BOSS_STATS if is_boss else DEFAULT_MOB_STATS
     loot_table = list(stats.get("loot_table", []))
+
+    # Calculer or_a_donner par défaut basé sur les stats (fallback si pas défini manuellement)
+    or_par_defaut = int(stats["vie_max"] + stats["attaque"] * 2 + stats["defense"] * 1.5)
 
     DEFINITIONS_ENNEMIS[slug] = {
         "nom": nom,
@@ -207,6 +225,7 @@ def creer_ennemi_si_absent(nom: str, slug: str, is_boss: bool = False) -> str:
         "defense": stats["defense"],
         "chance_critique": stats["chance_critique"],
         "xp_a_donner": stats["xp_a_donner"],
+        "or_a_donner": or_par_defaut,  # Valeur par défaut (à ajuster manuellement pour équilibrer)
         "loot_table": loot_table,
     }
     return slug
@@ -311,6 +330,8 @@ def serialiser_biomes_en_python(biomes_par_royaume: Dict[str, List[Biome]]) -> s
             lines.append(f"            donjon_nom={repr(biome.donjon_nom)},")
             lines.append(f"            boss_id={repr(biome.boss_id)},")
             lines.append(f"            difficulte={biome.difficulte},")
+            lines.append(f"            niveau_min={biome.niveau_min},")
+            lines.append(f"            niveau_max={biome.niveau_max},")
             lines.append("        ),")
         lines.append("    ],")
 
@@ -337,6 +358,135 @@ def charger_biomes_pre_generes() -> Dict[str, List[Biome]]:
         return {}
 
 
+def lire_ennemis_manuels() -> Dict[str, Dict]:
+    """
+    Lit les ennemis manuels existants dans data/ennemis.py.
+    Retourne un dict des ennemis qui étaient dans le fichier avant le parsing.
+    """
+    ennemis_manuels = {}
+    if not ENNEMIS_FILE.exists():
+        return ennemis_manuels
+
+    try:
+        # Importer le module pour récupérer les ennemis définis
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("data.ennemis", ENNEMIS_FILE)
+        if spec and spec.loader:
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            ennemis_manuels = getattr(module, 'DEFINITIONS_ENNEMIS', {})
+    except Exception:
+        pass
+
+    return ennemis_manuels
+
+
+def serialiser_ennemis_en_python(ennemis_manuels_initiaux: Dict[str, Dict]) -> str:
+    """
+    Génère le contenu Python pour data/ennemis.py.
+    Préserve les ennemis manuels et ajoute les ennemis générés.
+    """
+    lines = [
+        '# data/ennemis.py',
+        '# Définitions des Ennemis',
+        '',
+        '# IMPORTANT : Les ennemis marqués "AUTO-GÉNÉRÉ" sont régénérés depuis Valdoria/*.txt',
+        '# Tu peux modifier leurs stats (XP, or, loot) directement dans ce fichier.',
+        '# Les modifications seront préservées lors des prochains parsings.',
+        '',
+        '# --- Définitions des Ennemis ---',
+        'DEFINITIONS_ENNEMIS = {',
+    ]
+
+    # Séparer les ennemis manuels et générés
+    ennemis_manuels = {}
+    ennemis_generes = {}
+
+    for slug, data in sorted(DEFINITIONS_ENNEMIS.items()):
+        if slug in ennemis_manuels_initiaux:
+            ennemis_manuels[slug] = data
+        else:
+            ennemis_generes[slug] = data
+
+    # Ennemis manuels d'abord
+    if ennemis_manuels:
+        lines.append("    # --- Ennemis manuels ---")
+        ennemis_manuels_list = sorted(ennemis_manuels.items())
+        for idx, (slug, data) in enumerate(ennemis_manuels_list):
+            lines.extend(serialiser_un_ennemi(slug, data, is_last=idx == len(ennemis_manuels_list) - 1 and not ennemis_generes))
+            if idx < len(ennemis_manuels_list) - 1 or ennemis_generes:
+                lines.append("")
+
+    # Ennemis générés ensuite
+    if ennemis_generes:
+        if ennemis_manuels:
+            lines.append("")
+        lines.append("    # --- Ennemis AUTO-GÉNÉRÉS depuis Valdoria/*.txt ---")
+        lines.append("    # Tu peux modifier leurs stats manuellement ci-dessous")
+        ennemis_generes_list = sorted(ennemis_generes.items())
+        for idx, (slug, data) in enumerate(ennemis_generes_list):
+            lines.extend(serialiser_un_ennemi(slug, data, is_last=idx == len(ennemis_generes_list) - 1))
+            if idx < len(ennemis_generes_list) - 1:
+                lines.append("")
+
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def serialiser_un_ennemi(slug: str, data: Dict, is_last: bool = False) -> List[str]:
+    """Sérialise un ennemi en format Python pour data/ennemis.py"""
+    lines = [
+        f'    "{slug}": {{',
+        f'        "nom": {repr(data["nom"])},',
+        f'        "vie_max": {data["vie_max"]},',
+        f'        "vitesse": {data["vitesse"]},',
+        f'        "attaque": {data["attaque"]},',
+        f'        "defense": {data["defense"]},',
+        f'        "chance_critique": {data["chance_critique"]},',
+        f'        "xp_a_donner": {data["xp_a_donner"]},',
+    ]
+
+    # Ajouter or_a_donner si présent
+    if "or_a_donner" in data:
+        lines.append(f'        "or_a_donner": {data["or_a_donner"]},  # À ajuster manuellement pour équilibrer')
+    else:
+        # Calculer par défaut si absent
+        or_default = int(data["vie_max"] + data["attaque"] * 2 + data["defense"] * 1.5)
+        lines.append(f'        "or_a_donner": {or_default},  # Valeur par défaut (à ajuster)')
+
+    # Ajouter loot_table
+    loot_table = data.get("loot_table", [])
+    if loot_table:
+        lines.append('        "loot_table": [')
+        for loot_entry in loot_table:
+            if isinstance(loot_entry, str):
+                lines.append(f'            {repr(loot_entry)},')
+            elif isinstance(loot_entry, dict):
+                nom_loot = loot_entry.get("nom", "")
+                chance = loot_entry.get("chance", 100)
+                lines.append(f'            {{"nom": {repr(nom_loot)}, "chance": {chance}}},')
+        lines.append("        ],")
+    else:
+        lines.append('        "loot_table": [],')
+
+    # Ajouter la virgule ou non selon si c'est le dernier ennemi
+    if is_last:
+        lines.append("    }")
+    else:
+        lines.append("    },")
+    return lines
+
+
+def sauvegarder_ennemis(ennemis_manuels_initiaux: Dict[str, Dict]) -> None:
+    """
+    Sauvegarde tous les ennemis (manuels + générés) dans data/ennemis.py.
+    Préserve les ennemis manuels avec leurs valeurs personnalisées.
+    """
+    contenu = serialiser_ennemis_en_python(ennemis_manuels_initiaux)
+    ENNEMIS_FILE.write_text(contenu, encoding='utf-8')
+
+
+
 def generer_fichier_biomes(biomes_par_royaume: Dict[str, List[Biome]]) -> None:
     """Génère le fichier biomes_valdoria.py avec les biomes parsés"""
     if not biomes_par_royaume:
@@ -346,13 +496,24 @@ def generer_fichier_biomes(biomes_par_royaume: Dict[str, List[Biome]]) -> None:
     BIOMES_PRE_GENERES_FILE.write_text(contenu, encoding='utf-8')
 
 
-def attacher_biomes_depuis_valdoria(force: bool = False) -> Dict[str, List[Biome]]:
+def attacher_biomes_depuis_valdoria(force: bool = False, sauvegarder_ennemis_dans_fichier: bool = False) -> Dict[str, List[Biome]]:
+    """
+    Charge les biomes depuis les fichiers Valdoria et génère les ennemis nécessaires.
+
+    :param force: Force le rechargement même si déjà chargé
+    :param sauvegarder_ennemis_dans_fichier: Si True, sauvegarde les ennemis générés dans data/ennemis.py
+    """
     global _BIOMES_CHARGES
     if _BIOMES_CHARGES and not force:
         return {}
 
     if force:
         _BIOMES_CHARGES = False
+
+    # Lire les ennemis manuels AVANT le parsing pour les préserver
+    ennemis_manuels_initiaux = {}
+    if sauvegarder_ennemis_dans_fichier:
+        ennemis_manuels_initiaux = lire_ennemis_manuels()
 
     initialiser_royaumes_avec_hubs()
 
@@ -365,6 +526,9 @@ def attacher_biomes_depuis_valdoria(force: bool = False) -> Dict[str, List[Biome
         biomes_par_royaume = charger_biomes_valdoria()
         # Générer le fichier pré-généré pour les joueurs sans .txt
         generer_fichier_biomes(biomes_par_royaume)
+        # Sauvegarder les ennemis générés dans data/ennemis.py si demandé
+        if sauvegarder_ennemis_dans_fichier:
+            sauvegarder_ennemis(ennemis_manuels_initiaux)
     else:
         # Charger depuis le fichier pré-généré
         biomes_par_royaume = charger_biomes_pre_generes()

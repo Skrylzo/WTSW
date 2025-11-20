@@ -85,12 +85,19 @@ def menu_selection_zone(joueur, royaume, systeme_chapitres: SystemeChapitres):
     print(f"\nChapitre actuel : {chapitre_actuel.numero} - {chapitre_actuel.titre}")
     print(f"Zones disponibles ({len(zones_accessibles)}) :\n")
 
-    # Afficher les zones
+    # Afficher les zones avec leurs niveaux recommandés
     zones_liste = []
     for i, zone_id in enumerate(zones_accessibles, 1):
         est_completee = zone_id in chapitre_actuel.zones_completees
         statut = "✓ Complétée" if est_completee else "○ Disponible"
-        print(f"{i}. {zone_id} [{statut}]")
+
+        # Trouver le biome pour afficher le niveau recommandé
+        biome_zone = trouver_biome_par_nom(royaume, zone_id)
+        niveau_info = ""
+        if biome_zone:
+            niveau_info = f" ({biome_zone.afficher_niveau_recommande()})"
+
+        print(f"{i}. {zone_id}{niveau_info} [{statut}]")
         zones_liste.append(zone_id)
 
     print(f"{len(zones_liste) + 1}. Retour")
@@ -119,6 +126,34 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
     print(f"{'='*60}\n")
 
     biome_cible = trouver_biome_par_nom(royaume, zone_id)
+
+    # Afficher les informations du biome
+    if biome_cible:
+        if biome_cible.description:
+            print(f"Description: {biome_cible.description[:200]}...")  # Afficher les 200 premiers caractères
+        print(f"Niveau recommandé: {biome_cible.afficher_niveau_recommande()}")
+        print(f"Votre niveau actuel: {joueur.niveau}")
+
+        # Afficher un avertissement et demander confirmation si le niveau est trop faible
+        if joueur.niveau < biome_cible.niveau_min:
+            print(f"⚠️  Attention: Cette zone est recommandée pour les niveaux {biome_cible.niveau_min}-{biome_cible.niveau_max}. "
+                  f"Votre niveau ({joueur.niveau}) est inférieur au minimum recommandé.")
+            print()
+
+            while True:
+                reponse = input("Voulez-vous continuer malgré tout ? (o/n): ").strip().lower()
+                if reponse in ('o', 'oui', 'y', 'yes'):
+                    print("Vous décidez de continuer malgré les risques...")
+                    print()
+                    break
+                elif reponse in ('n', 'non', 'no'):
+                    print("Vous rebroussez chemin. Il est peut-être sage d'attendre d'être plus fort...")
+                    print()
+                    return
+                else:
+                    print("Réponse invalide. Veuillez répondre par 'o' (oui) ou 'n' (non).")
+        else:
+            print()
 
     if biome_cible and biome_cible.mobs_ids:
         ennemis_a_combattre_ids = biome_cible.obtenir_mobs_aleatoires(nombre=1)
