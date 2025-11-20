@@ -9,6 +9,12 @@ from data.ennemis import DEFINITIONS_ENNEMIS
 from data.objets import DEFINITIONS_OBJETS
 from .calculs import calculer_degats_finaux, esquive, creer_barre_vie
 from .selection import choisir_cible, choisir_capacite
+from .actions import executer_attaque, executer_capacite, determiner_cibles_capacite
+from .affichage import (
+    afficher_tour_joueur, afficher_menu_actions, afficher_resultat_attaque,
+    afficher_resultat_capacite, afficher_message_erreur,
+    afficher_tour_ennemis, afficher_attaque_ennemi, afficher_fin_combat
+)
 from world import teleporter_joueur_vers_capitale
 
 
@@ -54,109 +60,88 @@ def debut_combat(joueur, ennemis):
     print("-" * 30)
 
 def tour_joueur(joueur, ennemis):
-    resource_display = ""
-    if joueur.specialisation.type_ressource == "Mana":
-        resource_display = f"Mana: {joueur.mana:.1f}/{joueur.mana_max:.1f}"
-    elif joueur.specialisation.type_ressource == "Energie":
-        resource_display = f"Énergie: {joueur.energie:.1f}/{joueur.energie_max:.1f}"
-    elif joueur.specialisation.type_ressource == "Rage":
-        resource_display = f"Rage: {joueur.rage:.1f}/{joueur.rage_max:.1f}"
-
-    # Affichage avec barre de vie
-    barre_vie_joueur = creer_barre_vie(joueur.vie, joueur.vie_max)
-    print(f"\n--- TOUR DE {joueur.nom} ---")
-    print(f"Vie: {barre_vie_joueur} {joueur.vie:.1f}/{joueur.vie_max:.1f} | {resource_display}")
-
-    # Vérifier et appliquer les effets conditionnels (sous_30hp)
+    """
+    Gère le tour du joueur (interface solo avec input(), utilise les fonctions pures pour la logique).
+    Pour le multijoueur, cette fonction sera remplacée par des appels réseau aux fonctions pures.
+    """
+    # Appliquer les effets
     if joueur.vie <= (joueur.vie_max * 0.3):
         joueur.appliquer_effets(phase='sous_30hp')
-
     joueur.appliquer_effets(phase='tour')
 
-    ennemis_vivants = [e for e  in ennemis if e.est_vivant]
+    ennemis_vivants = [e for e in ennemis if e.est_vivant]
     if not ennemis_vivants:
         print("Il n'y a plus d'ennemis vivants. Fin du combat pour le joueur.")
         return False
 
-    print("\nEnnemis actuels :")
-    for i, ennemi in enumerate(ennemis_vivants):
-        barre_vie_ennemi = creer_barre_vie(ennemi.vie, ennemi.vie_max)
-        print(f"{i+1}. {ennemi.nom} - Vie: {barre_vie_ennemi} {ennemi.vie:.1f}/{ennemi.vie_max:.1f}")
+    # Affichage du tour (séparé de la logique)
+    afficher_tour_joueur(joueur, ennemis)
 
     action_choisie = False
     while not action_choisie:
-        print("\nChoisissez votre action :")
-        print("1. Attaquer")
-        print("2. Utiliser une Capacité")
-        print("3. Afficher les Stats")
-        print("4. Afficher les Capacités")
-        choix = input("Votre action : ")
+        # Affichage du menu (séparé de la logique)
+        afficher_menu_actions()
+        choix = input("Votre action : ")  # Garde input() pour compatibilité solo
 
         if choix == '1':
+            # Attaque : utilise la fonction pure
             if not ennemis_vivants:
-                print("Il n'y a personne à attaquer !")
+                afficher_message_erreur("Il n'y a personne à attaquer !")
                 continue
+
+            # Choix de la cible (garde input() pour solo)
             cible_ennemi = choisir_cible(joueur, ennemis_vivants)
             if cible_ennemi is None:
                 continue
 
-            degats_bruts = joueur.attaquer(cible_ennemi)
+            # Exécuter l'attaque (logique pure)
+            resultat_attaque = executer_attaque(joueur, cible_ennemi)
 
-            # Vérifier l'esquive
-            if esquive(joueur.vitesse, cible_ennemi.vitesse):
-                print(f"  {cible_ennemi.nom} a esquivé votre attaque !")
-                action_choisie = True
-                continue
+            # Afficher le résultat (séparé de la logique)
+            afficher_resultat_attaque(resultat_attaque)
 
-            critique = False
-            if random.randint(1, 100) <= joueur.calculer_chance_critique_totale():
-                degats_bruts *= 1.5
-                critique = True
-                print("  Coup critique !")
-
-            degats_finaux = calculer_degats_finaux(joueur, cible_ennemi, degats_bruts, est_capacite=False)
-
-            print(f"  {joueur.nom} inflige {degats_finaux:.1f} points de dégâts à {cible_ennemi.nom}.")
-            cible_ennemi.prendre_degats(degats_finaux)
             action_choisie = True
 
         elif choix == '2':
-            capacite_choisie = choisir_capacite(joueur)
+            # Capacité : utilise la fonction pure
+            capacite_choisie = choisir_capacite(joueur)  # Garde input() pour solo
             if capacite_choisie is None:
                 continue
 
+            # Déterminer les cibles selon le type de capacité
             cible_pour_capacite = None
-            if capacite_choisie.type_cible == "ennemi" or capacite_choisie.type_cible == "unique":
-                # "unique" et "ennemi" nécessitent de choisir une cible ennemie
+            if capacite_choisie.type_cible in ("ennemi", "unique"):
+                # Nécessite une cible ennemie unique (choix utilisateur)
                 if not ennemis_vivants:
-                    print("Il n'y a pas d'ennemis à cibler.")
+                    afficher_message_erreur("Il n'y a pas d'ennemis à cibler.")
                     continue
-                cible_pour_capacite = choisir_cible(joueur, ennemis_vivants)
+                cible_unique = choisir_cible(joueur, ennemis_vivants)  # Garde input() pour solo
+                if cible_unique is None:
+                    continue
+                cible_pour_capacite = [cible_unique]
+            else:
+                # Cibles automatiques selon le type
+                cible_pour_capacite = determiner_cibles_capacite(capacite_choisie, joueur, ennemis_vivants)
                 if cible_pour_capacite is None:
+                    afficher_message_erreur("Impossible de déterminer les cibles pour cette capacité.")
                     continue
-            elif capacite_choisie.type_cible == "aoe":
-                cible_pour_capacite = ennemis_vivants
-            elif capacite_choisie.type_cible == "soi":
-                cible_pour_capacite = joueur
-            elif capacite_choisie.type_cible == "aoe_amis":
-                cible_pour_capacite = [joueur]
-            elif capacite_choisie.type_cible == "aoe_mixte":
-                cible_pour_capacite = [joueur] + ennemis_vivants
 
-            # Appel de la méthode 'utiliser' de l'objet Capacite.
-            # L'application des dégâts et des soins se fait DANS la méthode 'utiliser'.
-            # La méthode utiliser appellera maintenant calculer_degats_finaux pour les dégâts.
-            if capacite_choisie.utiliser(joueur, cible_pour_capacite):
+            # Exécuter la capacité (logique pure)
+            resultat_capacite = executer_capacite(joueur, capacite_choisie, cible_pour_capacite)
+
+            # Afficher le résultat (séparé de la logique)
+            if resultat_capacite["success"]:
+                afficher_resultat_capacite(resultat_capacite)
                 action_choisie = True
             else:
-                pass
+                afficher_resultat_capacite(resultat_capacite)
 
         elif choix == '3':
             joueur.afficher_stats()
         elif choix == '4':
             joueur.afficher_capacites()
         else:
-            print("Action invalide. Veuillez réessayer.")
+            afficher_message_erreur("Action invalide. Veuillez réessayer.")
     return True
 
 def tour_ennemis(joueur, ennemis):
@@ -181,14 +166,17 @@ def tour_ennemis(joueur, ennemis):
 
         ennemi.appliquer_effets(phase='tour')
 
-        print(f"{ennemi.nom} attaque {joueur.nom}!")
+        # Affichage du début de l'attaque (séparé de la logique)
+        afficher_tour_ennemis(joueur, ennemi)
 
         # Vérifier l'esquive
-        if esquive(ennemi.vitesse, joueur.vitesse):
-            print(f"  Vous avez esquivé l'attaque de {ennemi.nom} !")
+        a_esquive = esquive(ennemi.vitesse, joueur.vitesse)
+        if a_esquive:
+            afficher_attaque_ennemi(ennemi, joueur, 0, critique=False, esquive=True)
             ennemi.retirer_effets_expires()
             continue
 
+        # Calculer les dégâts
         degats_bruts = ennemi.calculer_attaque_totale()
         critique = False
         if random.randint(1, 100) <= ennemi.calculer_chance_critique_totale():
@@ -197,10 +185,11 @@ def tour_ennemis(joueur, ennemis):
 
         degats_finaux = calculer_degats_finaux(ennemi, joueur, degats_bruts, est_capacite=False)
 
-        if critique:
-            print("  Coup critique !")
-        print(f"  {ennemi.nom} inflige {degats_finaux:.1f} points de dégâts à {joueur.nom}.")
+        # Appliquer les dégâts
         joueur.prendre_degats(degats_finaux)
+
+        # Afficher le résultat (séparé de la logique)
+        afficher_attaque_ennemi(ennemi, joueur, degats_finaux, critique=critique, esquive=False)
 
         # Vérifier les effets "mort_imminente" (comme réincarnation)
         if not joueur.est_vivant:
@@ -292,11 +281,10 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
 
         tour_numero += 1
 
-    print("-" * 30)
-    print("\n--- FIN DU COMBAT ---")
-    if joueur.est_vivant:
-        print(f"{joueur.nom} est victorieux !")
+    # Affichage de la fin du combat (séparé de la logique)
+    afficher_fin_combat(joueur, victoire=joueur.est_vivant)
 
+    if joueur.est_vivant:
         # Calculer les récompenses pour chaque ennemi vaincu
         ennemis_vaincus = [e for e in ennemis_initiaux if not e.est_vivant]
         total_xp_gagnee = 0
