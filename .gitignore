@@ -1,3 +1,7 @@
 Valdoria/
 *.md
 scripts/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd

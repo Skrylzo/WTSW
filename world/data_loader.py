@@ -12,6 +12,7 @@ from data.ennemis import DEFINITIONS_ENNEMIS
 
 
 VALDORIA_DIR = Path(__file__).resolve().parents[1] / "Valdoria"
+BIOMES_PRE_GENERES_FILE = Path(__file__).parent / "biomes_valdoria.py"
 ROYAUME_NAME_MAP = {
     "aerthos": "Aerthos",
     "khazak-dum": "Khazak-Dûm",
@@ -283,6 +284,68 @@ def trouver_fichier_detail(basic_stem: str) -> Path | None:
     return None
 
 
+def serialiser_biomes_en_python(biomes_par_royaume: Dict[str, List[Biome]]) -> str:
+    """Génère le code Python pour le fichier biomes_valdoria.py"""
+    lines = [
+        '# world/biomes_valdoria.py',
+        '# Fichier AUTO-GÉNÉRÉ par world/data_loader.py',
+        '# NE PAS MODIFIER MANUELLEMENT - Régénéré depuis Valdoria/*.txt',
+        '',
+        'from .biomes import Biome',
+        '',
+        'BIOMES_DATA = {'
+    ]
+
+    for royaume_nom, biomes in sorted(biomes_par_royaume.items()):
+        lines.append(f"    {repr(royaume_nom)}: [")
+        for biome in biomes:
+            lines.append("        Biome(")
+            lines.append(f"            nom={repr(biome.nom)},")
+            # Utiliser des triples guillemets pour les descriptions longues
+            if biome.description:
+                desc_escaped = biome.description.replace('"""', '\\"\\"\\"')
+                lines.append(f'            description="""{desc_escaped}""",')
+            else:
+                lines.append("            description='',")
+            lines.append(f"            mobs_ids={repr(biome.mobs_ids)},")
+            lines.append(f"            donjon_nom={repr(biome.donjon_nom)},")
+            lines.append(f"            boss_id={repr(biome.boss_id)},")
+            lines.append(f"            difficulte={biome.difficulte},")
+            lines.append("        ),")
+        lines.append("    ],")
+
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def charger_biomes_pre_generes() -> Dict[str, List[Biome]]:
+    """Charge les biomes depuis le fichier pré-généré si les .txt n'existent pas"""
+    if not BIOMES_PRE_GENERES_FILE.exists():
+        return {}
+
+    try:
+        # Importer le module dynamiquement
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("world.biomes_valdoria", BIOMES_PRE_GENERES_FILE)
+        if spec and spec.loader:
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            return getattr(module, 'BIOMES_DATA', {})
+        return {}
+    except Exception as e:
+        print(f"⚠️  Erreur lors du chargement de biomes_valdoria.py : {e}")
+        return {}
+
+
+def generer_fichier_biomes(biomes_par_royaume: Dict[str, List[Biome]]) -> None:
+    """Génère le fichier biomes_valdoria.py avec les biomes parsés"""
+    if not biomes_par_royaume:
+        return
+
+    contenu = serialiser_biomes_en_python(biomes_par_royaume)
+    BIOMES_PRE_GENERES_FILE.write_text(contenu, encoding='utf-8')
+
+
 def attacher_biomes_depuis_valdoria(force: bool = False) -> Dict[str, List[Biome]]:
     global _BIOMES_CHARGES
     if _BIOMES_CHARGES and not force:
@@ -291,17 +354,20 @@ def attacher_biomes_depuis_valdoria(force: bool = False) -> Dict[str, List[Biome
     if force:
         _BIOMES_CHARGES = False
 
-    if not VALDORIA_DIR.exists():
-        _BIOMES_CHARGES = True
-        return {}
-
     initialiser_royaumes_avec_hubs()
 
     if force:
         for royaume in TOUS_LES_ROYAUMES.values():
             royaume.biomes = []
 
-    biomes_par_royaume = charger_biomes_valdoria()
+    # Essayer de charger depuis les .txt si disponibles
+    if VALDORIA_DIR.exists():
+        biomes_par_royaume = charger_biomes_valdoria()
+        # Générer le fichier pré-généré pour les joueurs sans .txt
+        generer_fichier_biomes(biomes_par_royaume)
+    else:
+        # Charger depuis le fichier pré-généré
+        biomes_par_royaume = charger_biomes_pre_generes()
 
     for royaume_nom, biomes in biomes_par_royaume.items():
         royaume = TOUS_LES_ROYAUMES.get(royaume_nom)
