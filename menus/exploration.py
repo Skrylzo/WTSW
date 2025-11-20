@@ -8,6 +8,7 @@ from world import (
     Chapitre,
     TypeChapitre,
 )
+from world.data_loader import attacher_biomes_depuis_valdoria
 from combat import deroulement_combat
 
 
@@ -16,7 +17,7 @@ def menu_exploration_valdoria(joueur):
     Menu principal d'exploration de Valdoria.
     Permet d'explorer les zones débloquées selon les chapitres.
     """
-    # Obtenir le royaume du joueur
+    attacher_biomes_depuis_valdoria()
     royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
     if not royaume_joueur:
         print("Erreur : Impossible de trouver votre royaume.")
@@ -24,7 +25,7 @@ def menu_exploration_valdoria(joueur):
 
     # Pour l'instant, on crée un système de chapitres de base
     # TODO: Charger les chapitres depuis un fichier de configuration
-    systeme_chapitres = creer_systeme_chapitres_base(joueur)
+    systeme_chapitres = creer_systeme_chapitres_base(joueur, royaume_joueur)
 
     while True:
         chapitre_actuel = systeme_chapitres.obtenir_chapitre_actuel()
@@ -53,7 +54,7 @@ def menu_exploration_valdoria(joueur):
         choix = input("\nVotre choix : ")
 
         if choix == '1':
-            menu_selection_zone(joueur, systeme_chapitres)
+            menu_selection_zone(joueur, royaume_joueur, systeme_chapitres)
         elif choix == '2':
             afficher_infos_royaumes(joueur)
         elif choix == '3':
@@ -62,7 +63,7 @@ def menu_exploration_valdoria(joueur):
             print("Choix invalide. Veuillez réessayer.")
 
 
-def menu_selection_zone(joueur, systeme_chapitres: SystemeChapitres):
+def menu_selection_zone(joueur, royaume, systeme_chapitres: SystemeChapitres):
     """
     Menu de sélection de zone à explorer.
     """
@@ -99,7 +100,7 @@ def menu_selection_zone(joueur, systeme_chapitres: SystemeChapitres):
 
         if 1 <= choix <= len(zones_liste):
             zone_choisie = zones_liste[choix - 1]
-            explorer_zone(joueur, zone_choisie, systeme_chapitres)
+            explorer_zone(joueur, royaume, zone_choisie, systeme_chapitres)
         elif choix == len(zones_liste) + 1:
             return
         else:
@@ -108,7 +109,7 @@ def menu_selection_zone(joueur, systeme_chapitres: SystemeChapitres):
         print("Veuillez entrer un nombre valide.")
 
 
-def explorer_zone(joueur, zone_id: str, systeme_chapitres: SystemeChapitres):
+def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapitres):
     """
     Explore une zone : combat aléatoire ou accès au donjon.
     TODO: Intégrer les vrais biomes et leurs mobs une fois le parser Valdoria créé.
@@ -117,13 +118,13 @@ def explorer_zone(joueur, zone_id: str, systeme_chapitres: SystemeChapitres):
     print(f"--- {zone_id.upper()} ---")
     print(f"{'='*60}\n")
 
-    print(f"Vous explorez {zone_id}...")
-    print("(Système d'exploration en développement)")
-    print("Pour l'instant, combat de test avec un gobelin basique.\n")
+    biome_cible = trouver_biome_par_nom(royaume, zone_id)
 
-    # Pour l'instant, combat de test
-    # TODO: Remplacer par les vrais mobs de la zone une fois le parser créé
-    ennemis_a_combattre_ids = ["gobelin_basique"]
+    if biome_cible and biome_cible.mobs_ids:
+        ennemis_a_combattre_ids = biome_cible.obtenir_mobs_aleatoires(nombre=1)
+    else:
+        print("(Aucun biome trouvé ou pas de mobs définis, combat de secours)")
+        ennemis_a_combattre_ids = ["gobelin_basique"]
 
     # Lancer le combat
     deroulement_combat(joueur, ennemis_a_combattre_ids)
@@ -131,8 +132,9 @@ def explorer_zone(joueur, zone_id: str, systeme_chapitres: SystemeChapitres):
     # Après le combat, vérifier si le joueur a gagné
     if joueur.est_vivant:
         print(f"\nVous avez exploré {zone_id} avec succès.")
-        # TODO: Marquer la zone comme complétée si nécessaire
-        # systeme_chapitres.obtenir_chapitre_actuel().completer_zone(zone_id)
+        chapitre = systeme_chapitres.obtenir_chapitre_actuel()
+        if chapitre:
+            chapitre.completer_zone(zone_id)
     else:
         # Le joueur est déjà téléporté à sa capitale par deroulement_combat
         pass
@@ -166,36 +168,43 @@ def afficher_infos_royaumes(joueur):
     input("Appuyez sur Entrée pour continuer...")
 
 
-def creer_systeme_chapitres_base(joueur):
+def creer_systeme_chapitres_base(joueur, royaume_joueur):
     """
     Crée un système de chapitres de base pour le démarrage.
     TODO: Remplacer par un chargement depuis fichier de configuration.
     """
     systeme = SystemeChapitres()
 
-    # Chapitre 1 : Début de l'aventure (zones du royaume d'origine)
-    royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
-
-    if royaume_joueur:
-        # Pour l'instant, on crée des zones de test
-        # TODO: Remplacer par les vrais biomes une fois le parser créé
+    if royaume_joueur and royaume_joueur.biomes:
+        zones_royaume = [biome.nom for biome in royaume_joueur.biomes]
+    else:
+        nom_royaume = royaume_joueur.nom if royaume_joueur else "votre royaume"
         zones_royaume = [
-            f"Biome 1 de {royaume_joueur.nom}",
-            f"Biome 2 de {royaume_joueur.nom}",
+            f"Biome 1 de {nom_royaume}",
+            f"Biome 2 de {nom_royaume}",
         ]
 
-        chapitre1 = Chapitre(
-            numero=1,
-            titre="Les Premiers Pas",
-            type_chapitre=TypeChapitre.EXPLORATION_LIBRE,
-            description=f"Vous commencez votre aventure dans {royaume_joueur.nom}. "
-                       f"Explorez les zones de votre royaume pour progresser.",
-            zones_accessibles=zones_royaume,
-            objectifs=[],  # Pour l'instant, pas d'objectifs stricts
-            chapitre_suivant=2,  # Prochain chapitre (à créer plus tard)
-        )
-        chapitre1.est_debloque = True
-        systeme.ajouter_chapitre(chapitre1)
-        systeme.chapitre_actuel_numero = 1
+    chapitre1 = Chapitre(
+        numero=1,
+        titre="Les Premiers Pas",
+        type_chapitre=TypeChapitre.EXPLORATION_LIBRE,
+        description=f"Vous commencez votre aventure dans {royaume_joueur.nom if royaume_joueur else 'Valdoria'}. "
+                   f"Explorez les zones de votre royaume pour progresser.",
+        zones_accessibles=zones_royaume,
+        objectifs=[],
+        chapitre_suivant=2,
+    )
+    chapitre1.est_debloque = True
+    systeme.ajouter_chapitre(chapitre1)
+    systeme.chapitre_actuel_numero = 1
 
     return systeme
+
+
+def trouver_biome_par_nom(royaume, nom_biome):
+    if not royaume:
+        return None
+    for biome in royaume.biomes:
+        if biome.nom == nom_biome:
+            return biome
+    return None
