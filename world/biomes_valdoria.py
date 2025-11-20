@@ -13,6 +13,8 @@ BIOMES_DATA = {
             donjon_nom="Le Sanctuaire des Murmures Oubli�s (Ael'doria)",
             boss_id='le_gardien_sylvestre_eldrin_racin_clat',
             difficulte=1,
+            niveau_min=1,
+            niveau_max=5,
         ),
         Biome(
             nom="Les Montagnes de Cristal et les Salles �th�r�es (Lumins'Peak)",
@@ -21,6 +23,8 @@ BIOMES_DATA = {
             donjon_nom="Les Profondeurs C�lestes (Astrea's Veins)",
             boss_id='le_souffle_arcanique_silvaris_lumina',
             difficulte=2,
+            niveau_min=5,
+            niveau_max=10,
         ),
         Biome(
             nom="Les Lacs Scintillants et les Jardins Lunaires (Selenia's Embrace)",
@@ -29,6 +33,8 @@ BIOMES_DATA = {
             donjon_nom="Le Sanctuaire du Songe Lunaire (Somnus'Shrine)",
             boss_id='l_architecte_des_songes_lunarae_noctis',
             difficulte=3,
+            niveau_min=10,
+            niveau_max=15,
         ),
         Biome(
             nom="Les Plaines C�lestes (Aetheria's Expanse)",
@@ -37,6 +43,8 @@ BIOMES_DATA = {
             donjon_nom="Le Bastion des Vents Anciens (Ael'wyn's Roost)",
             boss_id='le_ma_tre_des_rafales_zephyros_sombreplume',
             difficulte=4,
+            niveau_min=15,
+            niveau_max=20,
         ),
     ],
     'Khazak-Dûm': [
@@ -47,6 +55,8 @@ BIOMES_DATA = {
             donjon_nom="L'Horloge D�mente, Cogsworth",
             boss_id='',
             difficulte=1,
+            niveau_min=1,
+            niveau_max=5,
         ),
         Biome(
             nom="Les Cr�tes Balay�es par le Vent (Zorluk's Edge)",
@@ -55,6 +65,8 @@ BIOMES_DATA = {
             donjon_nom='Le Gardien de la Fronti�re, Golem-Rempart',
             boss_id='',
             difficulte=2,
+            niveau_min=5,
+            niveau_max=10,
         ),
         Biome(
             nom='Les Cavernes de Lave Ardente (Amas du Kor)',
@@ -63,6 +75,8 @@ BIOMES_DATA = {
             donjon_nom='Le Titan de Cendres, Ignis Primus',
             boss_id='',
             difficulte=3,
+            niveau_min=10,
+            niveau_max=15,
         ),
         Biome(
             nom="Les Galeries du Savoir et de l'Ing�nierie",
@@ -71,6 +85,8 @@ BIOMES_DATA = {
             donjon_nom="L'Archiviste",
             boss_id='',
             difficulte=4,
+            niveau_min=15,
+            niveau_max=20,
         ),
     ],
     'Luthesia': [
@@ -81,6 +97,8 @@ BIOMES_DATA = {
             donjon_nom='Le Baron Fant�me',
             boss_id='',
             difficulte=1,
+            niveau_min=1,
+            niveau_max=5,
         ),
         Biome(
             nom="Les For�ts Luminescentes et les Tours d'Ivoire",
@@ -89,6 +107,8 @@ BIOMES_DATA = {
             donjon_nom="L'Oracle Astral",
             boss_id='',
             difficulte=2,
+            niveau_min=5,
+            niveau_max=10,
         ),
         Biome(
             nom="Les Monts H�riss�s et les Mines d'Argent",
@@ -97,6 +117,8 @@ BIOMES_DATA = {
             donjon_nom="L'Ascenseur Fant�me",
             boss_id='',
             difficulte=3,
+            niveau_min=10,
+            niveau_max=15,
         ),
         Biome(
             nom='Les Ruines du Vieux Royaume et les Terres Bannies',
@@ -105,6 +127,8 @@ BIOMES_DATA = {
             donjon_nom='Le Juge D�chu, Caelus Mortis',
             boss_id='',
             difficulte=4,
+            niveau_min=15,
+            niveau_max=20,
         ),
     ],
     "Vrak'thar": [
@@ -115,6 +139,8 @@ BIOMES_DATA = {
             donjon_nom="L'Architecte des Murmures, Xyl'thos",
             boss_id='',
             difficulte=1,
+            niveau_min=1,
+            niveau_max=5,
         ),
         Biome(
             nom="Les For�ts de Chair et d'Os (Phon�tique sugg�r�e : Grist'lynn)",
@@ -123,6 +149,8 @@ BIOMES_DATA = {
             donjon_nom="Les Entrailles Mutantes (Phon�tique sugg�r�e : Ghar'gul)",
             boss_id='le_c_ur_battant_xyl_thrak',
             difficulte=2,
+            niveau_min=5,
+            niveau_max=10,
         ),
         Biome(
             nom="Les Lacs Miroirs de l'�me (Phon�tique sugg�r�e : Sil'ven-ka)",
@@ -131,6 +159,8 @@ BIOMES_DATA = {
             donjon_nom="Les Archives de la M�moire Fractur�e (Phon�tique sugg�r�e : Mnemos'Kai)",
             boss_id='l_cho_originel_vis_khara',
             difficulte=3,
+            niveau_min=10,
+            niveau_max=15,
         ),
         Biome(
             nom="Les Montagnes Fractur�es de la Folie (Phon�tique sugg�r�e : Karr'ag-hul)",
@@ -139,6 +169,8 @@ BIOMES_DATA = {
             donjon_nom="La Gueule de l'Oubli (Phon�tique sugg�r�e : Ka'rul-Zar)",
             boss_id='le_chaos_immuable_vorlag_ghul',
             difficulte=4,
+            niveau_min=15,
+            niveau_max=20,
         ),
     ],
 }
