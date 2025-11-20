@@ -29,6 +29,10 @@ from .hubs import (
     CAPITALES_HUBS,
     initialiser_capitales_hubs,
 )
+from .data_loader import attacher_biomes_depuis_valdoria
+
+# Charger automatiquement les biomes de Valdoria
+attacher_biomes_depuis_valdoria()
 
 __all__ = [
     'Royaume',
@@ -61,4 +65,5 @@ __all__ = [
     'obtenir_hub_du_joueur',
     'obtenir_royaume_par_nom',
     'TOUS_LES_ROYAUMES',
+    'attacher_biomes_depuis_valdoria',
 ]
