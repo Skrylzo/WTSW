@@ -15,6 +15,7 @@ from .affichage import (
     afficher_resultat_capacite, afficher_message_erreur,
     afficher_tour_ennemis, afficher_attaque_ennemi, afficher_fin_combat
 )
+from .loot import ajouter_ingredients_a_inventaire
 from world import teleporter_joueur_vers_capitale
 
 
@@ -373,6 +374,17 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
                     print("  (Aucun objet obtenu)")
             else:
                 print("  (Aucun objet obtenu)")
+
+            # Gérer le loot d'ingrédients pour cet ennemi (1 ingrédient aléatoire parmi les 3 possibles)
+            ingredients_obtenus = ajouter_ingredients_a_inventaire(joueur, ennemi.nom)
+            if ingredients_obtenus:
+                ingredient = ingredients_obtenus[0]  # Un seul ingrédient est obtenu
+                quantite = joueur.compter_objet(ingredient.nom)
+                if quantite == 1:
+                    print(f"  ✓ Ingrédient obtenu : {ingredient.nom}")
+                else:
+                    print(f"  ✓ Ingrédient obtenu : {ingredient.nom} (quantité: {quantite})")
+                objets_obtenus.append(ingredient.nom)
 
         # Distribuer XP et Or au joueur
         if total_xp_gagnee > 0:
