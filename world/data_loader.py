@@ -107,15 +107,15 @@ def parse_basic_file(path: Path) -> List[Dict]:
                     collecting_mobs = False
                     # poursuivre pour analyser (peut être Donjon/Boss/nouveau biome)
 
+            if "boss" in lower:
+                if current:
+                    boss_value = line.split(":", 1)[1].strip().lstrip(": ").strip()
+                    current["boss"] = boss_value
+                continue
+
             if "donjon" in lower:
                 if current:
                     current["donjon"] = line.split(":", 1)[1].strip()
-                continue
-
-            if "boss" in lower:
-                if current:
-                    boss_value = line.split(":", 1)[1].strip()
-                    current["boss"] = boss_value
                 continue
 
             # New biome name
@@ -141,13 +141,20 @@ def parse_basic_file(path: Path) -> List[Dict]:
 
 
 def extraire_mobs(ligne: str) -> List[str]:
+    ligne = ligne.strip()
     if ":" in ligne:
-        ligne = ligne.split(":", 1)[1]
+        gauche, droite = ligne.split(":", 1)
+        if droite.strip():
+            ligne = droite
+        else:
+            ligne = gauche
     segments = re.split(r"-\s+", ligne)
     elements = []
     for part in segments:
         nom = part.strip(" :–—\t")
         if nom:
+            if re.search(r"\bmobs?\b", nom.lower()):
+                continue
             elements.append(nom)
     return elements
 

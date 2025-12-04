@@ -8,54 +8,6 @@
 # --- Définitions des Ennemis ---
 DEFINITIONS_ENNEMIS = {
     # --- Ennemis manuels ---
-    "gobelin_basique": {
-        "nom": 'Gobelin basique',
-        "vie_max": 30,
-        "vitesse": 10,
-        "attaque": 8,
-        "defense": 2,
-        "chance_critique": 5,
-        "xp_a_donner": 100,
-        "or_a_donner": 50,  # À ajuster manuellement pour équilibrer
-        "loot_table": [
-            {"nom": 'Petite bourse', "chance": 100},
-            {"nom": 'Peau de gobelin', "chance": 75},
-        ],
-    },
-
-    "gobelin_chaman": {
-        "nom": 'Gobelin Chaman',
-        "vie_max": 40,
-        "vitesse": 12,
-        "attaque": 10,
-        "defense": 3,
-        "chance_critique": 8,
-        "xp_a_donner": 35,
-        "or_a_donner": 75,  # À ajuster manuellement pour équilibrer
-        "loot_table": [
-            {"nom": 'Talisman chamanique', "chance": 30},
-            {"nom": 'Herbes mystérieuses', "chance": 90},
-        ],
-    },
-
-    "orc_furieux": {
-        "nom": 'Orc Furieux',
-        "vie_max": 60,
-        "vitesse": 8,
-        "attaque": 15,
-        "defense": 5,
-        "chance_critique": 10,
-        "xp_a_donner": 50,
-        "or_a_donner": 100,  # À ajuster manuellement pour équilibrer
-        "loot_table": [
-            {"nom": 'Hache rouillée', "chance": 80},
-            {"nom": "Dent d'orc", "chance": 50},
-        ],
-    },
-
-
-    # --- Ennemis AUTO-GÉNÉRÉS depuis Valdoria/*.txt ---
-    # Tu peux modifier leurs stats manuellement ci-dessous
     "acolytes_de_la_sagesse_perdue": {
         "nom": 'Acolytes de la Sagesse Perdue',
         "vie_max": 120,
@@ -224,6 +176,18 @@ DEFINITIONS_ENNEMIS = {
         "loot_table": [],
     },
 
+    "cr_atures_mobs": {
+        "nom": 'Cr�atures (Mobs)',
+        "vie_max": 120,
+        "vitesse": 12,
+        "attaque": 22,
+        "defense": 8,
+        "chance_critique": 5,
+        "xp_a_donner": 120,
+        "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
     "d_chireurs_dimensionnels": {
         "nom": 'D�chireurs Dimensionnels',
         "vie_max": 120,
@@ -344,6 +308,18 @@ DEFINITIONS_ENNEMIS = {
         "loot_table": [],
     },
 
+    "gardiens_de_s_l_nite": {
+        "nom": 'Gardiens de S�l�nite',
+        "vie_max": 120,
+        "vitesse": 12,
+        "attaque": 22,
+        "defense": 8,
+        "chance_critique": 5,
+        "xp_a_donner": 120,
+        "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
     "gardiens_de_tombeaux": {
         "nom": 'Gardiens de Tombeaux',
         "vie_max": 120,
@@ -378,6 +354,36 @@ DEFINITIONS_ENNEMIS = {
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
         "loot_table": [],
+    },
+
+    "gobelin_basique": {
+        "nom": 'Gobelin basique',
+        "vie_max": 30,
+        "vitesse": 10,
+        "attaque": 8,
+        "defense": 2,
+        "chance_critique": 5,
+        "xp_a_donner": 100,
+        "or_a_donner": 50,  # À ajuster manuellement pour équilibrer
+        "loot_table": [
+            {"nom": 'Petite bourse', "chance": 100},
+            {"nom": 'Peau de gobelin', "chance": 75},
+        ],
+    },
+
+    "gobelin_chaman": {
+        "nom": 'Gobelin Chaman',
+        "vie_max": 40,
+        "vitesse": 12,
+        "attaque": 10,
+        "defense": 3,
+        "chance_critique": 8,
+        "xp_a_donner": 35,
+        "or_a_donner": 75,  # À ajuster manuellement pour équilibrer
+        "loot_table": [
+            {"nom": 'Talisman chamanique', "chance": 30},
+            {"nom": 'Herbes mystérieuses', "chance": 90},
+        ],
     },
 
     "gobs_mineurs": {
@@ -464,8 +470,44 @@ DEFINITIONS_ENNEMIS = {
         "loot_table": [],
     },
 
+    "l_architecte_des_murmures_xyl_thos": {
+        "nom": "L'Architecte des Murmures, Xyl'thos",
+        "vie_max": 320,
+        "vitesse": 15,
+        "attaque": 38,
+        "defense": 15,
+        "chance_critique": 10,
+        "xp_a_donner": 500,
+        "or_a_donner": 418,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
     "l_architecte_des_songes_lunarae_noctis": {
         "nom": "L'Architecte des Songes, Lunarae Noctis",
+        "vie_max": 320,
+        "vitesse": 15,
+        "attaque": 38,
+        "defense": 15,
+        "chance_critique": 10,
+        "xp_a_donner": 500,
+        "or_a_donner": 418,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
+    "l_archiviste": {
+        "nom": "L'Archiviste",
+        "vie_max": 320,
+        "vitesse": 15,
+        "attaque": 38,
+        "defense": 15,
+        "chance_critique": 10,
+        "xp_a_donner": 500,
+        "or_a_donner": 418,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
+    "l_ascenseur_fant_me": {
+        "nom": "L'Ascenseur Fant�me",
         "vie_max": 320,
         "vitesse": 15,
         "attaque": 38,
@@ -488,6 +530,18 @@ DEFINITIONS_ENNEMIS = {
         "loot_table": [],
     },
 
+    "l_horloge_d_mente_cogsworth": {
+        "nom": "L'Horloge D�mente, Cogsworth",
+        "vie_max": 320,
+        "vitesse": 15,
+        "attaque": 38,
+        "defense": 15,
+        "chance_critique": 10,
+        "xp_a_donner": 500,
+        "or_a_donner": 418,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
     "l_mentaires_de_soufre": {
         "nom": '�l�mentaires de Soufre',
         "vie_max": 120,
@@ -500,6 +554,18 @@ DEFINITIONS_ENNEMIS = {
         "loot_table": [],
     },
 
+    "l_oracle_astral": {
+        "nom": "L'Oracle Astral",
+        "vie_max": 320,
+        "vitesse": 15,
+        "attaque": 38,
+        "defense": 15,
+        "chance_critique": 10,
+        "xp_a_donner": 500,
+        "or_a_donner": 418,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
     "larves_de_corruption": {
         "nom": 'Larves de Corruption',
         "vie_max": 120,
@@ -509,6 +575,18 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
+    "le_baron_fant_me": {
+        "nom": 'Le Baron Fant�me',
+        "vie_max": 320,
+        "vitesse": 15,
+        "attaque": 38,
+        "defense": 15,
+        "chance_critique": 10,
+        "xp_a_donner": 500,
+        "or_a_donner": 418,  # À ajuster manuellement pour équilibrer
         "loot_table": [],
     },
 
@@ -536,8 +614,32 @@ DEFINITIONS_ENNEMIS = {
         "loot_table": [],
     },
 
+    "le_gardien_de_la_fronti_re_golem_rempart": {
+        "nom": 'Le Gardien de la Fronti�re, Golem-Rempart',
+        "vie_max": 320,
+        "vitesse": 15,
+        "attaque": 38,
+        "defense": 15,
+        "chance_critique": 10,
+        "xp_a_donner": 500,
+        "or_a_donner": 418,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
     "le_gardien_sylvestre_eldrin_racin_clat": {
         "nom": 'Le Gardien Sylvestre, Eldrin Racin�clat',
+        "vie_max": 320,
+        "vitesse": 15,
+        "attaque": 38,
+        "defense": 15,
+        "chance_critique": 10,
+        "xp_a_donner": 500,
+        "or_a_donner": 418,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
+    "le_juge_d_chu_caelus_mortis": {
+        "nom": 'Le Juge D�chu, Caelus Mortis',
         "vie_max": 320,
         "vitesse": 15,
         "attaque": 38,
@@ -572,6 +674,18 @@ DEFINITIONS_ENNEMIS = {
         "loot_table": [],
     },
 
+    "le_titan_de_cendres_ignis_primus": {
+        "nom": 'Le Titan de Cendres, Ignis Primus',
+        "vie_max": 320,
+        "vitesse": 15,
+        "attaque": 38,
+        "defense": 15,
+        "chance_critique": 10,
+        "xp_a_donner": 500,
+        "or_a_donner": 418,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
     "les_murmurants_de_brume": {
         "nom": 'Les Murmurants de Brume',
         "vie_max": 20,
@@ -596,6 +710,18 @@ DEFINITIONS_ENNEMIS = {
         "loot_table": [],
     },
 
+    "loups_de_canyon": {
+        "nom": 'Loups de Canyon',
+        "vie_max": 120,
+        "vitesse": 12,
+        "attaque": 22,
+        "defense": 8,
+        "chance_critique": 5,
+        "xp_a_donner": 120,
+        "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
     "mammouths_des_glaces_naines": {
         "nom": 'Mammouths des Glaces Naines',
         "vie_max": 120,
@@ -610,6 +736,18 @@ DEFINITIONS_ENNEMIS = {
 
     "maraudeurs_et_hors_la_loi": {
         "nom": 'Maraudeurs et Hors-la-Loi',
+        "vie_max": 120,
+        "vitesse": 12,
+        "attaque": 22,
+        "defense": 8,
+        "chance_critique": 5,
+        "xp_a_donner": 120,
+        "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
+    "mobs": {
+        "nom": 'Mobs',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -668,6 +806,21 @@ DEFINITIONS_ENNEMIS = {
         "loot_table": [],
     },
 
+    "orc_furieux": {
+        "nom": 'Orc Furieux',
+        "vie_max": 60,
+        "vitesse": 8,
+        "attaque": 15,
+        "defense": 5,
+        "chance_critique": 10,
+        "xp_a_donner": 50,
+        "or_a_donner": 100,  # À ajuster manuellement pour équilibrer
+        "loot_table": [
+            {"nom": 'Hache rouillée', "chance": 80},
+            {"nom": "Dent d'orc", "chance": 50},
+        ],
+    },
+
     "professeurs_reni_s": {
         "nom": 'Professeurs Reni�s',
         "vie_max": 120,
@@ -692,8 +845,44 @@ DEFINITIONS_ENNEMIS = {
         "loot_table": [],
     },
 
+    "roches_vivantes": {
+        "nom": 'Roches Vivantes',
+        "vie_max": 120,
+        "vitesse": 12,
+        "attaque": 22,
+        "defense": 8,
+        "chance_critique": 5,
+        "xp_a_donner": 120,
+        "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
     "salamandres_de_flamme": {
         "nom": 'Salamandres de Flamme',
+        "vie_max": 120,
+        "vitesse": 12,
+        "attaque": 22,
+        "defense": 8,
+        "chance_critique": 5,
+        "xp_a_donner": 120,
+        "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
+    "scarab_es_de_minerai": {
+        "nom": 'Scarab�es de Minerai',
+        "vie_max": 120,
+        "vitesse": 12,
+        "attaque": 22,
+        "defense": 8,
+        "chance_critique": 5,
+        "xp_a_donner": 120,
+        "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
+    "scorpions_de_jais": {
+        "nom": 'Scorpions de Jais',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -814,6 +1003,18 @@ DEFINITIONS_ENNEMIS = {
 
     "trolls_de_quartz": {
         "nom": 'Trolls de Quartz',
+        "vie_max": 120,
+        "vitesse": 12,
+        "attaque": 22,
+        "defense": 8,
+        "chance_critique": 5,
+        "xp_a_donner": 120,
+        "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
+        "loot_table": [],
+    },
+
+    "vautours_cr_te_d_acier": {
+        "nom": "Vautours � Cr�te d'Acier",
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
