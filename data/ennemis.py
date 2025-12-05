@@ -45,7 +45,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "arbres_c_ur": {
-        "nom": 'Arbres-C?ur',
+        "nom": 'Arbres-Cœur',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -57,7 +57,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "automates_d_entra_nement": {
-        "nom": "Automates d'Entra�nement",
+        "nom": "Automates d'Entraînement",
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -105,7 +105,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "chevaliers_ren_gats": {
-        "nom": 'Chevaliers Ren�gats',
+        "nom": 'Chevaliers Renégats',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -117,7 +117,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "chevaux_ail_s_d_ther": {
-        "nom": "Chevaux Ail�s d'�ther",
+        "nom": "Chevaux Ailés d'Éther",
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -141,7 +141,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "chim_res_d_exp_rience": {
-        "nom": "Chim�res d'Exp�rience",
+        "nom": "Chimères d'Expérience",
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -153,7 +153,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "chos_aquatiques": {
-        "nom": '�chos Aquatiques',
+        "nom": 'Échos Aquatiques',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -165,7 +165,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "cr_atures_de_stalactite": {
-        "nom": 'Cr�atures de Stalactite',
+        "nom": 'Créatures de Stalactite',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -177,7 +177,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "cr_atures_mobs": {
-        "nom": 'Cr�atures (Mobs)',
+        "nom": 'Créatures (Mobs)',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -189,7 +189,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "d_chireurs_dimensionnels": {
-        "nom": 'D�chireurs Dimensionnels',
+        "nom": 'Déchireurs Dimensionnels',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -213,7 +213,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "f_es_gardiennes": {
-        "nom": 'F�es Gardiennes',
+        "nom": 'Fées Gardiennes',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -225,7 +225,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "f_es_pipettes": {
-        "nom": 'F�es-Pipettes',
+        "nom": 'Fées-Pipettes',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -237,7 +237,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "fleurs_de_r_ves": {
-        "nom": 'Fleurs de R�ves',
+        "nom": 'Fleurs de Rêves',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -261,7 +261,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "g_ants_squelettiques": {
-        "nom": 'G�ants Squelettiques',
+        "nom": 'Géants Squelettiques',
         "vie_max": 20,
         "vitesse": 12,
         "attaque": 2,
@@ -273,7 +273,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "gardes_c_lestes": {
-        "nom": 'Gardes C�lestes',
+        "nom": 'Gardes Célestes',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -309,7 +309,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "gardiens_de_s_l_nite": {
-        "nom": 'Gardiens de S�l�nite',
+        "nom": 'Gardiens de Sélénite',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -333,7 +333,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "gardiens_de_tr_sor": {
-        "nom": 'Gardiens de Tr�sor',
+        "nom": 'Gardiens de Trésor',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -459,7 +459,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "inquisiteurs_de_p_nitence": {
-        "nom": 'Inquisiteurs de P�nitence',
+        "nom": 'Inquisiteurs de Pénitence',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -507,7 +507,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "l_ascenseur_fant_me": {
-        "nom": "L'Ascenseur Fant�me",
+        "nom": "L'Ascenseur Fantôme",
         "vie_max": 320,
         "vitesse": 15,
         "attaque": 38,
@@ -519,7 +519,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "l_cho_originel_vis_khara": {
-        "nom": "L'�cho Originel, Vis'khara",
+        "nom": "L'Écho Originel, Vis'khara",
         "vie_max": 320,
         "vitesse": 15,
         "attaque": 38,
@@ -531,7 +531,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "l_horloge_d_mente_cogsworth": {
-        "nom": "L'Horloge D�mente, Cogsworth",
+        "nom": "L'Horloge Dément, Cogsworth",
         "vie_max": 320,
         "vitesse": 15,
         "attaque": 38,
@@ -543,7 +543,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "l_mentaires_de_soufre": {
-        "nom": '�l�mentaires de Soufre',
+        "nom": 'Élémentaires de Soufre',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -579,7 +579,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "le_baron_fant_me": {
-        "nom": 'Le Baron Fant�me',
+        "nom": 'Le Baron Fantôme',
         "vie_max": 320,
         "vitesse": 15,
         "attaque": 38,
@@ -591,7 +591,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "le_c_ur_battant_xyl_thrak": {
-        "nom": ":Le C?ur Battant, Xyl'thrak",
+        "nom": ":Le Cœur Battant, Xyl'thrak",
         "vie_max": 320,
         "vitesse": 15,
         "attaque": 38,
@@ -615,7 +615,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "le_gardien_de_la_fronti_re_golem_rempart": {
-        "nom": 'Le Gardien de la Fronti�re, Golem-Rempart',
+        "nom": 'Le Gardien de la Frontière, Golem-Rempart',
         "vie_max": 320,
         "vitesse": 15,
         "attaque": 38,
@@ -627,7 +627,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "le_gardien_sylvestre_eldrin_racin_clat": {
-        "nom": 'Le Gardien Sylvestre, Eldrin Racin�clat',
+        "nom": 'Le Gardien Sylvestre, Eldrin Racinéclat',
         "vie_max": 320,
         "vitesse": 15,
         "attaque": 38,
@@ -639,7 +639,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "le_juge_d_chu_caelus_mortis": {
-        "nom": 'Le Juge D�chu, Caelus Mortis',
+        "nom": 'Le Juge Déchu, Caelus Mortis',
         "vie_max": 320,
         "vitesse": 15,
         "attaque": 38,
@@ -651,7 +651,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "le_ma_tre_des_rafales_zephyros_sombreplume": {
-        "nom": 'Le Ma�tre des Rafales, Zephyros Sombreplume',
+        "nom": 'Le Maître des Rafales, Zephyros Sombreplume',
         "vie_max": 320,
         "vitesse": 15,
         "attaque": 38,
@@ -699,7 +699,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "libellules_d_clat": {
-        "nom": "Libellules d'�clat",
+        "nom": "Libellules d'Éclat",
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -771,7 +771,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "noy_s_psioniques": {
-        "nom": 'Noy�s Psioniques',
+        "nom": 'Noyés Psioniques',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -783,7 +783,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "nu_es_de_micro_drones": {
-        "nom": 'Nu�es de Micro-Drones',
+        "nom": 'Nuées de Micro-Drones',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -822,7 +822,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "professeurs_reni_s": {
-        "nom": 'Professeurs Reni�s',
+        "nom": 'Professeurs Reniés',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -834,7 +834,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "r_deurs_gravitationnels": {
-        "nom": 'R�deurs Gravitationnels',
+        "nom": 'Rôdeurs Gravitationnels',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -870,7 +870,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "scarab_es_de_minerai": {
-        "nom": 'Scarab�es de Minerai',
+        "nom": 'Scarabées de Minerai',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -930,7 +930,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "sir_nes_de_d_rision": {
-        "nom": 'Sir�nes de D�rision',
+        "nom": 'Sirènes de Dérision',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -942,7 +942,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "spectres_cendr_s": {
-        "nom": 'Spectres Cendr�s',
+        "nom": 'Spectres Cendrés',
         "vie_max": 80,
         "vitesse": 12,
         "attaque": 10,
@@ -954,7 +954,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "spectres_de_lumi_re": {
-        "nom": 'Spectres de Lumi�re',
+        "nom": 'Spectres de Lumière',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -1014,7 +1014,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "vautours_cr_te_d_acier": {
-        "nom": "Vautours � Cr�te d'Acier",
+        "nom": "Vautours à Crête d'Acier",
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,
@@ -1026,7 +1026,7 @@ DEFINITIONS_ENNEMIS = {
     },
 
     "vers_de_poussi_re": {
-        "nom": 'Vers de Poussi�re',
+        "nom": 'Vers de Poussière',
         "vie_max": 120,
         "vitesse": 12,
         "attaque": 22,

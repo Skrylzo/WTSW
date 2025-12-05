@@ -6,6 +6,8 @@ from typing import Optional, Dict, List
 from world import obtenir_capitale_joueur, FeatureType, HubFeature, HubCapital
 from classes.objet import Objet
 from data.objets import DEFINITIONS_OBJETS
+from data.categories_ingredients import INGREDIENTS_SPECIAUX
+from .craft import menu_craft
 
 
 def menu_capitale(joueur):
@@ -195,13 +197,21 @@ def menu_achat(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
     afficher_or(joueur)
     print(f"{'='*60}")
 
-    # Pour l'instant, liste d'objets de base disponibles à l'achat
-    # TODO: Utiliser les données des features de commerce pour définir les objets disponibles
+    # Liste d'objets de base disponibles à l'achat
     objets_disponibles = {
         "Potion de Vie Mineure": {"prix": 50, "id": "potion_de_vie_mineure"},
         "Potion de Mana Mineure": {"prix": 50, "id": "potion_de_mana_mineure"},
-        # Ajouter plus d'objets selon les besoins
     }
+
+    # Ajouter les ingrédients spéciaux (achetables en boutique)
+    for nom_ingredient, data_ingredient in INGREDIENTS_SPECIAUX.items():
+        if data_ingredient.get("achetable", False):
+            prix = data_ingredient.get("prix_base", 10)
+            objets_disponibles[nom_ingredient] = {
+                "prix": prix,
+                "id": None,  # Pas d'ID dans DEFINITIONS_OBJETS, c'est un ingrédient spécial
+                "type": "ingredient_special"
+            }
 
     print("\nObjets disponibles :")
     for i, (nom, data) in enumerate(objets_disponibles.items(), 1):
@@ -225,8 +235,24 @@ def menu_achat(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
 
             if or_actuel >= prix_total:
                 # Créer l'objet
-                obj_id = objet_data["id"]
-                if obj_id in DEFINITIONS_OBJETS:
+                obj_id = objet_data.get("id")
+                type_objet = objet_data.get("type", "consommable")
+
+                if type_objet == "ingredient_special":
+                    # C'est un ingrédient spécial (comme "Eau Pure")
+                    description = INGREDIENTS_SPECIAUX.get(nom_objet, {}).get("description", "")
+                    nouvel_objet = Objet(
+                        nom=nom_objet,
+                        type_objet="matériau",
+                        quantite=quantite,
+                        description=description,
+                        rarete=None  # Les ingrédients spéciaux n'ont pas de rareté
+                    )
+                    joueur.ajouter_objet(nouvel_objet)
+                    retirer_or(joueur, prix_total)
+                    print(f"\n✓ Vous avez acheté {quantite}x {nom_objet} pour {prix_total} pièces.")
+                    print(f"Or restant : {obtenir_or_joueur(joueur)} pièces")
+                elif obj_id and obj_id in DEFINITIONS_OBJETS:
                     obj_def = DEFINITIONS_OBJETS[obj_id]
                     nouvel_objet = Objet(
                         nom=obj_def["nom"],
@@ -334,29 +360,8 @@ def calculer_prix_vente(objet: Objet) -> int:
 # ============================================================================
 # MENU CRAFT
 # ============================================================================
-
-def menu_craft(joueur, hub: HubCapital, features_craft: List[HubFeature]):
-    """
-    Menu de craft : fabrication d'objets à partir de matériaux.
-    TODO: Intégrer les recettes depuis les features ou un système de recettes.
-    """
-    print(f"\n{'='*60}")
-    print("--- ATELIER DE CRAFT ---")
-    print(f"{'='*60}")
-    print("\nLe système de craft est en cours de développement.")
-    print("Les recettes seront ajoutées prochainement.\n")
-
-    # TODO: Implémenter le système de recettes
-    # 1. Afficher les recettes disponibles
-    # 2. Vérifier les matériaux nécessaires
-    # 3. Créer l'objet
-    # 4. Retirer les matériaux
-
-    print("Fonctionnalités prévues :")
-    print("- Fabrication de potions")
-    print("- Forge d'armes et armures")
-    print("- Amélioration d'équipements")
-    print("- Création d'objets magiques\n")
+# Le menu de craft est maintenant dans menus/craft.py
+# Cette fonction est conservée pour compatibilité mais redirige vers le nouveau système
 
 
 # ============================================================================

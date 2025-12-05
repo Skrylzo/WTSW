@@ -1791,14 +1791,29 @@ def obtenir_slug_par_nom(nom: str) -> Optional[str]:
 def obtenir_ingredients_par_mob(nom_mob: str) -> List[Dict]:
     """
     Obtient tous les ingrédients dropés par un mob spécifique.
+    La comparaison est insensible à la casse et normalise les caractères Unicode.
 
     :param nom_mob: Nom du mob
     :return: Liste de dictionnaires avec les informations des ingrédients
     """
+    import unicodedata
+
+    def normaliser_nom(nom: str) -> str:
+        """Normalise un nom pour la comparaison (minuscules, sans accents)"""
+        # Normaliser les caractères Unicode (NFD = décomposé)
+        nom = unicodedata.normalize('NFD', nom)
+        # Supprimer les accents
+        nom = ''.join(c for c in nom if unicodedata.category(c) != 'Mn')
+        # Convertir en minuscules
+        return nom.lower().strip()
+
+    nom_mob_normalise = normaliser_nom(nom_mob)
     resultats = []
+
     for slug, data in DEFINITIONS_INGREDIENTS.items():
         for source in data['sources']:
-            if source['mob'] == nom_mob:
+            nom_source_normalise = normaliser_nom(source['mob'])
+            if nom_source_normalise == nom_mob_normalise:
                 resultats.append({'slug': slug, **data})
                 break
     return resultats

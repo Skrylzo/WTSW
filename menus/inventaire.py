@@ -2,6 +2,7 @@
 # Fonctions de gestion de l'inventaire
 
 from classes.objet import Objet
+from .utiliser_objets import utiliser_potion as utiliser_potion_objet, equiper_arme_menu, equiper_armure_menu
 
 def menu_inventaire(joueur):
     """Menu de gestion de l'inventaire du joueur"""
@@ -10,8 +11,11 @@ def menu_inventaire(joueur):
         print("1. Afficher tout l'inventaire")
         print("2. Afficher l'inventaire par type")
         print("3. Consulter un objet spécifique")
-        print("4. Jeter un objet")
-        print("5. Retour au menu personnage")
+        print("4. Utiliser une potion")
+        print("5. Équiper une arme")
+        print("6. Équiper une armure")
+        print("7. Jeter un objet")
+        print("8. Retour au menu personnage")
 
         choix = input("Votre choix : ")
 
@@ -22,8 +26,14 @@ def menu_inventaire(joueur):
         elif choix == '3':
             consulter_objet(joueur)
         elif choix == '4':
-            jeter_objet(joueur)
+            utiliser_potion(joueur)
         elif choix == '5':
+            equiper_arme_menu(joueur)
+        elif choix == '6':
+            equiper_armure_menu(joueur)
+        elif choix == '7':
+            jeter_objet(joueur)
+        elif choix == '8':
             break
         else:
             print("Choix invalide. Veuillez réessayer.")
@@ -90,12 +100,62 @@ def consulter_objet(joueur):
                 print("Description: Aucune description disponible")
             if objet.rarete:
                 print(f"Rareté: {objet.rarete}")
+
+            # Afficher les effets/stats si disponibles
+            if hasattr(objet, 'effets'):
+                effets = objet.effets
+                print("\nEffets :")
+                for effet_nom, valeur in effets.items():
+                    if valeur is not None and effet_nom != 'duree_tours':
+                        print(f"  • {effet_nom}: {valeur}")
+
+            if hasattr(objet, 'stats'):
+                stats = objet.stats
+                print("\nStats :")
+                for stat_nom, valeur in stats.items():
+                    if valeur is not None:
+                        print(f"  • {stat_nom}: {valeur}")
         else:
             print("Numéro invalide.")
     except ValueError:
         print("Veuillez entrer un nombre valide.")
     except (IndexError, KeyError):
         print("Erreur lors de la consultation de l'objet.")
+
+
+def utiliser_potion(joueur):
+    """Menu pour utiliser une potion depuis l'inventaire"""
+    # Filtrer les potions dans l'inventaire
+    potions_disponibles = []
+    for nom_objet, objet in joueur.inventaire.items():
+        if objet.type == "potion":
+            potions_disponibles.append((nom_objet, objet))
+
+    if not potions_disponibles:
+        print("\n❌ Vous n'avez aucune potion dans votre inventaire.")
+        return
+
+    print("\n--- Utiliser une Potion ---")
+    print("Potions disponibles :")
+
+    for i, (nom_objet, objet) in enumerate(potions_disponibles, 1):
+        print(f"{i}. {objet.nom} (x{objet.quantite})")
+        if objet.description:
+            print(f"   {objet.description}")
+
+    print(f"{len(potions_disponibles) + 1}. Retour")
+
+    try:
+        choix = int(input("\nVotre choix : "))
+        if 1 <= choix <= len(potions_disponibles):
+            nom_objet, objet = potions_disponibles[choix - 1]
+            utiliser_potion_objet(joueur, objet)
+        elif choix == len(potions_disponibles) + 1:
+            return
+        else:
+            print("Choix invalide.")
+    except ValueError:
+        print("Veuillez entrer un nombre valide.")
 
 def jeter_objet(joueur):
     """Permet de jeter un objet de l'inventaire"""

@@ -371,11 +371,6 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
                     objets_ennemi.append(nom_loot)
                     objets_obtenus.append(nom_loot)
 
-                if not objets_ennemi:
-                    print("  (Aucun objet obtenu)")
-            else:
-                print("  (Aucun objet obtenu)")
-
             # Gérer le loot d'ingrédients pour cet ennemi (1 ingrédient aléatoire parmi les 3 possibles)
             ingredients_obtenus = ajouter_ingredients_a_inventaire(joueur, ennemi.nom, niveau_biome)
             if ingredients_obtenus:
@@ -386,6 +381,10 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
                 else:
                     print(f"  ✓ Ingrédient obtenu : {ingredient.nom} (quantité: {quantite})")
                 objets_obtenus.append(ingredient.nom)
+
+            # Afficher "Aucun objet obtenu" seulement si vraiment aucun objet n'a été obtenu
+            if not objets_obtenus:
+                print("  (Aucun objet obtenu)")
 
         # Distribuer XP et Or au joueur
         if total_xp_gagnee > 0:
