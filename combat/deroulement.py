@@ -211,7 +211,7 @@ def resoudre_effets_fin_tour(combatants):
     for combatant in combatants:
         combatant.retirer_effets_expires()
 
-def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False, reinitialiser_ressources=False):
+def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False, reinitialiser_ressources=False, niveau_biome=None):
     """
     Déroule un combat entre le joueur et une liste d'ennemis.
 
@@ -219,6 +219,7 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
     :param ennemis_a_combattre_ids: Liste des IDs d'ennemis à combattre
     :param reinitialiser_vie: Si True, remet la vie du joueur à max au début du combat (défaut: False)
     :param reinitialiser_ressources: Si True, remet les ressources (mana/énergie/rage) à max au début (défaut: False)
+    :param niveau_biome: Niveau minimum du biome d'origine (pour calculer les bonus de craft sur les ingrédients)
     """
     # Recréer les instances d'ennemis à chaque nouveau combat à partir de leurs IDs
     # Cela garantit qu'ils commencent toujours avec leur vie max
@@ -376,7 +377,7 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
                 print("  (Aucun objet obtenu)")
 
             # Gérer le loot d'ingrédients pour cet ennemi (1 ingrédient aléatoire parmi les 3 possibles)
-            ingredients_obtenus = ajouter_ingredients_a_inventaire(joueur, ennemi.nom)
+            ingredients_obtenus = ajouter_ingredients_a_inventaire(joueur, ennemi.nom, niveau_biome)
             if ingredients_obtenus:
                 ingredient = ingredients_obtenus[0]  # Un seul ingrédient est obtenu
                 quantite = joueur.compter_objet(ingredient.nom)

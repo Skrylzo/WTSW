@@ -162,7 +162,9 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
         ennemis_a_combattre_ids = ["gobelin_basique"]
 
     # Lancer le combat
-    deroulement_combat(joueur, ennemis_a_combattre_ids)
+    # Passer le niveau du biome pour le système de bonus de craft
+    niveau_biome = biome_cible.niveau_min if biome_cible else None
+    deroulement_combat(joueur, ennemis_a_combattre_ids, niveau_biome=niveau_biome)
 
     # Après le combat, vérifier si le joueur a gagné
     if joueur.est_vivant:

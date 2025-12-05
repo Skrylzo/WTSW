@@ -3,6 +3,7 @@
 # Généré automatiquement depuis DESIGN_CRAFT.md
 
 from typing import Dict, List, Optional
+from classes.objet import Objet
 
 # Niveaux de rareté
 RARETES = [
@@ -1831,3 +1832,139 @@ def verifier_ingredient_existe(nom: str) -> bool:
     :return: True si l'ingrédient existe, False sinon
     """
     return obtenir_ingredient_par_nom(nom) is not None
+
+
+# ============================================================================
+# FONCTIONS UTILITAIRES POUR LA GESTION DES QUALITÉS D'INGRÉDIENTS
+# ============================================================================
+
+def extraire_nom_base_ingredient(nom_complet: str) -> str:
+    """
+    Extrait le nom de base d'un ingrédient en enlevant la qualité.
+
+    Exemple : "Cendre Maudite (Commun)" → "Cendre Maudite"
+
+    :param nom_complet: Nom complet de l'ingrédient avec qualité
+    :return: Nom de base sans qualité
+    """
+    if " (" in nom_complet and nom_complet.endswith(")"):
+        return nom_complet.rsplit(" (", 1)[0]
+    return nom_complet
+
+
+def extraire_qualite_ingredient(nom_complet: str) -> Optional[str]:
+    """
+    Extrait la qualité d'un ingrédient depuis son nom complet.
+
+    Exemple : "Cendre Maudite (Commun)" → "Commun"
+
+    :param nom_complet: Nom complet de l'ingrédient avec qualité
+    :return: Qualité de l'ingrédient ou None si pas de qualité trouvée
+    """
+    if " (" in nom_complet and nom_complet.endswith(")"):
+        qualite = nom_complet.rsplit(" (", 1)[1].rstrip(")")
+        if qualite in RARETES:
+            return qualite
+    return None
+
+
+def compter_ingredients_par_nom_base(joueur, nom_base: str) -> Dict[str, int]:
+    """
+    Compte les ingrédients d'un nom de base dans l'inventaire du joueur,
+    groupés par qualité.
+
+    :param joueur: Le personnage joueur
+    :param nom_base: Nom de base de l'ingrédient (sans qualité)
+    :return: Dictionnaire {qualite: quantite} pour chaque qualité trouvée
+    """
+    resultats = {}
+
+    for nom_objet, objet in joueur.inventaire.items():
+        nom_base_objet = extraire_nom_base_ingredient(nom_objet)
+        if nom_base_objet == nom_base:
+            qualite = extraire_qualite_ingredient(nom_objet)
+            if qualite:
+                resultats[qualite] = resultats.get(qualite, 0) + objet.quantite
+
+    return resultats
+
+
+def compter_total_ingredient_toutes_qualites(joueur, nom_base: str) -> int:
+    """
+    Compte le total d'un ingrédient dans l'inventaire, toutes qualités confondues.
+
+    :param joueur: Le personnage joueur
+    :param nom_base: Nom de base de l'ingrédient (sans qualité)
+    :return: Quantité totale de l'ingrédient (toutes qualités)
+    """
+    total = 0
+    for nom_objet, objet in joueur.inventaire.items():
+        nom_base_objet = extraire_nom_base_ingredient(nom_objet)
+        if nom_base_objet == nom_base:
+            total += objet.quantite
+    return total
+
+
+def avoir_ingredient_qualite(joueur, nom_base: str, qualite: str) -> Optional[Objet]:
+    """
+    Vérifie si le joueur possède un ingrédient d'une qualité spécifique.
+
+    :param joueur: Le personnage joueur
+    :param nom_base: Nom de base de l'ingrédient (sans qualité)
+    :param qualite: Qualité recherchée (ex: "Commun", "Rare")
+    :return: L'objet ingrédient si trouvé, None sinon
+    """
+    nom_complet = obtenir_nom_complet_avec_qualite(nom_base, qualite)
+    return joueur.avoir_objet(nom_complet)
+
+
+def compter_ingredient_qualite(joueur, nom_base: str, qualite: str) -> int:
+    """
+    Compte la quantité d'un ingrédient d'une qualité spécifique.
+
+    :param joueur: Le personnage joueur
+    :param nom_base: Nom de base de l'ingrédient (sans qualité)
+    :param qualite: Qualité recherchée (ex: "Commun", "Rare")
+    :return: Quantité de l'ingrédient de cette qualité (0 si absent)
+    """
+    nom_complet = obtenir_nom_complet_avec_qualite(nom_base, qualite)
+    return joueur.compter_objet(nom_complet)
+
+
+def lister_ingredients_par_nom_base(joueur, nom_base: str) -> List[Dict]:
+    """
+    Liste tous les ingrédients d'un nom de base dans l'inventaire,
+    avec leurs qualités et quantités.
+
+    :param joueur: Le personnage joueur
+    :param nom_base: Nom de base de l'ingrédient (sans qualité)
+    :return: Liste de dictionnaires {'qualite': str, 'quantite': int, 'objet': Objet}
+    """
+    resultats = []
+
+    for nom_objet, objet in joueur.inventaire.items():
+        nom_base_objet = extraire_nom_base_ingredient(nom_objet)
+        if nom_base_objet == nom_base:
+            qualite = extraire_qualite_ingredient(nom_objet)
+            resultats.append({
+                'qualite': qualite,
+                'quantite': objet.quantite,
+                'objet': objet,
+                'nom_complet': nom_objet
+            })
+
+    return resultats
+
+
+def retirer_ingredient_qualite(joueur, nom_base: str, qualite: str, quantite: int = 1) -> bool:
+    """
+    Retire une quantité d'un ingrédient d'une qualité spécifique.
+
+    :param joueur: Le personnage joueur
+    :param nom_base: Nom de base de l'ingrédient (sans qualité)
+    :param qualite: Qualité de l'ingrédient à retirer
+    :param quantite: Quantité à retirer (défaut: 1)
+    :return: True si l'ingrédient a été retiré, False sinon
+    """
+    nom_complet = obtenir_nom_complet_avec_qualite(nom_base, qualite)
+    return joueur.retirer_objet(nom_complet, quantite)

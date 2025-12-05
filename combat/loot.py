@@ -30,13 +30,14 @@ def determiner_qualite_ingredient() -> str:
     return RARETES[0]
 
 
-def generer_loot_ingredients(nom_mob: str) -> List[Objet]:
+def generer_loot_ingredients(nom_mob: str, niveau_biome: Optional[int] = None) -> List[Objet]:
     """
     Génère le loot d'ingrédients pour un mob spécifique.
     Chaque mob drop exactement 1 ingrédient choisi aléatoirement parmi les 3 possibles
     (1 Potion, 1 Arme, 1 Armure), avec une qualité déterminée aléatoirement selon la distribution.
 
     :param nom_mob: Nom du mob qui drop les ingrédients
+    :param niveau_biome: Niveau minimum du biome d'origine (pour calculer les bonus de craft)
     :return: Liste contenant 1 objet Objet représentant l'ingrédient obtenu (ou liste vide)
     """
     # Récupérer les ingrédients associés à ce mob
@@ -45,6 +46,11 @@ def generer_loot_ingredients(nom_mob: str) -> List[Objet]:
     if not ingredients_data:
         # Si le mob n'a pas d'ingrédients définis, retourner une liste vide
         return []
+
+    # Si le niveau du biome n'est pas fourni, essayer de le déterminer depuis le mob
+    if niveau_biome is None:
+        from data.utils_biomes import obtenir_niveau_biome_depuis_mob
+        niveau_biome = obtenir_niveau_biome_depuis_mob(nom_mob)
 
     # Choisir aléatoirement 1 ingrédient parmi les 3 possibles
     ing_data = random.choice(ingredients_data)
@@ -58,27 +64,29 @@ def generer_loot_ingredients(nom_mob: str) -> List[Objet]:
     # Créer le nom complet avec qualité
     nom_complet = obtenir_nom_complet_avec_qualite(nom_base, qualite)
 
-    # Créer l'objet ingrédient
+    # Créer l'objet ingrédient avec le niveau du biome
     objet_ingredient = Objet(
         nom=nom_complet,
         type_objet="matériau",
         quantite=1,
         description=f"Ingrédient pour {usage.lower()} ({qualite})",
-        rarete=qualite.lower()
+        rarete=qualite.lower(),
+        niveau_biome=niveau_biome
     )
 
     return [objet_ingredient]
 
 
-def ajouter_ingredients_a_inventaire(joueur, nom_mob: str) -> List[Objet]:
+def ajouter_ingredients_a_inventaire(joueur, nom_mob: str, niveau_biome: Optional[int] = None) -> List[Objet]:
     """
     Génère et ajoute les ingrédients d'un mob à l'inventaire du joueur.
 
     :param joueur: Le personnage joueur
     :param nom_mob: Nom du mob qui drop les ingrédients
+    :param niveau_biome: Niveau minimum du biome d'origine (pour calculer les bonus de craft)
     :return: Liste des objets ingrédients ajoutés
     """
-    ingredients = generer_loot_ingredients(nom_mob)
+    ingredients = generer_loot_ingredients(nom_mob, niveau_biome)
 
     for ingredient in ingredients:
         joueur.ajouter_objet(ingredient)
