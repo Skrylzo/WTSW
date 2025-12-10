@@ -10,33 +10,110 @@ from data.categories_ingredients import INGREDIENTS_SPECIAUX
 from .monnaie import obtenir_or_joueur, ajouter_or, retirer_or, afficher_or
 
 
-def calculer_prix_vente(objet: Objet) -> int:
+def calculer_prix_vente(objet: Objet) -> tuple[int, dict]:
     """
-    Calcule le prix de vente d'un objet (30% de sa valeur d'achat approximative).
-    TODO: Améliorer avec un système de prix basé sur la rareté et les stats.
+    Calcule le prix de vente d'un objet basé sur sa rareté, ses stats/effets réels et son niveau_biome.
+
+    :param objet: L'objet à évaluer
+    :return: Tuple (prix_final, details) où details contient les informations sur le calcul
     """
-    # Prix de base selon la rareté
-    prix_base = {
-        "commun": 10,
-        "rare": 50,
-        "épique": 200,
-        "légendaire": 1000,
-        None: 5
+    details = {
+        "prix_base": 0,
+        "bonus_stats": 0,
+        "bonus_niveau": 0,
+        "multiplicateur_type": 1.0,
+        "prix_final": 0
     }
 
-    base = prix_base.get(objet.rarete, 5)
+    # Normaliser la rareté (gérer les variations de casse et les valeurs None)
+    rarete_normalisee = None
+    if objet.rarete:
+        rarete_normalisee = objet.rarete.lower()
+
+    # Prix de base selon la rareté (incluant "peu commun")
+    prix_base_rarete = {
+        "commun": 10,
+        "peu commun": 25,
+        "rare": 50,
+        "épique": 200,
+        "légendaire": 1000
+    }
+
+    base = prix_base_rarete.get(rarete_normalisee, 5)
+    details["prix_base"] = base
+
+    # Bonus basé sur les stats/effets réels de l'objet
+    bonus_stats = 0
+
+    # Pour les potions : évaluer les effets
+    if objet.type == "potion" and hasattr(objet, 'effets') and objet.effets:
+        effets = objet.effets
+        # Valeur des effets de soin
+        if effets.get('vie'):
+            bonus_stats += int(effets['vie'] * 0.5)  # 0.5 pièce par PV
+        if effets.get('mana'):
+            bonus_stats += int(effets['mana'] * 0.3)  # 0.3 pièce par Mana
+        if effets.get('energie'):
+            bonus_stats += int(effets['energie'] * 0.3)  # 0.3 pièce par Énergie
+
+        # Valeur des boosts temporaires (plus précieux)
+        duree = effets.get('duree_tours', 0)
+        if duree > 0:
+            if effets.get('boost_attaque'):
+                bonus_stats += int(effets['boost_attaque'] * duree * 2)  # 2 pièces par point par tour
+            if effets.get('boost_defense'):
+                bonus_stats += int(effets['boost_defense'] * duree * 2)
+            if effets.get('boost_vitesse'):
+                bonus_stats += int(effets['boost_vitesse'] * duree * 1.5)
+            if effets.get('boost_critique'):
+                bonus_stats += int(effets['boost_critique'] * duree * 3)  # Critique très précieux
+
+    # Pour les armes/armures : évaluer les stats
+    elif objet.type == "équipement" and hasattr(objet, 'stats') and objet.stats:
+        stats = objet.stats
+        # Valeur des dégâts (pour les armes)
+        if stats.get('degats_base') is not None and stats['degats_base'] > 0:
+            bonus_stats += int(stats['degats_base'] * 3)  # 3 pièces par point de dégât
+
+        # Valeur des bonus de défense
+        if stats.get('bonus_defense') is not None and stats['bonus_defense'] > 0:
+            bonus_stats += int(stats['bonus_defense'] * 2)  # 2 pièces par point de défense
+
+        # Valeur des bonus d'attributs (très précieux)
+        if stats.get('bonus_force') is not None and stats['bonus_force'] > 0:
+            bonus_stats += int(stats['bonus_force'] * 5)  # 5 pièces par point de force
+        if stats.get('bonus_agilite') is not None and stats['bonus_agilite'] > 0:
+            bonus_stats += int(stats['bonus_agilite'] * 5)
+        if stats.get('bonus_vitalite') is not None and stats['bonus_vitalite'] > 0:
+            bonus_stats += int(stats['bonus_vitalite'] * 5)
+        if stats.get('bonus_intelligence') is not None and stats['bonus_intelligence'] > 0:
+            bonus_stats += int(stats['bonus_intelligence'] * 5)
+
+    details["bonus_stats"] = bonus_stats
+
+    # Bonus basé sur le niveau_biome (pour les objets craftés)
+    bonus_niveau = 0
+    if hasattr(objet, 'niveau_biome') and objet.niveau_biome is not None:
+        # 8% de bonus par niveau de biome (objets craftés avec ingrédients de haut niveau valent plus)
+        bonus_niveau = int((base + bonus_stats) * (objet.niveau_biome * 0.08))
+        details["bonus_niveau"] = bonus_niveau
 
     # Multiplicateur selon le type
-    multiplicateur = {
+    multiplicateur_type = {
         "matériau": 1.0,
         "potion": 1.5,
         "équipement": 2.0,
         "consommable": 1.2
     }
 
-    multi = multiplicateur.get(objet.type, 1.0)
+    multi = multiplicateur_type.get(objet.type, 1.0)
+    details["multiplicateur_type"] = multi
 
-    return int(base * multi)
+    # Calcul du prix final
+    prix_final = int((base + bonus_stats + bonus_niveau) * multi)
+    details["prix_final"] = prix_final
+
+    return prix_final, details
 
 
 def menu_commerce(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
@@ -156,7 +233,7 @@ def menu_achat(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
 
 def menu_vente(joueur):
     """
-    Menu de vente d'objets.
+    Menu de vente d'objets avec affichage détaillé des prix.
     """
     print(f"\n{'='*60}")
     print("--- VENTE ---")
@@ -170,8 +247,38 @@ def menu_vente(joueur):
     print("\nObjets à vendre :")
     objets_liste = list(joueur.inventaire.items())
     for i, (nom, objet) in enumerate(objets_liste, 1):
-        prix_vente = calculer_prix_vente(objet)
-        print(f"{i}. {objet} - Prix de vente : {prix_vente} pièces")
+        prix_vente, details = calculer_prix_vente(objet)
+
+        # Afficher l'objet avec son prix
+        affichage_objet = f"{i}. {objet}"
+
+        # Ajouter des indicateurs visuels pour les objets de valeur
+        if prix_vente >= 500:
+            affichage_objet += " 💎"
+        elif prix_vente >= 200:
+            affichage_objet += " ⭐"
+        elif prix_vente >= 100:
+            affichage_objet += " ✨"
+
+        print(f"{affichage_objet}")
+        print(f"   Prix : {prix_vente} pièces", end="")
+
+        # Afficher les détails du calcul si l'objet a des stats/effets ou un niveau_biome
+        if details["bonus_stats"] > 0 or details["bonus_niveau"] > 0:
+            print(" (", end="")
+            details_affichage = []
+            if details["prix_base"] > 0:
+                details_affichage.append(f"Base: {details['prix_base']}")
+            if details["bonus_stats"] > 0:
+                details_affichage.append(f"+Stats: {details['bonus_stats']}")
+            if details["bonus_niveau"] > 0:
+                details_affichage.append(f"+Niveau: {details['bonus_niveau']}")
+            if details["multiplicateur_type"] != 1.0:
+                details_affichage.append(f"x{details['multiplicateur_type']}")
+            print(" + ".join(details_affichage), end="")
+            print(")")
+        else:
+            print()
 
     print(f"{len(objets_liste) + 1}. Retour")
 
@@ -187,7 +294,31 @@ def menu_vente(joueur):
                 print("Quantité invalide.")
                 return
 
-            prix_total = calculer_prix_vente(objet) * quantite
+            prix_unitaire, details = calculer_prix_vente(objet)
+            prix_total = prix_unitaire * quantite
+
+            # Afficher un résumé détaillé avant confirmation
+            print(f"\n{'='*60}")
+            print(f"Résumé de la vente :")
+            print(f"{'='*60}")
+            print(f"Objet : {nom_objet}")
+            print(f"Quantité : {quantite}")
+            print(f"Prix unitaire : {prix_unitaire} pièces")
+            if details["bonus_stats"] > 0 or details["bonus_niveau"] > 0:
+                print(f"\nDétail du prix unitaire :")
+                print(f"  • Prix de base ({objet.rarete or 'sans rareté'}) : {details['prix_base']} pièces")
+                if details["bonus_stats"] > 0:
+                    print(f"  • Bonus stats/effets : +{details['bonus_stats']} pièces")
+                if details["bonus_niveau"] > 0:
+                    print(f"  • Bonus niveau biome ({objet.niveau_biome}) : +{details['bonus_niveau']} pièces")
+                print(f"  • Multiplicateur type ({objet.type}) : x{details['multiplicateur_type']}")
+            print(f"\nPrix total : {prix_total} pièces")
+            print(f"{'='*60}")
+
+            confirmation = input("\nConfirmer la vente ? (o/n) : ").strip().lower()
+            if confirmation not in ('o', 'oui', 'y', 'yes'):
+                print("Vente annulée.")
+                return
 
             # Retirer l'objet
             joueur.retirer_objet(nom_objet, quantite)
@@ -197,6 +328,7 @@ def menu_vente(joueur):
 
             print(f"\n✓ Vous avez vendu {quantite}x {nom_objet} pour {prix_total} pièces.")
             print(f"Or actuel : {obtenir_or_joueur(joueur)} pièces")
+            input("\nAppuyez sur Entrée pour continuer...")
         elif choix == len(objets_liste) + 1:
             return
         else:
