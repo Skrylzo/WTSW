@@ -392,7 +392,7 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
 
         if total_or_gagne > 0:
             # Import local pour éviter la dépendance circulaire
-            from menus.capitale import ajouter_or, obtenir_or_joueur
+            from menus.monnaie import ajouter_or, obtenir_or_joueur
             ajouter_or(joueur, total_or_gagne)
 
         # Afficher le total
@@ -402,7 +402,7 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
         print(f"Total XP gagnée : {total_xp_gagnee}")
         print(f"Total or gagné : {total_or_gagne} pièces")
         # Import local pour éviter la dépendance circulaire
-        from menus.capitale import obtenir_or_joueur
+        from menus.monnaie import obtenir_or_joueur
         print(f"Or actuel : {obtenir_or_joueur(joueur)} pièces")
         if objets_obtenus:
             objets_unique = {}

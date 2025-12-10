@@ -3,7 +3,7 @@
 import random
 
 class Capacite:
-    def __init__(self, id_cap, nom, description, cout_mana=0, cout_energie=0, cout_rage=0, degats_fixes=0, soin_fixe=0, effet_data=None, type_cible="unique", niveau_requis=1, peut_critiquer=False):
+    def __init__(self, id_cap, nom, description, cout_mana=0, cout_energie=0, cout_rage=0, degats_fixes=0, soin_fixe=0, effet_data=None, type_cible="unique", niveau_requis=1, peut_critiquer=False, niveau_amelioration=1):
         self.id = id_cap
         self.nom = nom
         self.description = description
@@ -16,6 +16,10 @@ class Capacite:
         self.type_cible = type_cible
         self.niveau_requis = niveau_requis
         self.peut_critiquer = peut_critiquer
+        self.niveau_amelioration = niveau_amelioration  # Niveau d'amélioration de la capacité (1 = base, 2+ = améliorée)
+        self._degats_base = degats_fixes  # Valeur de base pour les calculs d'amélioration
+        self._soin_base = soin_fixe  # Valeur de base pour les calculs d'amélioration
+        self._effet_base = effet_data.copy() if effet_data else None  # Copie de l'effet de base
 
     def utiliser(self, lanceur, cible=None):
         # IMPORTER ICI, JUSTE AVANT L'UTILISATION POUR ÉVITER LES DÉPENDANCES CIRCULAIRES
@@ -102,3 +106,51 @@ class Capacite:
                     print(f"  {lanceur.nom} récupère {vie_recuperee:.1f} points de vie grâce à {self.nom}. Vie actuelle : {lanceur.vie:.1f}/{lanceur.vie_max:.1f}")
 
         return True
+
+    def ameliorer(self):
+        """
+        Améliore la capacité en augmentant ses stats.
+        Chaque niveau d'amélioration augmente les dégâts/soins de 20% et les effets de 15%.
+        """
+        self.niveau_amelioration += 1
+
+        # Améliorer les dégâts (20% par niveau)
+        if self._degats_base > 0:
+            bonus_degats = self._degats_base * 0.20 * (self.niveau_amelioration - 1)
+            self.degats_fixes = int(self._degats_base + bonus_degats)
+
+        # Améliorer le soin (20% par niveau)
+        if self._soin_base > 0:
+            bonus_soin = self._soin_base * 0.20 * (self.niveau_amelioration - 1)
+            self.soin_fixe = int(self._soin_base + bonus_soin)
+
+        # Améliorer les effets (15% par niveau)
+        if self._effet_base:
+            self.effet_data = self._effet_base.copy()
+            # Améliorer les effets numériques
+            if "effet_attaque" in self.effet_data:
+                base_effet = abs(self._effet_base.get("effet_attaque", 0))
+                bonus = base_effet * 0.15 * (self.niveau_amelioration - 1)
+                if self._effet_base.get("effet_attaque", 0) < 0:
+                    self.effet_data["effet_attaque"] = -(base_effet + bonus)
+                else:
+                    self.effet_data["effet_attaque"] = base_effet + bonus
+
+            if "effet_defense" in self.effet_data:
+                base_effet = self._effet_base.get("effet_defense", 0)
+                bonus = base_effet * 0.15 * (self.niveau_amelioration - 1)
+                self.effet_data["effet_defense"] = int(base_effet + bonus)
+
+            if "effet_vie" in self.effet_data:
+                base_effet = abs(self._effet_base.get("effet_vie", 0))
+                bonus = base_effet * 0.15 * (self.niveau_amelioration - 1)
+                if self._effet_base.get("effet_vie", 0) < 0:
+                    self.effet_data["effet_vie"] = -(base_effet + bonus)
+                else:
+                    self.effet_data["effet_vie"] = base_effet + bonus
+
+    def obtenir_nom_avec_niveau(self):
+        """Retourne le nom de la capacité avec son niveau d'amélioration."""
+        if self.niveau_amelioration > 1:
+            return f"{self.nom} (Niveau {self.niveau_amelioration})"
+        return self.nom

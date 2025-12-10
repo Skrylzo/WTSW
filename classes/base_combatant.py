@@ -616,10 +616,17 @@ class Personnage(BaseCombatant):
             "energie": self.energie,
             "rage": self.rage,
             "arme": self.arme.nom if self.arme else None,
-            "capacites_apprises_ids": [cap.id for cap in self.capacites_apprises],
+            "capacites_apprises": [
+                {
+                    "id": cap.id,
+                    "niveau_amelioration": getattr(cap, 'niveau_amelioration', 1)
+                }
+                for cap in self.capacites_apprises
+            ],
             "effets_actifs": [effet.__dict__ for effet in self.effets_actifs],
             "inventaire": [objet.to_dict() for objet in self.inventaire.values()],
-            "or_": getattr(self, 'or_', 100)  # Sauvegarder l'or (100 par défaut si absent)
+            "or_": getattr(self, 'or_', 100),  # Sauvegarder l'or (100 par défaut si absent)
+            "bonus_formation_achetes": getattr(self, 'bonus_formation_achetes', [])  # Sauvegarder les bonus de formation
         }
         return data
 
@@ -668,9 +675,53 @@ class Personnage(BaseCombatant):
         perso.rage = data.get("rage", 0.0)
         perso.or_ = data.get("or_", 100)  # Charger l'or (100 par défaut pour anciennes sauvegardes)
 
+        # Charger les bonus de formation achetés
+        perso.bonus_formation_achetes = data.get("bonus_formation_achetes", [])
+
+        # Appliquer les bonus de formation aux attributs
+        # Note: Les bonus sont appliqués lors du chargement, mais les stats seront recalculées après
+        # Pour éviter les dépendances circulaires, on applique les bonus directement ici
+        if perso.bonus_formation_achetes:
+            # Import différé pour éviter les dépendances circulaires
+            try:
+                from menus.formation import obtenir_bonus_formation_classe
+                bonus_disponibles = obtenir_bonus_formation_classe(perso.specialisation.nom)
+                for bonus_id in perso.bonus_formation_achetes:
+                    bonus = next((b for b in bonus_disponibles if b['id'] == bonus_id), None)
+                    if bonus:
+                        if "force" in bonus['bonus']:
+                            perso.force += bonus['bonus']['force']
+                        if "agilite" in bonus['bonus']:
+                            perso.agilite += bonus['bonus']['agilite']
+                        if "vitalite" in bonus['bonus']:
+                            perso.vitalite += bonus['bonus']['vitalite']
+                        if "intelligence" in bonus['bonus']:
+                            perso.intelligence += bonus['bonus']['intelligence']
+            except ImportError:
+                # Si l'import échoue (dépendance circulaire), on saute cette étape
+                # Les bonus seront appliqués lors de la prochaine utilisation du menu de formation
+                pass
+
         # Les capacités sont déjà initialisées dans __init__, il faut juste s'assurer que celles apprises sont les bonnes
         perso.capacites_apprises = [] # On vide celles par défaut
-        for cap_id in data.get("capacites_apprises_ids", []):
+
+        # Gérer l'ancien format (liste d'IDs) et le nouveau format (liste de dicts avec niveau_amelioration)
+        capacites_data = data.get("capacites_apprises", [])
+        capacites_ids_ancien_format = data.get("capacites_apprises_ids", [])
+
+        # Si on a l'ancien format, le convertir
+        if capacites_ids_ancien_format and not capacites_data:
+            capacites_data = [{"id": cap_id, "niveau_amelioration": 1} for cap_id in capacites_ids_ancien_format]
+
+        for cap_info in capacites_data:
+            # Gérer les deux formats : dict ou string
+            if isinstance(cap_info, dict):
+                cap_id = cap_info.get("id", cap_info)
+                niveau_amelioration = cap_info.get("niveau_amelioration", 1)
+            else:
+                cap_id = cap_info
+                niveau_amelioration = 1
+
             if cap_id in TOUTES_LES_CAPACITES_DATA:
                 cap_data = TOUTES_LES_CAPACITES_DATA[cap_id]
                 capacite = Capacite(
@@ -685,8 +736,14 @@ class Personnage(BaseCombatant):
                     effet_data=cap_data.get("effet_data"),
                     type_cible=cap_data.get("type_cible", "unique"),
                     niveau_requis=cap_data.get("niveau_requis", 1),
-                    peut_critiquer=cap_data.get("peut_critiquer", False)
+                    peut_critiquer=cap_data.get("peut_critiquer", False),
+                    niveau_amelioration=niveau_amelioration
                 )
+
+                # Appliquer les améliorations si nécessaire
+                while capacite.niveau_amelioration < niveau_amelioration:
+                    capacite.ameliorer()
+
                 perso.capacites_apprises.append(capacite)
             else:
                 print(f"Avertissement: Capacité '{cap_id}' non trouvée lors du chargement.")

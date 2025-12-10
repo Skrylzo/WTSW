@@ -42,7 +42,7 @@ def menu_exploration_valdoria(joueur):
         chapitre_actuel.afficher_info()
 
         # Afficher l'or du joueur
-        from .capitale import afficher_or
+        from .monnaie import afficher_or
         afficher_or(joueur)
 
         # Afficher les options
