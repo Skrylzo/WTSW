@@ -14,7 +14,8 @@ from data.recettes import (
 from data.categories_ingredients import (
     est_categorie_generique,
     est_ingredient_special,
-    obtenir_ingredients_par_categorie
+    obtenir_ingredients_par_categorie,
+    trouver_equivalents_ingredient
 )
 from data.ingredients import (
     extraire_nom_base_ingredient,
@@ -211,20 +212,273 @@ def afficher_recettes_potions(joueur, royaume_nom: str, recettes: List[Dict]):
 
 def menu_craft_armes(joueur, royaume_nom: str, niveau_craft: int):
     """Menu de craft des armes"""
-    print(f"\n{'='*60}")
-    print("--- CRAFT D'ARMES ---")
-    print(f"{'='*60}\n")
-    print("Le craft d'armes sera implémenté prochainement.")
-    input("\nAppuyez sur Entrée pour continuer...")
+    while True:
+        print(f"\n{'='*60}")
+        print("--- CRAFT D'ARMES ---")
+        print(f"{'='*60}\n")
+
+        # Obtenir les recettes d'armes disponibles
+        recettes_armes = [r for r in obtenir_recettes_disponibles(niveau_craft)
+                         if r.get('type') == 'arme']
+
+        if not recettes_armes:
+            print("Aucune recette d'arme disponible pour votre niveau.")
+            input("\nAppuyez sur Entrée pour continuer...")
+            return
+
+        # Grouper par sous-type
+        sous_types = {}
+        for rec in recettes_armes:
+            sous_type = rec.get('sous_type', 'autre')
+            if sous_type not in sous_types:
+                sous_types[sous_type] = []
+            sous_types[sous_type].append(rec)
+
+        print("Types d'armes disponibles :")
+        options = []
+        option_num = 1
+
+        type_names = {
+            'epee': 'Épées',
+            'hache': 'Haches',
+            'dague': 'Dagues',
+            'baton': 'Bâtons'
+        }
+
+        for sous_type, recettes in sorted(sous_types.items()):
+            nom_type = type_names.get(sous_type, sous_type)
+            print(f"{option_num}. {nom_type} ({len(recettes)} recettes)")
+            options.append(sous_type)
+            option_num += 1
+
+        print(f"{option_num}. Retour")
+
+        choix = input("\nVotre choix : ").strip()
+
+        try:
+            choix_int = int(choix)
+            if 1 <= choix_int <= len(options):
+                sous_type_choisi = options[choix_int - 1]
+                afficher_recettes_armes(joueur, royaume_nom, sous_types[sous_type_choisi])
+            elif choix_int == option_num:
+                return
+            else:
+                print("Choix invalide.")
+        except ValueError:
+            print("Veuillez entrer un nombre valide.")
+
+
+def afficher_recettes_armes(joueur, royaume_nom: str, recettes: List[Dict]):
+    """Affiche les recettes d'armes et permet de les craft"""
+    while True:
+        print(f"\n{'='*60}")
+        print("--- RECETTES D'ARMES ---")
+        print(f"{'='*60}\n")
+
+        # Trier par rareté (ordre défini)
+        ordre_rarete = {r: i for i, r in enumerate(RARETES)}
+        recettes_triees = sorted(recettes, key=lambda r: ordre_rarete.get(r.get('rarete', ''), 99))
+
+        print("Recettes disponibles :\n")
+        options = []
+        option_num = 1
+
+        for rec in recettes_triees:
+            nom = rec['nom']
+            rarete = rec.get('rarete', 'Inconnu')
+            niveau_req = rec.get('niveau_craft_requis', 1)
+
+            # Vérifier si le joueur peut craft cette recette
+            peut_crafter, ingredients_manquants = verifier_ingredients_recette(joueur, rec, royaume_nom)
+            statut = "✓" if peut_crafter else "✗"
+
+            # Codes couleur ANSI
+            VERT = '\033[92m'  # Vert clair
+            RESET = '\033[0m'   # Reset
+
+            # Appliquer la couleur verte si craftable
+            nom_affiche = f"{VERT}{nom}{RESET}" if peut_crafter else nom
+            statut_affiche = f"{VERT}{statut}{RESET}" if peut_crafter else statut
+
+            print(f"{option_num}. {statut_affiche} {nom_affiche} ({rarete}) - Niveau requis : {niveau_req}")
+
+            # Afficher les stats
+            stats = rec.get('stats', {})
+            stats_str = []
+            if stats.get('degats_base') is not None:
+                stats_str.append(f"Dégâts: {stats['degats_base']}")
+            if stats.get('bonus_force') is not None:
+                stats_str.append(f"Force: +{stats['bonus_force']}")
+            if stats.get('bonus_agilite') is not None:
+                stats_str.append(f"Agilité: +{stats['bonus_agilite']}")
+            if stats.get('bonus_vitalite') is not None:
+                stats_str.append(f"Vitalité: +{stats['bonus_vitalite']}")
+            if stats.get('bonus_intelligence') is not None:
+                stats_str.append(f"Intelligence: +{stats['bonus_intelligence']}")
+            if stats.get('bonus_defense') is not None:
+                stats_str.append(f"Défense: +{stats['bonus_defense']}")
+
+            if stats_str:
+                print(f"   Stats : {', '.join(stats_str)}")
+            else:
+                print(f"   Stats : À définir")
+
+            if not peut_crafter and ingredients_manquants:
+                print(f"   ⚠️  Ingrédients manquants : {', '.join(ingredients_manquants[:3])}")
+
+            options.append(rec)
+            option_num += 1
+
+        print(f"{option_num}. Retour")
+
+        choix = input("\nVotre choix : ").strip()
+
+        try:
+            choix_int = int(choix)
+            if 1 <= choix_int <= len(options):
+                recette_choisie = options[choix_int - 1]
+                executer_craft(joueur, recette_choisie, royaume_nom)
+            elif choix_int == option_num:
+                return
+            else:
+                print("Choix invalide.")
+        except ValueError:
+            print("Veuillez entrer un nombre valide.")
 
 
 def menu_craft_armures(joueur, royaume_nom: str, niveau_craft: int):
     """Menu de craft des armures"""
-    print(f"\n{'='*60}")
-    print("--- CRAFT D'ARMURES ---")
-    print(f"{'='*60}\n")
-    print("Le craft d'armures sera implémenté prochainement.")
-    input("\nAppuyez sur Entrée pour continuer...")
+    while True:
+        print(f"\n{'='*60}")
+        print("--- CRAFT D'ARMURES ---")
+        print(f"{'='*60}\n")
+
+        # Obtenir les recettes d'armures disponibles
+        recettes_armures = [r for r in obtenir_recettes_disponibles(niveau_craft)
+                           if r.get('type') == 'armure']
+
+        if not recettes_armures:
+            print("Aucune recette d'armure disponible pour votre niveau.")
+            input("\nAppuyez sur Entrée pour continuer...")
+            return
+
+        # Grouper par sous-type
+        sous_types = {}
+        for rec in recettes_armures:
+            sous_type = rec.get('sous_type', 'autre')
+            if sous_type not in sous_types:
+                sous_types[sous_type] = []
+            sous_types[sous_type].append(rec)
+
+        print("Types d'armures disponibles :")
+        options = []
+        option_num = 1
+
+        type_names = {
+            'torse': 'Armures Torse',
+            'casque': 'Casques',
+            'bottes': 'Bottes'
+        }
+
+        for sous_type, recettes in sorted(sous_types.items()):
+            nom_type = type_names.get(sous_type, sous_type)
+            print(f"{option_num}. {nom_type} ({len(recettes)} recettes)")
+            options.append(sous_type)
+            option_num += 1
+
+        print(f"{option_num}. Retour")
+
+        choix = input("\nVotre choix : ").strip()
+
+        try:
+            choix_int = int(choix)
+            if 1 <= choix_int <= len(options):
+                sous_type_choisi = options[choix_int - 1]
+                afficher_recettes_armures(joueur, royaume_nom, sous_types[sous_type_choisi])
+            elif choix_int == option_num:
+                return
+            else:
+                print("Choix invalide.")
+        except ValueError:
+            print("Veuillez entrer un nombre valide.")
+
+
+def afficher_recettes_armures(joueur, royaume_nom: str, recettes: List[Dict]):
+    """Affiche les recettes d'armures et permet de les craft"""
+    while True:
+        print(f"\n{'='*60}")
+        print("--- RECETTES D'ARMURES ---")
+        print(f"{'='*60}\n")
+
+        # Trier par rareté (ordre défini)
+        ordre_rarete = {r: i for i, r in enumerate(RARETES)}
+        recettes_triees = sorted(recettes, key=lambda r: ordre_rarete.get(r.get('rarete', ''), 99))
+
+        print("Recettes disponibles :\n")
+        options = []
+        option_num = 1
+
+        for rec in recettes_triees:
+            nom = rec['nom']
+            rarete = rec.get('rarete', 'Inconnu')
+            niveau_req = rec.get('niveau_craft_requis', 1)
+
+            # Vérifier si le joueur peut craft cette recette
+            peut_crafter, ingredients_manquants = verifier_ingredients_recette(joueur, rec, royaume_nom)
+            statut = "✓" if peut_crafter else "✗"
+
+            # Codes couleur ANSI
+            VERT = '\033[92m'  # Vert clair
+            RESET = '\033[0m'   # Reset
+
+            # Appliquer la couleur verte si craftable
+            nom_affiche = f"{VERT}{nom}{RESET}" if peut_crafter else nom
+            statut_affiche = f"{VERT}{statut}{RESET}" if peut_crafter else statut
+
+            print(f"{option_num}. {statut_affiche} {nom_affiche} ({rarete}) - Niveau requis : {niveau_req}")
+
+            # Afficher les stats
+            stats = rec.get('stats', {})
+            stats_str = []
+            if stats.get('bonus_defense') is not None:
+                stats_str.append(f"Défense: +{stats['bonus_defense']}")
+            if stats.get('bonus_force') is not None:
+                stats_str.append(f"Force: +{stats['bonus_force']}")
+            if stats.get('bonus_agilite') is not None:
+                stats_str.append(f"Agilité: +{stats['bonus_agilite']}")
+            if stats.get('bonus_vitalite') is not None:
+                stats_str.append(f"Vitalité: +{stats['bonus_vitalite']}")
+            if stats.get('bonus_intelligence') is not None:
+                stats_str.append(f"Intelligence: +{stats['bonus_intelligence']}")
+            if stats.get('degats_base') is not None:
+                stats_str.append(f"Dégâts: {stats['degats_base']}")
+
+            if stats_str:
+                print(f"   Stats : {', '.join(stats_str)}")
+            else:
+                print(f"   Stats : À définir")
+
+            if not peut_crafter and ingredients_manquants:
+                print(f"   ⚠️  Ingrédients manquants : {', '.join(ingredients_manquants[:3])}")
+
+            options.append(rec)
+            option_num += 1
+
+        print(f"{option_num}. Retour")
+
+        choix = input("\nVotre choix : ").strip()
+
+        try:
+            choix_int = int(choix)
+            if 1 <= choix_int <= len(options):
+                recette_choisie = options[choix_int - 1]
+                executer_craft(joueur, recette_choisie, royaume_nom)
+            elif choix_int == option_num:
+                return
+            else:
+                print("Choix invalide.")
+        except ValueError:
+            print("Veuillez entrer un nombre valide.")
 
 
 def verifier_ingredients_recette(joueur, recette: Dict, royaume_nom: str) -> Tuple[bool, List[str]]:
@@ -263,9 +517,17 @@ def verifier_ingredients_recette(joueur, recette: Dict, royaume_nom: str) -> Tup
                 ingredients_manquants.append(f"{ingredient_nom} x{quantite_requise}")
 
         else:
-            # Ingrédient spécifique (ne devrait pas arriver avec le système de catégories)
-            quantite_disponible = joueur.compter_objet(ingredient_nom)
-            if quantite_disponible < quantite_requise:
+            # Ingrédient réel spécifique : chercher les équivalents
+            equivalents = trouver_equivalents_ingredient(ingredient_nom, royaume_nom)
+            total_disponible = 0
+
+            # Compter toutes les qualités de tous les équivalents
+            for nom_equiv in equivalents:
+                for qualite in RARETES:
+                    quantite = compter_ingredient_qualite(joueur, nom_equiv, qualite)
+                    total_disponible += quantite
+
+            if total_disponible < quantite_requise:
                 ingredients_manquants.append(f"{ingredient_nom} x{quantite_requise}")
 
     return len(ingredients_manquants) == 0, ingredients_manquants
@@ -348,6 +610,39 @@ def executer_craft(joueur, recette: Dict, royaume_nom: str) -> bool:
             # Retirer l'ingrédient spécial (pas de niveau_biome pour les ingrédients spéciaux)
             joueur.retirer_objet(ingredient_nom, quantite_requise)
             ingredients_utilises.append(f"{ingredient_nom} x{quantite_requise}")
+
+        else:
+            # Ingrédient réel spécifique : utiliser les équivalents
+            equivalents = trouver_equivalents_ingredient(ingredient_nom, royaume_nom)
+            quantite_restante = quantite_requise
+
+            for nom_equiv in equivalents:
+                if quantite_restante <= 0:
+                    break
+
+                # Chercher toutes les qualités de cet équivalent
+                for qualite in RARETES:
+                    if quantite_restante <= 0:
+                        break
+
+                    quantite_disponible = compter_ingredient_qualite(joueur, nom_equiv, qualite)
+                    quantite_a_retirer = min(quantite_disponible, quantite_restante)
+
+                    if quantite_a_retirer > 0:
+                        # Trouver l'objet dans l'inventaire pour obtenir son niveau_biome
+                        nom_complet = obtenir_nom_complet_avec_qualite(nom_equiv, qualite)
+                        objet_ingredient = joueur.avoir_objet(nom_complet)
+
+                        if objet_ingredient:
+                            # Ajouter au calcul du niveau moyen (pondéré par quantité)
+                            niveau_biome_ing = objet_ingredient.niveau_biome
+                            if niveau_biome_ing is not None:
+                                niveaux_ingredients.append((niveau_biome_ing, quantite_a_retirer))
+                                total_quantite_niveaux += quantite_a_retirer
+
+                            retirer_ingredient_qualite(joueur, nom_equiv, qualite, quantite_a_retirer)
+                            quantite_restante -= quantite_a_retirer
+                            ingredients_utilises.append(f"{nom_complet} x{quantite_a_retirer}")
 
     # Calculer le niveau moyen final (pondéré par quantité)
     niveau_moyen = None

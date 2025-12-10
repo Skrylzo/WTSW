@@ -266,3 +266,66 @@ def obtenir_ingredients_speciaux() -> List[str]:
     :return: Liste des noms d'ingrédients spéciaux
     """
     return list(INGREDIENTS_SPECIAUX.keys())
+
+
+def trouver_equivalents_ingredient(nom_ingredient: str, royaume: str) -> List[str]:
+    """
+    Trouve tous les ingrédients équivalents à un ingrédient donné.
+    Deux ingrédients sont équivalents s'ils ont :
+    - Le même usage (Potions, Armes, ou Armures)
+    - Le même niveau de biome (même position dans le royaume : 1er, 2ème, 3ème, 4ème)
+
+    IMPORTANT : La substitution se fait par POSITION du biome, pas par niveau absolu.
+    Cela garantit que les recettes restent craftables même quand le joueur change de royaume.
+
+    :param nom_ingredient: Nom de l'ingrédient recherché (ex: "Fragment d'Os Spectral")
+    :param royaume: Nom du royaume pour déterminer les équivalents
+    :return: Liste des noms d'ingrédients équivalents (inclut l'ingrédient lui-même)
+    """
+    from data.ingredients import obtenir_ingredient_par_nom, DEFINITIONS_INGREDIENTS
+
+    # Obtenir les infos de l'ingrédient recherché
+    ingredient_data = obtenir_ingredient_par_nom(nom_ingredient)
+    if not ingredient_data:
+        return [nom_ingredient]  # Si pas trouvé, retourner juste le nom
+
+    usage = ingredient_data.get('usage', '')
+    sources = ingredient_data.get('sources', [])
+
+    # Trouver le niveau du biome (position) pour cet ingrédient dans le royaume donné
+    niveau_biome = None
+    for source in sources:
+        if source.get('royaume') == royaume:
+            biome_nom = source.get('biome', '')
+            niveau_biome = _determiner_niveau_biome(royaume, biome_nom)
+            break
+
+    if not niveau_biome:
+        return [nom_ingredient]  # Si pas de niveau trouvé, retourner juste le nom
+
+    # Trouver tous les ingrédients avec le même usage et niveau (position) dans TOUS les royaumes
+    equivalents = [nom_ingredient]  # Inclure l'ingrédient lui-même
+
+    # Parcourir tous les royaumes pour trouver les équivalents
+    royaumes_connus = set()
+    for slug, data in DEFINITIONS_INGREDIENTS.items():
+        if data.get('usage') != usage:
+            continue
+
+        # Vérifier toutes les sources de cet ingrédient
+        for source in data.get('sources', []):
+            source_royaume = source.get('royaume', '')
+            if not source_royaume:
+                continue
+
+            biome_nom = source.get('biome', '')
+            niveau_source = _determiner_niveau_biome(source_royaume, biome_nom)
+
+            # Si même position de biome (même niveau relatif), c'est un équivalent
+            if niveau_source == niveau_biome:
+                nom_equiv = data.get('nom', '')
+                if nom_equiv and nom_equiv not in equivalents:
+                    equivalents.append(nom_equiv)
+                break  # Pas besoin de vérifier les autres sources de cet ingrédient
+
+    return equivalents

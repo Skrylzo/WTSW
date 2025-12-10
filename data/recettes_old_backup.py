@@ -15,18 +15,46 @@ from .recettes_potions import (
     RECETTES_POTIONS_BOOST_CRITIQUE,
 )
 
-# Importer toutes les recettes d'armes
-from .recettes_armes import (
-    RECETTES_ARMES_EPEES,
-    RECETTES_ARMES_HACHES,
-    RECETTES_ARMES_DAGUES,
-    RECETTES_ARMES_BATONS,
-)
+# TODO: Importer les autres fichiers une fois créés
+# from .recettes_armes import (
+#     RECETTES_ARMES_EPEES,
+#     RECETTES_ARMES_HACHES,
+#     RECETTES_ARMES_DAGUES,
+#     RECETTES_ARMES_BATONS,
+# )
+# from .recettes_armures_torse import RECETTES_ARMURES_TORSE
+# from .recettes_armures_casques import RECETTES_ARMURES_CASQUES
+# from .recettes_armures_bottes import RECETTES_ARMURES_BOTTES
 
-# Importer toutes les recettes d'armures
-from .recettes_armures_torse import RECETTES_ARMURES_TORSE
-from .recettes_armures_casques import RECETTES_ARMURES_CASQUES
-from .recettes_armures_bottes import RECETTES_ARMURES_BOTTES
+# Pour l'instant, utiliser les anciennes recettes (sera remplacé progressivement)
+# Import temporaire depuis l'ancien fichier
+import importlib.util
+import os
+
+# Charger temporairement les recettes d'armes et armures depuis l'ancien fichier
+# Cela sera remplacé une fois que les nouveaux fichiers seront créés
+_old_recettes_path = os.path.join(os.path.dirname(__file__), "recettes_old.py")
+if os.path.exists(_old_recettes_path):
+    spec = importlib.util.spec_from_file_location("recettes_old", _old_recettes_path)
+    recettes_old = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(recettes_old)
+    
+    RECETTES_ARMES_EPEES = getattr(recettes_old, "RECETTES_ARMES_EPEES", {})
+    RECETTES_ARMES_HACHES = getattr(recettes_old, "RECETTES_ARMES_HACHES", {})
+    RECETTES_ARMES_DAGUES = getattr(recettes_old, "RECETTES_ARMES_DAGUES", {})
+    RECETTES_ARMES_BATONS = getattr(recettes_old, "RECETTES_ARMES_BATONS", {})
+    RECETTES_ARMURES_TORSE = getattr(recettes_old, "RECETTES_ARMURES_TORSE", {})
+    RECETTES_ARMURES_CASQUES = getattr(recettes_old, "RECETTES_ARMURES_CASQUES", {})
+    RECETTES_ARMURES_BOTTES = getattr(recettes_old, "RECETTES_ARMURES_BOTTES", {})
+else:
+    # Si le fichier old n'existe pas, créer des dictionnaires vides temporaires
+    RECETTES_ARMES_EPEES = {}
+    RECETTES_ARMES_HACHES = {}
+    RECETTES_ARMES_DAGUES = {}
+    RECETTES_ARMES_BATONS = {}
+    RECETTES_ARMURES_TORSE = {}
+    RECETTES_ARMURES_CASQUES = {}
+    RECETTES_ARMURES_BOTTES = {}
 
 # ============================================================================
 # REGROUPEMENT DE TOUTES LES RECETTES

@@ -67,18 +67,50 @@ def utiliser_potion(joueur, objet: Objet) -> bool:
         if energie_recuperee > 0:
             message_effets.append(f"+{energie_recuperee:.0f} Énergie")
 
-    # Boosts temporaires (à implémenter avec le système d'effets)
+    # Boosts temporaires (implémentés avec le système d'effets)
     duree_tours = effets.get('duree_tours', 0)
     if duree_tours and duree_tours > 0:
-        # TODO: Implémenter les effets temporaires avec le système d'effets existant
-        if effets.get('boost_attaque'):
-            print(f"⚠️  Les boosts temporaires ne sont pas encore implémentés.")
-        if effets.get('boost_defense'):
-            print(f"⚠️  Les boosts temporaires ne sont pas encore implémentés.")
-        if effets.get('boost_vitesse'):
-            print(f"⚠️  Les boosts temporaires ne sont pas encore implémentés.")
-        if effets.get('boost_critique'):
-            print(f"⚠️  Les boosts temporaires ne sont pas encore implémentés.")
+        # Vérifier s'il y a des boosts à appliquer
+        boost_attaque = effets.get('boost_attaque', 0) or 0
+        boost_defense = effets.get('boost_defense', 0) or 0
+        boost_vitesse = effets.get('boost_vitesse', 0) or 0
+        boost_critique = effets.get('boost_critique', 0) or 0
+
+        # Si au moins un boost est présent, créer l'effet temporaire
+        if boost_attaque > 0 or boost_defense > 0 or boost_vitesse > 0 or boost_critique > 0:
+            # Construire la description de l'effet
+            boosts_desc = []
+            if boost_attaque > 0:
+                boosts_desc.append(f"+{boost_attaque} Attaque")
+            if boost_defense > 0:
+                boosts_desc.append(f"+{boost_defense} Défense")
+            if boost_vitesse > 0:
+                boosts_desc.append(f"+{boost_vitesse} Vitesse")
+            if boost_critique > 0:
+                boosts_desc.append(f"+{boost_critique}% Critique")
+
+            description_effet = f"{', '.join(boosts_desc)} pendant {duree_tours} tours"
+
+            # Créer le dictionnaire d'effet pour le système d'effets
+            effet_data = {
+                "nom": f"Boost de {objet.nom}",
+                "description": description_effet,
+                "duree": duree_tours,
+                "condition": "tour",  # L'effet s'applique chaque tour
+                "effet_attaque": boost_attaque,
+                "effet_defense": boost_defense,
+                "effet_vitesse": boost_vitesse,
+                "effet_critique": boost_critique,
+                "effet_vie": 0,
+                "effet_regen_mana": 0,
+                "effet_regen_energie": 0
+            }
+
+            # Appliquer l'effet au joueur
+            joueur.appliquer_effet(effet_data)
+
+            # Ajouter au message d'effets
+            message_effets.append(f"Boost: {description_effet}")
 
     if message_effets:
         print(f"✅ {objet.nom} utilisée ! ({', '.join(message_effets)})")
@@ -122,16 +154,27 @@ def equiper_arme_menu(joueur):
             # Les stats sont stockées dans l'attribut dynamique `stats`
             if hasattr(objet, 'stats'):
                 stats = objet.stats
+
+                # Fonction helper pour convertir en int en gérant None
+                def safe_int(value, default=0):
+                    """Convertit une valeur en int, retourne default si None ou invalide"""
+                    if value is None:
+                        return default
+                    try:
+                        return int(value)
+                    except (ValueError, TypeError):
+                        return default
+
                 arme = Arme(
                     nom=objet.nom,
-                    degats_base=int(stats.get('degats_base', 0)),
-                    bonus_force=int(stats.get('bonus_force', 0)),
-                    bonus_agilite=int(stats.get('bonus_agilite', 0)),
-                    bonus_intelligence=int(stats.get('bonus_intelligence', 0)),
-                    bonus_vitalite=int(stats.get('bonus_vitalite', 0)),
-                    bonus_mana=int(stats.get('bonus_mana', 0)),
-                    bonus_energie=int(stats.get('bonus_energie', 0)),
-                    bonus_rage=int(stats.get('bonus_rage', 0))
+                    degats_base=safe_int(stats.get('degats_base'), 0),
+                    bonus_force=safe_int(stats.get('bonus_force'), 0),
+                    bonus_agilite=safe_int(stats.get('bonus_agilite'), 0),
+                    bonus_intelligence=safe_int(stats.get('bonus_intelligence'), 0),
+                    bonus_vitalite=safe_int(stats.get('bonus_vitalite'), 0),
+                    bonus_mana=safe_int(stats.get('bonus_mana'), 0),
+                    bonus_energie=safe_int(stats.get('bonus_energie'), 0),
+                    bonus_rage=safe_int(stats.get('bonus_rage'), 0)
                 )
                 joueur.equiper_arme(arme)
                 print(f"✅ {objet.nom} équipée !")
@@ -166,6 +209,26 @@ def equiper_armure_menu(joueur):
         if objet.description:
             print(f"   {objet.description}")
 
+        # Afficher les stats si disponibles
+        if hasattr(objet, 'stats'):
+            stats = objet.stats
+            stats_str = []
+            if stats.get('bonus_defense') is not None:
+                stats_str.append(f"Défense: +{stats['bonus_defense']}")
+            if stats.get('bonus_force') is not None:
+                stats_str.append(f"Force: +{stats['bonus_force']}")
+            if stats.get('bonus_agilite') is not None:
+                stats_str.append(f"Agilité: +{stats['bonus_agilite']}")
+            if stats.get('bonus_vitalite') is not None:
+                stats_str.append(f"Vitalité: +{stats['bonus_vitalite']}")
+            if stats.get('bonus_intelligence') is not None:
+                stats_str.append(f"Intelligence: +{stats['bonus_intelligence']}")
+
+            if stats_str:
+                print(f"   Stats : {', '.join(stats_str)}")
+            else:
+                print(f"   Stats : À définir")
+
     print(f"{len(armures_disponibles) + 1}. Retour")
 
     try:
@@ -177,8 +240,20 @@ def equiper_armure_menu(joueur):
             if not hasattr(joueur, 'armure'):
                 joueur.armure = None
 
+            # Vérifier que les stats sont valides (gérer les valeurs None)
+            if hasattr(objet, 'stats'):
+                stats = objet.stats
+                # Vérifier que toutes les stats sont None ou des nombres valides
+                for stat_name, valeur in stats.items():
+                    if valeur is not None:
+                        try:
+                            # Tester la conversion en float pour vérifier que c'est un nombre
+                            float(valeur)
+                        except (ValueError, TypeError):
+                            print(f"⚠️  Avertissement : La stat '{stat_name}' de {objet.nom} a une valeur invalide : {valeur}")
+
             # Pour l'instant, on stocke juste l'objet
-            # TODO: Créer une classe Armure similaire à Arme
+            # TODO: Créer une classe Armure similaire à Arme et appliquer les bonus de stats
             joueur.armure = objet
             print(f"✅ {objet.nom} équipée !")
             print("⚠️  Note : Les bonus de stats des armures ne sont pas encore appliqués.")
@@ -188,3 +263,7 @@ def equiper_armure_menu(joueur):
             print("Choix invalide.")
     except ValueError:
         print("Veuillez entrer un nombre valide.")
+    except Exception as e:
+        print(f"❌ Erreur lors de l'équipement : {e}")
+        import traceback
+        traceback.print_exc()
