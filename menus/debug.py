@@ -160,7 +160,7 @@ def ajouter_objets_test_vente(joueur):
     }
     joueur.ajouter_objet(arme_epique)
 
-    # 8. Armure légendaire avec tous les bonus (niveau biome très élevé)
+    # 8. Armure légendaire de torse avec tous les bonus (niveau biome très élevé)
     armure_legendaire = Objet(
         nom="Armure Légendaire Complète [TEST]",
         type_objet="équipement",
@@ -178,6 +178,44 @@ def ajouter_objets_test_vente(joueur):
     }
     armure_legendaire.sous_type = "torse"
     joueur.ajouter_objet(armure_legendaire)
+
+    # 8b. Casque épique (niveau biome élevé)
+    casque_epique = Objet(
+        nom="Casque Épique du Guerrier [TEST]",
+        type_objet="équipement",
+        quantite=1,
+        description="+50 Défense, +10 Force, +10 Vitalité",
+        rarete="épique",
+        niveau_biome=15
+    )
+    casque_epique.stats = {
+        "bonus_defense": 50,
+        "bonus_force": 10,
+        "bonus_vitalite": 10,
+        "bonus_agilite": 0,
+        "bonus_intelligence": 0
+    }
+    casque_epique.sous_type = "casque"
+    joueur.ajouter_objet(casque_epique)
+
+    # 8c. Bottes rares (niveau biome moyen)
+    bottes_rares = Objet(
+        nom="Bottes de Course Rapide [TEST]",
+        type_objet="équipement",
+        quantite=1,
+        description="+30 Défense, +15 Agilité",
+        rarete="rare",
+        niveau_biome=10
+    )
+    bottes_rares.stats = {
+        "bonus_defense": 30,
+        "bonus_agilite": 15,
+        "bonus_force": 0,
+        "bonus_vitalite": 0,
+        "bonus_intelligence": 0
+    }
+    bottes_rares.sous_type = "bottes"
+    joueur.ajouter_objet(bottes_rares)
 
     # 9. Matériau commun (pour comparaison)
     materiau_commun = Objet(
@@ -199,8 +237,8 @@ def ajouter_objets_test_vente(joueur):
     )
     joueur.ajouter_objet(materiau_peu_commun)
 
-    print("   ✅ 10 objets de test ajoutés à l'inventaire")
+    print("   ✅ 12 objets de test ajoutés à l'inventaire")
     print("      → Potions : Commun, Rare, Épique, Légendaire")
     print("      → Armes : Commun, Rare, Épique")
-    print("      → Armure : Légendaire")
+    print("      → Armures : Torse Légendaire, Casque Épique, Bottes Rare")
     print("      → Matériaux : Commun, Peu Commun")

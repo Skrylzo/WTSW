@@ -472,15 +472,74 @@ class Personnage(BaseCombatant):
         print(f"Chance Critique : {self.chance_critique:.1f}%")
         print(f"XP : {self.xp}/{self.xp_requise}")
         print(f"Points d'Attribut : {self.points_attribut}")
+
+        # Codes couleur ANSI pour les raretés
+        COULEURS_RARETE = {
+            "commun": "\033[0m",
+            "peu commun": "\033[92m",
+            "rare": "\033[94m",
+            "épique": "\033[95m",
+            "légendaire": "\033[93m"
+        }
+        RESET_COULEUR = "\033[0m"
+
+        # Afficher les équipements
+        print("\n--- Équipements ---")
+
+        # Arme équipée
         if self.arme:
-            print(f"Arme équipée : {self.arme.nom} (Dégâts: {self.arme.degats_base})")
-            if self.arme.bonus_force > 0: print(f"  (Force: +{self.arme.bonus_force})")
-            if self.arme.bonus_agilite > 0: print(f"  (Agilité: +{self.arme.bonus_agilite})")
-            if self.arme.bonus_intelligence > 0: print(f"  (Intelligence: +{self.arme.bonus_intelligence})")
-            if self.arme.bonus_vitalite > 0: print(f"  (Vitalité: +{self.arme.bonus_vitalite})")
-            if self.arme.bonus_mana > 0: print(f"  (Mana: +{self.arme.bonus_mana})")
-            if self.arme.bonus_energie > 0: print(f"  (Énergie: +{self.arme.bonus_energie})")
-            if self.arme.bonus_rage > 0: print(f"  (Rage: +{self.arme.bonus_rage})")
+            affichage_arme = f"Arme : {self.arme.nom} (Dégâts: {self.arme.degats_base})"
+            if self.arme.rarete:
+                rarete_lower = str(self.arme.rarete).lower().strip()
+                couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
+                affichage_arme += f" [{couleur}{self.arme.rarete.upper()}{RESET_COULEUR}]"
+            print(affichage_arme)
+            bonus_arme = []
+            if self.arme.bonus_force > 0: bonus_arme.append(f"Force: +{self.arme.bonus_force}")
+            if self.arme.bonus_agilite > 0: bonus_arme.append(f"Agilité: +{self.arme.bonus_agilite}")
+            if self.arme.bonus_intelligence > 0: bonus_arme.append(f"Intelligence: +{self.arme.bonus_intelligence}")
+            if self.arme.bonus_vitalite > 0: bonus_arme.append(f"Vitalité: +{self.arme.bonus_vitalite}")
+            if self.arme.bonus_mana > 0: bonus_arme.append(f"Mana: +{self.arme.bonus_mana}")
+            if self.arme.bonus_energie > 0: bonus_arme.append(f"Énergie: +{self.arme.bonus_energie}")
+            if self.arme.bonus_rage > 0: bonus_arme.append(f"Rage: +{self.arme.bonus_rage}")
+            if bonus_arme:
+                print(f"  Bonus : {', '.join(bonus_arme)}")
+        else:
+            print("Arme : Aucune")
+
+        # Armure de torse
+        if self.armure_torse:
+            affichage_torse = f"Torse : {self.armure_torse.nom} (Défense: +{self.armure_torse.bonus_defense})"
+            if self.armure_torse.rarete:
+                rarete_lower = str(self.armure_torse.rarete).lower().strip()
+                couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
+                affichage_torse += f" [{couleur}{self.armure_torse.rarete.upper()}{RESET_COULEUR}]"
+            print(affichage_torse)
+        else:
+            print("Torse : Aucune")
+
+        # Casque
+        if self.armure_casque:
+            affichage_casque = f"Casque : {self.armure_casque.nom} (Défense: +{self.armure_casque.bonus_defense})"
+            if self.armure_casque.rarete:
+                rarete_lower = str(self.armure_casque.rarete).lower().strip()
+                couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
+                affichage_casque += f" [{couleur}{self.armure_casque.rarete.upper()}{RESET_COULEUR}]"
+            print(affichage_casque)
+        else:
+            print("Casque : Aucun")
+
+        # Bottes
+        if self.armure_bottes:
+            affichage_bottes = f"Bottes : {self.armure_bottes.nom} (Défense: +{self.armure_bottes.bonus_defense})"
+            if self.armure_bottes.rarete:
+                rarete_lower = str(self.armure_bottes.rarete).lower().strip()
+                couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
+                affichage_bottes += f" [{couleur}{self.armure_bottes.rarete.upper()}{RESET_COULEUR}]"
+            print(affichage_bottes)
+        else:
+            print("Bottes : Aucunes")
+
         print("-----------------------------------")
 
         if self.effets_actifs:
@@ -519,13 +578,45 @@ class Personnage(BaseCombatant):
 
 
     def equiper_arme(self, arme):
+        """
+        Équipe une arme. Si une arme est déjà équipée, elle retourne dans l'inventaire.
+        :param arme: Instance de la classe Arme
+        """
+        # Si une arme est déjà équipée, la remettre dans l'inventaire
+        if self.arme:
+            # Créer un objet Objet à partir de l'arme équipée pour le remettre dans l'inventaire
+            ancienne_arme_objet = Objet(
+                nom=self.arme.nom,
+                type_objet="équipement",
+                quantite=1,
+                description=f"Dégâts: {self.arme.degats_base}",
+                rarete=self.arme.rarete
+            )
+            # Restaurer les stats de l'arme dans l'objet
+            ancienne_arme_objet.stats = {
+                "degats_base": self.arme.degats_base,
+                "bonus_force": self.arme.bonus_force,
+                "bonus_agilite": self.arme.bonus_agilite,
+                "bonus_intelligence": self.arme.bonus_intelligence,
+                "bonus_vitalite": self.arme.bonus_vitalite,
+                "bonus_mana": self.arme.bonus_mana,
+                "bonus_energie": self.arme.bonus_energie,
+                "bonus_rage": self.arme.bonus_rage
+            }
+            # Déterminer le sous_type si possible (pour les armes craftées)
+            if hasattr(self.arme, 'sous_type'):
+                ancienne_arme_objet.sous_type = self.arme.sous_type
+            self.ajouter_objet(ancienne_arme_objet)
+            print(f"✓ {self.arme.nom} a été retirée et remise dans l'inventaire.")
+
         self.arme = arme
-        print(f"{self.nom} a équipé {arme.nom}.")
+        print(f"✓ {self.nom} a équipé {arme.nom}.")
         self.mettre_a_jour_stats_apres_attributs()
 
     def equiper_armure(self, armure):
         """
         Équipe une armure selon son type (torse, casque, bottes).
+        Si une armure est déjà équipée à cet emplacement, elle retourne dans l'inventaire.
         :param armure: Instance de la classe Armure
         """
         if armure.sous_type == "torse":
@@ -544,9 +635,32 @@ class Personnage(BaseCombatant):
             print(f"❌ Type d'armure invalide : {armure.sous_type}")
             return
 
+        # Si une armure est déjà équipée, la remettre dans l'inventaire
         if ancienne:
-            print(f"{self.nom} a retiré {ancienne.nom} ({type_nom}).")
-        print(f"{self.nom} a équipé {armure.nom} ({type_nom}).")
+            # Créer un objet Objet à partir de l'armure équipée pour le remettre dans l'inventaire
+            ancienne_armure_objet = Objet(
+                nom=ancienne.nom,
+                type_objet="équipement",
+                quantite=1,
+                description=f"Défense: +{ancienne.bonus_defense}",
+                rarete=ancienne.rarete
+            )
+            # Restaurer les stats de l'armure dans l'objet
+            ancienne_armure_objet.stats = {
+                "bonus_defense": ancienne.bonus_defense,
+                "bonus_force": ancienne.bonus_force,
+                "bonus_agilite": ancienne.bonus_agilite,
+                "bonus_intelligence": ancienne.bonus_intelligence,
+                "bonus_vitalite": ancienne.bonus_vitalite,
+                "bonus_mana": ancienne.bonus_mana,
+                "bonus_energie": ancienne.bonus_energie,
+                "bonus_rage": ancienne.bonus_rage
+            }
+            ancienne_armure_objet.sous_type = ancienne.sous_type
+            self.ajouter_objet(ancienne_armure_objet)
+            print(f"✓ {ancienne.nom} a été retirée et remise dans l'inventaire.")
+
+        print(f"✓ {self.nom} a équipé {armure.nom} ({type_nom}).")
         self.mettre_a_jour_stats_apres_attributs()
 
     def ajouter_objet(self, objet):
@@ -649,7 +763,8 @@ class Personnage(BaseCombatant):
                     bonus_vitalite=arme_data.get("bonus_vitalite", 0),
                     bonus_mana=arme_data.get("bonus_mana", 0),
                     bonus_energie=arme_data.get("bonus_energie", 0),
-                    bonus_rage=arme_data.get("bonus_rage", 0)
+                    bonus_rage=arme_data.get("bonus_rage", 0),
+                    rarete=arme_data.get("rarete", None)  # Rareté si disponible dans les définitions
                 )
             else:
                 # Si pas trouvé par ID, chercher par nom (nouveau format)
@@ -669,7 +784,8 @@ class Personnage(BaseCombatant):
                         bonus_vitalite=arme_trouvee.get("bonus_vitalite", 0),
                         bonus_mana=arme_trouvee.get("bonus_mana", 0),
                         bonus_energie=arme_trouvee.get("bonus_energie", 0),
-                        bonus_rage=arme_trouvee.get("bonus_rage", 0)
+                        bonus_rage=arme_trouvee.get("bonus_rage", 0),
+                        rarete=arme_trouvee.get("rarete", None)  # Rareté si disponible dans les définitions
                     )
                 else:
                     # Arme non trouvée : créer une arme par défaut pour éviter les erreurs

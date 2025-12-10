@@ -40,7 +40,8 @@ def choisir_arme_depart(joueur):
         bonus_vitalite=arme_data.get("bonus_vitalite", 0),
         bonus_mana=arme_data.get("bonus_mana", 0),
         bonus_energie=arme_data.get("bonus_energie", 0),
-        bonus_rage=arme_data.get("bonus_rage", 0)
+        bonus_rage=arme_data.get("bonus_rage", 0),
+        rarete=arme_data.get("rarete", None)  # Rareté si disponible dans les définitions
     )
     joueur.equiper_arme(arme)
     # Suppression du print : print(f"Vous avez équipé : {arme.nom}")

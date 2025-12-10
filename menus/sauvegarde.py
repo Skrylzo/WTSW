@@ -151,7 +151,8 @@ def charger_jeu(nom_personnage: str, slot: int = 1) -> Optional[Personnage]:
                     bonus_vitalite=arme_data.get("bonus_vitalite", 0),
                     bonus_mana=arme_data.get("bonus_mana", 0),
                     bonus_energie=arme_data.get("bonus_energie", 0),
-                    bonus_rage=arme_data.get("bonus_rage", 0)
+                    bonus_rage=arme_data.get("bonus_rage", 0),
+                    rarete=arme_data.get("rarete", None)  # Rareté si disponible dans les définitions
                 )
             else:
                 # Si pas trouvé par ID, chercher par nom (nouveau format)
@@ -171,7 +172,8 @@ def charger_jeu(nom_personnage: str, slot: int = 1) -> Optional[Personnage]:
                         bonus_vitalite=arme_trouvee.get("bonus_vitalite", 0),
                         bonus_mana=arme_trouvee.get("bonus_mana", 0),
                         bonus_energie=arme_trouvee.get("bonus_energie", 0),
-                        bonus_rage=arme_trouvee.get("bonus_rage", 0)
+                        bonus_rage=arme_trouvee.get("bonus_rage", 0),
+                        rarete=arme_trouvee.get("rarete", None)  # Rareté si disponible dans les définitions
                     )
                 else:
                     # Arme non trouvée : créer une arme par défaut pour éviter les erreurs

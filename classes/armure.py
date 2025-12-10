@@ -1,7 +1,7 @@
 # classes/armure.py
 
 class Armure:
-    def __init__(self, nom, sous_type, bonus_defense=0, bonus_force=0, bonus_agilite=0, bonus_intelligence=0, bonus_vitalite=0, bonus_mana=0, bonus_energie=0, bonus_rage=0):
+    def __init__(self, nom, sous_type, bonus_defense=0, bonus_force=0, bonus_agilite=0, bonus_intelligence=0, bonus_vitalite=0, bonus_mana=0, bonus_energie=0, bonus_rage=0, rarete=None):
         """
         Classe représentant une armure équipable.
 
@@ -15,6 +15,7 @@ class Armure:
         :param bonus_mana: Bonus de mana max
         :param bonus_energie: Bonus d'énergie max
         :param bonus_rage: Bonus de rage max
+        :param rarete: Rareté de l'armure (pour l'affichage)
         """
         self.nom = nom
         self.sous_type = sous_type  # 'torse', 'casque', 'bottes'
@@ -26,6 +27,7 @@ class Armure:
         self.bonus_mana = bonus_mana
         self.bonus_energie = bonus_energie
         self.bonus_rage = bonus_rage
+        self.rarete = rarete  # Rareté de l'armure (pour l'affichage)
 
     def __str__(self):
         return self.nom
