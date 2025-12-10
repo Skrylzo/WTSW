@@ -439,17 +439,208 @@ def menu_teleportation(joueur, hub: HubCapital):
 # MENU FORMATION
 # ============================================================================
 
+def calculer_prix_apprentissage_capacite(niveau_requis: int) -> int:
+    """
+    Calcule le prix d'apprentissage d'une capacité en fonction de son niveau requis.
+    Le prix augmente de manière exponentielle pour refléter le parcours fait.
+
+    Prix par niveau :
+    - Niveau 1 : 100 or
+    - Niveau 5 : 1250 or
+    - Niveau 10 : 5000 or
+    - Niveau 15 : 7500 or (avant-dernière capacité, prix réduit)
+    - Niveau 20 : 15000 or (dernière capacité, prix augmenté)
+
+    :param niveau_requis: Niveau requis pour apprendre la capacité
+    :return: Prix en or pour apprendre la capacité
+    """
+    prix_base = 100
+
+    # Prix spéciaux pour les dernières capacités
+    if niveau_requis == 20:
+        # Dernière capacité : prix élevé
+        return 15000
+    elif niveau_requis == 15:
+        # Avant-dernière capacité : prix réduit
+        return 7500
+
+    # Formule standard pour les autres niveaux : prix_base * niveau^2 * 0.5
+    prix = int(prix_base * (niveau_requis ** 2) * 0.5)
+    # Minimum 100 or
+    return max(100, prix)
+
+
+def obtenir_capacites_disponibles(joueur):
+    """
+    Retourne les capacités disponibles pour le joueur selon sa classe et son niveau.
+    :param joueur: Instance du personnage joueur
+    :return: Liste des capacités disponibles (non apprises) avec leurs données
+    """
+    from data.capacites import TOUTES_LES_CAPACITES_DATA
+    from data.races_classes import DEFINITIONS_RACES_CLASSES
+
+    # Obtenir les capacités de la classe du joueur
+    race_data = DEFINITIONS_RACES_CLASSES.get(joueur.race, {})
+    classe_data = race_data.get('classes', {}).get(joueur.specialisation.nom, {})
+    capacites_classe = classe_data.get('capacites_ids', [])
+
+    # Obtenir les IDs des capacités déjà apprises
+    capacites_apprises_ids = [cap.id for cap in joueur.capacites_apprises]
+
+    # Filtrer les capacités disponibles
+    capacites_disponibles = []
+    for cap_id in capacites_classe:
+        # Vérifier que la capacité n'est pas déjà apprise
+        if cap_id in capacites_apprises_ids:
+            continue
+
+        # Vérifier que la capacité existe dans les données
+        if cap_id not in TOUTES_LES_CAPACITES_DATA:
+            continue
+
+        cap_data = TOUTES_LES_CAPACITES_DATA[cap_id]
+        niveau_requis = cap_data.get('niveau_requis', 1)
+
+        # Vérifier que le joueur a le niveau requis
+        if joueur.niveau < niveau_requis:
+            continue
+
+        # Ajouter la capacité avec son prix
+        prix = calculer_prix_apprentissage_capacite(niveau_requis)
+        capacites_disponibles.append({
+            'id': cap_id,
+            'nom': cap_data.get('nom', 'Capacité Inconnue'),
+            'description': cap_data.get('description', ''),
+            'niveau_requis': niveau_requis,
+            'prix': prix
+        })
+
+    # Trier par niveau requis puis par nom
+    capacites_disponibles.sort(key=lambda x: (x['niveau_requis'], x['nom']))
+
+    return capacites_disponibles
+
+
+def apprendre_capacite(joueur, cap_id: str) -> bool:
+    """
+    Apprend une capacité au joueur si les conditions sont remplies.
+    :param joueur: Instance du personnage joueur
+    :param cap_id: ID de la capacité à apprendre
+    :return: True si la capacité a été apprise, False sinon
+    """
+    from data.capacites import TOUTES_LES_CAPACITES_DATA
+    from classes.capacite import Capacite
+
+    # Vérifier que la capacité existe
+    if cap_id not in TOUTES_LES_CAPACITES_DATA:
+        print(f"❌ Capacité '{cap_id}' introuvable.")
+        return False
+
+    # Vérifier que la capacité n'est pas déjà apprise
+    capacites_apprises_ids = [cap.id for cap in joueur.capacites_apprises]
+    if cap_id in capacites_apprises_ids:
+        print(f"❌ Vous connaissez déjà cette capacité.")
+        return False
+
+    cap_data = TOUTES_LES_CAPACITES_DATA[cap_id]
+    niveau_requis = cap_data.get('niveau_requis', 1)
+
+    # Vérifier le niveau requis
+    if joueur.niveau < niveau_requis:
+        print(f"❌ Vous devez être niveau {niveau_requis} pour apprendre cette capacité.")
+        return False
+
+    # Calculer le prix
+    prix = calculer_prix_apprentissage_capacite(niveau_requis)
+
+    # Vérifier que le joueur a assez d'or
+    or_actuel = obtenir_or_joueur(joueur)
+    if or_actuel < prix:
+        print(f"❌ Vous n'avez pas assez d'or. Prix : {prix} or, Vous avez : {or_actuel} or.")
+        return False
+
+    # Retirer l'or
+    retirer_or(joueur, prix)
+
+    # Créer et ajouter la capacité
+    capacite = Capacite(
+        id_cap=cap_id,
+        nom=cap_data["nom"],
+        description=cap_data["description"],
+        cout_mana=cap_data.get("cout_mana", 0),
+        cout_energie=cap_data.get("cout_energie", 0),
+        cout_rage=cap_data.get("cout_rage", 0),
+        degats_fixes=cap_data.get("degats_fixes", 0),
+        soin_fixe=cap_data.get("soin_fixe", 0),
+        effet_data=cap_data.get("effet_data"),
+        type_cible=cap_data.get("type_cible", "unique"),
+        niveau_requis=cap_data.get("niveau_requis", 1),
+        peut_critiquer=cap_data.get("peut_critiquer", False)
+    )
+
+    joueur.capacites_apprises.append(capacite)
+    print(f"✅ Vous avez appris '{capacite.nom}' pour {prix} or !")
+    print(f"   {capacite.description}")
+    return True
+
+
 def menu_formation(joueur, hub: HubCapital, features_formation: List[HubFeature]):
     """
     Menu de formation : amélioration des compétences.
-    TODO: Implémenter le système de formation.
+    Permet d'apprendre de nouvelles capacités selon la classe et le niveau.
     """
-    print(f"\n{'='*60}")
-    print("--- FORMATION ---")
-    print(f"{'='*60}")
-    print("\nLe système de formation est en cours de développement.\n")
+    while True:
+        print(f"\n{'='*60}")
+        print("--- FORMATION ---")
+        print(f"{'='*60}")
+        afficher_or(joueur)
+        print(f"Niveau : {joueur.niveau}")
+        print(f"Classe : {joueur.specialisation.nom}")
 
-    print("Fonctionnalités prévues :")
-    print("- Apprentissage de nouvelles capacités")
-    print("- Amélioration de capacités existantes")
-    print("- Formation spécialisée selon la classe\n")
+        # Obtenir les capacités disponibles
+        capacites_disponibles = obtenir_capacites_disponibles(joueur)
+
+        if not capacites_disponibles:
+            print("\n❌ Aucune capacité disponible pour le moment.")
+            print("   Vous avez déjà appris toutes les capacités accessibles à votre niveau.")
+            input("\nAppuyez sur Entrée pour continuer...")
+            return
+
+        print(f"\n📚 Capacités disponibles ({len(capacites_disponibles)}) :\n")
+
+        for i, cap in enumerate(capacites_disponibles, 1):
+            niveau_info = f"Niveau {cap['niveau_requis']}"
+            prix_info = f"{cap['prix']} or"
+            print(f"{i}. {cap['nom']} ({niveau_info}) - {prix_info}")
+            if cap['description']:
+                print(f"   {cap['description']}")
+
+        print(f"{len(capacites_disponibles) + 1}. Retour")
+
+        try:
+            choix = int(input("\nVotre choix : "))
+            if 1 <= choix <= len(capacites_disponibles):
+                cap_choisie = capacites_disponibles[choix - 1]
+
+                # Demander confirmation
+                print(f"\nApprendre '{cap_choisie['nom']}' pour {cap_choisie['prix']} or ?")
+                confirmation = input("Confirmer (o/n) : ").strip().lower()
+
+                if confirmation == 'o':
+                    if apprendre_capacite(joueur, cap_choisie['id']):
+                        input("\nAppuyez sur Entrée pour continuer...")
+                        # Continuer la boucle pour voir les nouvelles capacités disponibles
+                        continue
+                    else:
+                        input("\nAppuyez sur Entrée pour continuer...")
+                else:
+                    print("Apprentissage annulé.")
+            elif choix == len(capacites_disponibles) + 1:
+                return
+            else:
+                print("Choix invalide.")
+        except ValueError:
+            print("Veuillez entrer un nombre valide.")
+        except KeyboardInterrupt:
+            print("\n\nRetour au menu précédent...")
+            return

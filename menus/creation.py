@@ -5,6 +5,7 @@ from classes.base_combatant import Personnage
 from classes.arme import Arme
 from data.races_classes import DEFINITIONS_RACES_CLASSES
 from data.armes import DEFINITIONS_ARMES
+from .debug import appliquer_bonus_debug
 # choisir_arme_depart est défini dans ce fichier
 
 # --- Nouvelle fonction pour choisir l'arme de départ ---
@@ -97,6 +98,10 @@ def creer_personnage():
 
     # Créer le personnage avec les stats de départ
     joueur = Personnage(nom, race_choisie, specialisation_choisie_nom, force, agilite, vitalite, intelligence)
+
+    # Appliquer les bonus de debug si nécessaire
+    appliquer_bonus_debug(joueur, nom)
+
     print(f"\n{joueur.nom}, un {joueur.race} {joueur.specialisation.nom}, a été créé !")
     joueur.afficher_stats()
 

@@ -232,24 +232,29 @@ class Personnage(BaseCombatant):
 
 
     def _initialiser_capacites(self):
+        # Seules les capacités de niveau 1 sont apprises au départ
+        # Les autres doivent être apprises via le menu de formation
         for cap_id in self.specialisation.capacites_initiales:
             cap_data = TOUTES_LES_CAPACITES_DATA.get(cap_id)
             if cap_data:
-                capacite = Capacite(
-                    id_cap=cap_id,
-                    nom=cap_data["nom"],
-                    description=cap_data["description"],
-                    cout_mana=cap_data.get("cout_mana", 0),
-                    cout_energie=cap_data.get("cout_energie", 0),
-                    cout_rage=cap_data.get("cout_rage", 0),
-                    degats_fixes=cap_data.get("degats_fixes", 0),
-                    soin_fixe=cap_data.get("soin_fixe", 0),
-                    effet_data=cap_data.get("effet_data"),
-                    type_cible=cap_data.get("type_cible", "unique"),
-                    niveau_requis=cap_data.get("niveau_requis", 1),
-                    peut_critiquer=cap_data.get("peut_critiquer", False)
-                )
-                self.capacites_apprises.append(capacite)
+                niveau_requis = cap_data.get("niveau_requis", 1)
+                # Ne charger que les capacités de niveau 1 au départ
+                if niveau_requis == 1:
+                    capacite = Capacite(
+                        id_cap=cap_id,
+                        nom=cap_data["nom"],
+                        description=cap_data["description"],
+                        cout_mana=cap_data.get("cout_mana", 0),
+                        cout_energie=cap_data.get("cout_energie", 0),
+                        cout_rage=cap_data.get("cout_rage", 0),
+                        degats_fixes=cap_data.get("degats_fixes", 0),
+                        soin_fixe=cap_data.get("soin_fixe", 0),
+                        effet_data=cap_data.get("effet_data"),
+                        type_cible=cap_data.get("type_cible", "unique"),
+                        niveau_requis=niveau_requis,
+                        peut_critiquer=cap_data.get("peut_critiquer", False)
+                    )
+                    self.capacites_apprises.append(capacite)
             else:
                 print(f"Avertissement: Capacité '{cap_id}' introuvable dans TOUTES_LES_CAPACITES_DATA.")
 
