@@ -770,6 +770,9 @@ def creer_objet_depuis_recette(recette: Dict, niveau_biome: Optional[int] = None
         )
 
         objet.stats = stats_finales  # Attribut dynamique pour les stats
+        # Stocker le sous_type pour les armures (torse, casque, bottes)
+        if recette.get('type') == 'armure':
+            objet.sous_type = recette.get('sous_type')
 
     else:
         description = recette.get('description', '')

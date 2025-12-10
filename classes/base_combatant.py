@@ -6,6 +6,7 @@ from .specialisation import Specialisation
 from .capacite import Capacite
 from .objet import Objet
 from .arme import Arme
+from .armure import Armure
 # Importation des données du jeu
 from data.races_classes import DEFINITIONS_RACES_CLASSES
 from data.capacites import TOUTES_LES_CAPACITES_DATA
@@ -208,6 +209,9 @@ class Personnage(BaseCombatant):
         self.rage_max = 0.0
 
         self.arme = arme
+        self.armure_torse = None
+        self.armure_casque = None
+        self.armure_bottes = None
         self.inventaire = {}  # Dictionnaire {nom_objet: Objet} pour gérer les quantités
         self.or_ = 100  # Or de départ pour le commerce
 
@@ -255,25 +259,40 @@ class Personnage(BaseCombatant):
         Ne modifie PAS les stats finales (attaque, defense, etc.) qui sont calculées dynamiquement
         via obtenir_stat_modifiee() pour prendre en compte les effets.
         """
-        # Calculer les stats de base uniquement (sans effets)
-        self.base_attaque = self.force * 2
-        self.base_defense = (self.force * 0.5) + (self.vitalite * 0.3)
-        self.base_vitesse = self.agilite * 1.2
-        self.base_chance_critique = 5 + (self.agilite * 0.3) + (self.intelligence * 0.2)
+        # Calculer les attributs totaux en incluant les bonus des armures
+        force_totale = self.force
+        agilite_totale = self.agilite
+        vitalite_totale = self.vitalite
+        intelligence_totale = self.intelligence
 
-        # Calculer les valeurs max
-        self.vie_max = 50 + (self.vitalite * 5) + (self.niveau - 1) * 5
+        # Ajouter les bonus d'attributs des armures
+        armures_equipees = [self.armure_torse, self.armure_casque, self.armure_bottes]
+        for armure in armures_equipees:
+            if armure:
+                force_totale += armure.bonus_force
+                agilite_totale += armure.bonus_agilite
+                vitalite_totale += armure.bonus_vitalite
+                intelligence_totale += armure.bonus_intelligence
+
+        # Calculer les stats de base avec les attributs totaux
+        self.base_attaque = force_totale * 2
+        self.base_defense = (force_totale * 0.5) + (vitalite_totale * 0.3)
+        self.base_vitesse = agilite_totale * 1.2
+        self.base_chance_critique = 5 + (agilite_totale * 0.3) + (intelligence_totale * 0.2)
+
+        # Calculer les valeurs max avec les attributs totaux (incluant les bonus d'armures)
+        self.vie_max = 50 + (vitalite_totale * 5) + (self.niveau - 1) * 5
 
         self.mana_max = 0.0
         self.energie_max = 0.0
         self.rage_max = 0.0
 
         if self.specialisation.type_ressource == "Mana":
-            self.mana_max = 30 + (self.intelligence * 3) + (self.niveau - 1) * 3
+            self.mana_max = 30 + (intelligence_totale * 3) + (self.niveau - 1) * 3
         elif self.specialisation.type_ressource == "Energie":
-            self.energie_max = 100 + (self.agilite * 2) + (self.force * 2) + (self.niveau - 1) * 5
+            self.energie_max = 100 + (agilite_totale * 2) + (force_totale * 2) + (self.niveau - 1) * 5
         elif self.specialisation.type_ressource == "Rage":
-            self.rage_max = 100 + (self.vitalite * 1) + (self.force * 0.5)
+            self.rage_max = 100 + (vitalite_totale * 1) + (force_totale * 0.5)
 
         # Ajouter les bonus de l'arme
         if self.arme:
@@ -282,6 +301,15 @@ class Personnage(BaseCombatant):
             self.mana_max += self.arme.bonus_mana
             self.energie_max += self.arme.bonus_energie
             self.rage_max += self.arme.bonus_rage
+
+        # Ajouter les bonus directs des armures (défense, ressources)
+        # Les bonus d'attributs sont déjà pris en compte dans le calcul ci-dessus
+        for armure in armures_equipees:
+            if armure:
+                self.base_defense += armure.bonus_defense
+                self.mana_max += armure.bonus_mana
+                self.energie_max += armure.bonus_energie
+                self.rage_max += armure.bonus_rage
 
         # NE PAS modifier directement self.attaque, self.defense, etc.
         # Ces valeurs sont calculées dynamiquement via obtenir_stat_modifiee()
@@ -488,6 +516,32 @@ class Personnage(BaseCombatant):
     def equiper_arme(self, arme):
         self.arme = arme
         print(f"{self.nom} a équipé {arme.nom}.")
+        self.mettre_a_jour_stats_apres_attributs()
+
+    def equiper_armure(self, armure):
+        """
+        Équipe une armure selon son type (torse, casque, bottes).
+        :param armure: Instance de la classe Armure
+        """
+        if armure.sous_type == "torse":
+            ancienne = self.armure_torse
+            self.armure_torse = armure
+            type_nom = "armure de torse"
+        elif armure.sous_type == "casque":
+            ancienne = self.armure_casque
+            self.armure_casque = armure
+            type_nom = "casque"
+        elif armure.sous_type == "bottes":
+            ancienne = self.armure_bottes
+            self.armure_bottes = armure
+            type_nom = "bottes"
+        else:
+            print(f"❌ Type d'armure invalide : {armure.sous_type}")
+            return
+
+        if ancienne:
+            print(f"{self.nom} a retiré {ancienne.nom} ({type_nom}).")
+        print(f"{self.nom} a équipé {armure.nom} ({type_nom}).")
         self.mettre_a_jour_stats_apres_attributs()
 
     def ajouter_objet(self, objet):

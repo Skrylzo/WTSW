@@ -4,6 +4,7 @@
 from typing import Optional
 from classes.objet import Objet
 from classes.arme import Arme
+from classes.armure import Armure
 from data.craft_bonus import calculer_effet_avec_bonus
 from data.recettes import obtenir_recette
 
@@ -201,7 +202,19 @@ def equiper_armure_menu(joueur):
         return
 
     print("\n--- Équiper une Armure ---")
-    print(f"Armure actuellement équipée : {joueur.armure.nom if hasattr(joueur, 'armure') and joueur.armure else 'Aucune'}")
+    # Afficher les armures équipées
+    armures_equipees = []
+    if hasattr(joueur, 'armure_torse') and joueur.armure_torse:
+        armures_equipees.append(f"Torse: {joueur.armure_torse.nom}")
+    if hasattr(joueur, 'armure_casque') and joueur.armure_casque:
+        armures_equipees.append(f"Casque: {joueur.armure_casque.nom}")
+    if hasattr(joueur, 'armure_bottes') and joueur.armure_bottes:
+        armures_equipees.append(f"Bottes: {joueur.armure_bottes.nom}")
+
+    if armures_equipees:
+        print(f"Armures équipées : {', '.join(armures_equipees)}")
+    else:
+        print("Aucune armure équipée")
     print("\nArmures disponibles :")
 
     for i, (nom_objet, objet) in enumerate(armures_disponibles, 1):
@@ -236,27 +249,50 @@ def equiper_armure_menu(joueur):
         if 1 <= choix <= len(armures_disponibles):
             nom_objet, objet = armures_disponibles[choix - 1]
 
-            # Équiper l'armure (à implémenter dans Personnage)
-            if not hasattr(joueur, 'armure'):
-                joueur.armure = None
+            # Récupérer le sous_type depuis l'objet ou la recette
+            sous_type = None
+            if hasattr(objet, 'sous_type'):
+                sous_type = objet.sous_type
+            else:
+                # Essayer de récupérer depuis la recette
+                recette = obtenir_recette(objet.nom)
+                if recette:
+                    sous_type = recette.get('sous_type')
 
-            # Vérifier que les stats sont valides (gérer les valeurs None)
+            if not sous_type:
+                print(f"❌ Impossible de déterminer le type d'armure pour {objet.nom}.")
+                return
+
+            # Convertir l'objet en Armure
             if hasattr(objet, 'stats'):
                 stats = objet.stats
-                # Vérifier que toutes les stats sont None ou des nombres valides
-                for stat_name, valeur in stats.items():
-                    if valeur is not None:
-                        try:
-                            # Tester la conversion en float pour vérifier que c'est un nombre
-                            float(valeur)
-                        except (ValueError, TypeError):
-                            print(f"⚠️  Avertissement : La stat '{stat_name}' de {objet.nom} a une valeur invalide : {valeur}")
 
-            # Pour l'instant, on stocke juste l'objet
-            # TODO: Créer une classe Armure similaire à Arme et appliquer les bonus de stats
-            joueur.armure = objet
-            print(f"✅ {objet.nom} équipée !")
-            print("⚠️  Note : Les bonus de stats des armures ne sont pas encore appliqués.")
+                # Fonction helper pour convertir en int en gérant None
+                def safe_int(value, default=0):
+                    """Convertit une valeur en int, retourne default si None ou invalide"""
+                    if value is None:
+                        return default
+                    try:
+                        return int(value)
+                    except (ValueError, TypeError):
+                        return default
+
+                armure = Armure(
+                    nom=objet.nom,
+                    sous_type=sous_type,
+                    bonus_defense=safe_int(stats.get('bonus_defense'), 0),
+                    bonus_force=safe_int(stats.get('bonus_force'), 0),
+                    bonus_agilite=safe_int(stats.get('bonus_agilite'), 0),
+                    bonus_intelligence=safe_int(stats.get('bonus_intelligence'), 0),
+                    bonus_vitalite=safe_int(stats.get('bonus_vitalite'), 0),
+                    bonus_mana=safe_int(stats.get('bonus_mana'), 0),
+                    bonus_energie=safe_int(stats.get('bonus_energie'), 0),
+                    bonus_rage=safe_int(stats.get('bonus_rage'), 0)
+                )
+                joueur.equiper_armure(armure)
+                print(f"✅ {objet.nom} équipée !")
+            else:
+                print(f"❌ Impossible d'équiper {objet.nom} : stats manquantes.")
         elif choix == len(armures_disponibles) + 1:
             return
         else:
