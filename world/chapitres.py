@@ -234,3 +234,32 @@ class SystemeChapitres:
                     if zone not in toutes_zones:
                         toutes_zones.append(zone)
         return toutes_zones
+
+    def royaume_est_complete(self):
+        """
+        Vérifie si le royaume est complété.
+        Un royaume est complété si :
+        - Le chapitre actuel est complété ET
+        - Il n'y a pas de chapitre suivant (ou le chapitre actuel est de type FINAL)
+        :return: True si le royaume est complété, False sinon
+        """
+        chapitre_actuel = self.obtenir_chapitre_actuel()
+        if not chapitre_actuel:
+            return False
+
+        # Vérifier que le chapitre actuel est complété
+        if not chapitre_actuel.est_complete:
+            return False
+
+        # Vérifier s'il y a un chapitre suivant
+        chapitre_suivant_id = chapitre_actuel.obtenir_chapitre_suivant()
+
+        # Si le chapitre actuel est de type FINAL et complété, le royaume est complété
+        if chapitre_actuel.type_chapitre == TypeChapitre.FINAL:
+            return True
+
+        # Si il n'y a pas de chapitre suivant, le royaume est complété
+        if chapitre_suivant_id is None or chapitre_suivant_id not in self.chapitres:
+            return True
+
+        return False

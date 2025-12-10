@@ -9,15 +9,24 @@ from .royaumes import obtenir_hub_du_joueur, obtenir_royaume_du_joueur
 
 def obtenir_capitale_joueur(joueur) -> Optional[HubCapital]:
     """
-    Obtient la capitale (hub) du joueur selon sa race.
-    Fonction principale à utiliser dans le code du jeu.
+    Obtient la capitale (hub) du joueur selon sa race ou son royaume actuel.
+    Si le joueur a un royaume_actuel (après téléportation), utilise celui-ci.
+    Sinon, utilise le royaume de sa race.
 
     :param joueur: Instance de Personnage (doit avoir l'attribut 'race')
-    :return: HubCapital associé à la race du joueur, ou None si non trouvé
+    :return: HubCapital associé au royaume actuel du joueur, ou None si non trouvé
     """
     if not hasattr(joueur, 'race'):
         return None
 
+    # Si le joueur a un royaume_actuel (après téléportation), l'utiliser
+    if hasattr(joueur, 'royaume_actuel') and joueur.royaume_actuel:
+        from .royaumes import obtenir_royaume_par_nom
+        royaume_actuel = obtenir_royaume_par_nom(joueur.royaume_actuel)
+        if royaume_actuel and royaume_actuel.hub_capital:
+            return royaume_actuel.hub_capital
+
+    # Sinon, utiliser le royaume de la race du joueur
     return obtenir_hub_du_joueur(joueur.race)
 
 

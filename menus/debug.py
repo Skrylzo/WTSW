@@ -42,7 +42,11 @@ def appliquer_bonus_debug(joueur, nom_personnage: str):
         elif joueur.specialisation.type_ressource == "Rage":
             joueur.rage = joueur.rage_max
 
+        # Marquer le royaume comme complété pour débloquer la téléportation
+        joueur.royaume_complete = True
+
         print(f"   ✅ Niveau : {joueur.niveau}")
         print(f"   ✅ Or : {joueur.or_:,} pièces")
         print(f"   ✅ Points d'attribut : {joueur.points_attribut}")
+        print(f"   ✅ Royaume complété : Oui (téléportation débloquée)")
         print()

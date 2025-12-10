@@ -2,12 +2,50 @@
 # Menus des capitales (hubs) : commerce, craft, quêtes, téléportation
 
 from typing import Optional, Dict, List
+import re
 
-from world import obtenir_capitale_joueur, FeatureType, HubFeature, HubCapital
+from world import (
+    obtenir_capitale_joueur, obtenir_royaume_du_joueur, obtenir_royaume_par_nom,
+    obtenir_tous_royaumes, FeatureType, HubFeature, HubCapital, TOUS_LES_ROYAUMES
+)
 from classes.objet import Objet
 from data.objets import DEFINITIONS_OBJETS
 from data.categories_ingredients import INGREDIENTS_SPECIAUX
 from .craft import menu_craft
+from .exploration import creer_systeme_chapitres_base
+
+
+def royaume_est_complete(joueur) -> bool:
+    """
+    Vérifie si le royaume du joueur est complété.
+    Un royaume est complété si tous ses chapitres sont complétés.
+
+    Pour l'instant, utilise un attribut du joueur pour suivre la complétion.
+    Cet attribut peut être défini manuellement ou via le système de chapitres.
+
+    :param joueur: Instance du personnage joueur
+    :return: True si le royaume est complété, False sinon
+    """
+    # Vérifier si le joueur a un attribut indiquant que le royaume est complété
+    if hasattr(joueur, 'royaume_complete'):
+        return joueur.royaume_complete
+
+    # Sinon, créer le système de chapitres pour vérifier l'état
+    # Note: Pour un système complet, le système de chapitres devrait être stocké dans le joueur
+    royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
+    if not royaume_joueur:
+        return False
+
+    # Créer le système de chapitres pour vérifier l'état
+    systeme_chapitres = creer_systeme_chapitres_base(joueur, royaume_joueur)
+
+    # Vérifier si le royaume est complété
+    est_complete = systeme_chapitres.royaume_est_complete()
+
+    # Stocker le résultat dans le joueur pour éviter de recalculer à chaque fois
+    joueur.royaume_complete = est_complete
+
+    return est_complete
 
 
 def menu_capitale(joueur):
@@ -53,8 +91,8 @@ def menu_capitale(joueur):
             options.append(('quetes', FeatureType.QUETE))
             option_num += 1
 
-        # Téléportation
-        if hub.teleportations:
+        # Téléportation (uniquement si le royaume est complété)
+        if hub.teleportations and royaume_est_complete(joueur):
             options_display.append(f"{option_num}. Téléportation")
             options.append(('teleportation', None))
             option_num += 1
@@ -396,43 +434,164 @@ def menu_quetes(joueur, hub: HubCapital, features_quetes: List[HubFeature]):
 # MENU TÉLÉPORTATION
 # ============================================================================
 
+def parser_royaumes_depuis_teleportations(teleportations: List[str], royaume_actuel: str = None) -> List[str]:
+    """
+    Parse les strings de téléportation pour extraire les noms de royaumes disponibles.
+    Si aucune description spécifique n'est trouvée, retourne tous les autres royaumes.
+
+    :param teleportations: Liste de strings descriptives (ex: "Portails vers Khazak-Dûm, Luthesia")
+    :param royaume_actuel: Nom du royaume actuel (sera exclu de la liste)
+    :return: Liste des noms de royaumes disponibles
+    """
+    royaumes_disponibles = []
+    tous_royaumes = ["Aerthos", "Khazak-Dûm", "Luthesia", "Vrak'thar"]
+
+    for teleportation_desc in teleportations:
+        # Chercher les noms de royaumes dans la description
+        for royaume in tous_royaumes:
+            # Vérifier si le nom du royaume apparaît dans la description
+            if royaume.lower() in teleportation_desc.lower():
+                if royaume not in royaumes_disponibles:
+                    royaumes_disponibles.append(royaume)
+
+    # Si aucune description spécifique n'a été trouvée mais qu'il y a des descriptions
+    # qui mentionnent "capitales", "royaumes", "alliances", etc., inclure tous les autres royaumes
+    if not royaumes_disponibles and teleportations:
+        descriptions_lower = [desc.lower() for desc in teleportations]
+        mots_cles = ["capitale", "royaume", "alliance", "ennemi", "fissure", "portail", "miroir"]
+
+        # Si une description contient un mot-clé suggérant des téléportations vers d'autres royaumes
+        if any(mot in " ".join(descriptions_lower) for mot in mots_cles):
+            # Retourner tous les autres royaumes (sauf le royaume actuel)
+            royaumes_disponibles = [r for r in tous_royaumes if r != royaume_actuel]
+
+    return royaumes_disponibles
+
+
+def teleporter_vers_royaume(joueur, nom_royaume: str) -> bool:
+    """
+    Téléporte le joueur vers un autre royaume.
+    :param joueur: Instance du personnage joueur
+    :param nom_royaume: Nom du royaume de destination
+    :return: True si téléportation réussie, False sinon
+    """
+    # Obtenir le royaume de destination
+    royaume_dest = obtenir_royaume_par_nom(nom_royaume)
+    if not royaume_dest:
+        print(f"❌ Impossible de trouver le royaume '{nom_royaume}'.")
+        return False
+
+    # Vérifier que le royaume a une capitale
+    if not royaume_dest.hub_capital:
+        print(f"❌ Le royaume '{nom_royaume}' n'a pas de capitale définie.")
+        return False
+
+    # Obtenir le royaume actuel du joueur
+    # Si le joueur a un royaume_actuel (après téléportation), l'utiliser
+    # Sinon, utiliser le royaume de sa race
+    if hasattr(joueur, 'royaume_actuel') and joueur.royaume_actuel:
+        nom_royaume_actuel = joueur.royaume_actuel
+    else:
+        royaume_actuel = obtenir_royaume_du_joueur(joueur.race)
+        nom_royaume_actuel = royaume_actuel.nom if royaume_actuel else None
+
+    # Vérifier si le joueur est déjà dans ce royaume
+    if nom_royaume_actuel == nom_royaume:
+        print(f"❌ Vous êtes déjà dans le royaume '{nom_royaume}'.")
+        return False
+
+    # Téléporter le joueur
+    joueur.royaume_actuel = nom_royaume
+
+    # Afficher le message de téléportation
+    hub_dest = royaume_dest.hub_capital
+    print(f"\n{'='*60}")
+    print("✨ TÉLÉPORTATION ✨")
+    print(f"{'='*60}")
+    print(f"\nVous avez été téléporté vers {hub_dest.nom}, capitale de {nom_royaume}.")
+    print(f"{hub_dest.description}\n")
+
+    return True
+
+
 def menu_teleportation(joueur, hub: HubCapital):
     """
     Menu de téléportation vers d'autres royaumes.
+    La téléportation n'est disponible qu'après avoir complété son propre royaume.
     """
-    # hub.teleportations est une List[str], pas un dict
     if not hub.teleportations:
         print("\nAucune téléportation disponible pour le moment.")
+        return
+
+    # Obtenir le royaume actuel du joueur
+    # Si le joueur a un royaume_actuel (après téléportation), l'utiliser
+    # Sinon, utiliser le royaume de sa race
+    if hasattr(joueur, 'royaume_actuel') and joueur.royaume_actuel:
+        nom_royaume_actuel = joueur.royaume_actuel
+    else:
+        royaume_actuel = obtenir_royaume_du_joueur(joueur.race)
+        nom_royaume_actuel = royaume_actuel.nom if royaume_actuel else None
+
+    # Parser les royaumes disponibles depuis les descriptions
+    royaumes_disponibles = parser_royaumes_depuis_teleportations(hub.teleportations, nom_royaume_actuel)
+
+    if not royaumes_disponibles:
+        print("\nAucun royaume disponible pour la téléportation.")
         return
 
     print(f"\n{'='*60}")
     print("--- TÉLÉPORTATION ---")
     print(f"{'='*60}")
-    print(f"\nDepuis {hub.nom}, les options de téléportation disponibles :\n")
+    print(f"\nDepuis {hub.nom}, vous pouvez vous téléporter vers :\n")
 
-    # Afficher les options de téléportation (qui sont des strings descriptives)
-    for i, teleportation_desc in enumerate(hub.teleportations, 1):
-        print(f"{i}. {teleportation_desc}")
+    # Afficher les royaumes disponibles
+    royaumes_affiches = []
+    for i, royaume_nom in enumerate(royaumes_disponibles, 1):
+        # Ne pas afficher le royaume actuel
+        if royaume_nom == nom_royaume_actuel:
+            continue
 
-    print(f"{len(hub.teleportations) + 1}. Retour")
+        royaume = obtenir_royaume_par_nom(royaume_nom)
+        if royaume and royaume.hub_capital:
+            hub_dest = royaume.hub_capital
+            print(f"{len(royaumes_affiches) + 1}. {hub_dest.nom} ({royaume_nom})")
+            royaumes_affiches.append(royaume_nom)
+
+    if not royaumes_affiches:
+        print("Aucun autre royaume disponible pour la téléportation.")
+        input("\nAppuyez sur Entrée pour continuer...")
+        return
+
+    print(f"{len(royaumes_affiches) + 1}. Retour")
 
     try:
         choix = int(input("\nVotre choix : "))
-        if 1 <= choix <= len(hub.teleportations):
-            teleportation_choisie = hub.teleportations[choix - 1]
+        if 1 <= choix <= len(royaumes_affiches):
+            royaume_choisi = royaumes_affiches[choix - 1]
 
-            # TODO: Vérifier si le royaume est débloqué
-            # TODO: Implémenter la téléportation effective
+            # Demander confirmation
+            print(f"\nTéléporter vers {royaume_choisi} ?")
+            confirmation = input("Confirmer (o/n) : ").strip().lower()
 
-            print(f"\n✓ {teleportation_choisie}")
-            print("(Fonctionnalité à implémenter - nécessite système de zones débloquées)")
-            print("La téléportation sera disponible une fois le système de progression implémenté.\n")
-        elif choix == len(hub.teleportations) + 1:
+            if confirmation == 'o':
+                if teleporter_vers_royaume(joueur, royaume_choisi):
+                    input("\nAppuyez sur Entrée pour continuer...")
+                    # Retourner au menu de capitale du nouveau royaume
+                    menu_capitale(joueur)
+                    return
+                else:
+                    input("\nAppuyez sur Entrée pour continuer...")
+            else:
+                print("Téléportation annulée.")
+        elif choix == len(royaumes_affiches) + 1:
             return
         else:
             print("Choix invalide.")
     except ValueError:
         print("Veuillez entrer un nombre valide.")
+    except KeyboardInterrupt:
+        print("\n\nRetour au menu précédent...")
+        return
 
 
 # ============================================================================
