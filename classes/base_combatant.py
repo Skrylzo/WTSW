@@ -634,24 +634,48 @@ class Personnage(BaseCombatant):
     def from_dict(cls, data):
         # Charger l'arme avec les données complètes si disponible dans DEFINITIONS_ARMES
         arme_chargee = None
-        arme_nom = data.get("arme")
-        if arme_nom and arme_nom in DEFINITIONS_ARMES:
-            arme_data = DEFINITIONS_ARMES[arme_nom]
-            arme_chargee = Arme(
-                nom=arme_data["nom"],
-                degats_base=arme_data["degats_base"],
-                bonus_force=arme_data.get("bonus_force", 0),
-                bonus_agilite=arme_data.get("bonus_agilite", 0),
-                bonus_intelligence=arme_data.get("bonus_intelligence", 0),
-                bonus_vitalite=arme_data.get("bonus_vitalite", 0),
-                bonus_mana=arme_data.get("bonus_mana", 0),
-                bonus_energie=arme_data.get("bonus_energie", 0),
-                bonus_rage=arme_data.get("bonus_rage", 0)
-            )
-        elif arme_nom: # Si le nom est là mais pas dans les définitions (peut-être un bug ou une arme temporaire)
-            print(f"Avertissement: Arme '{arme_nom}' introuvable dans DEFINITIONS_ARMES lors du chargement.")
-            # Créer une arme par défaut pour éviter les erreurs
-            arme_chargee = Arme(nom=arme_nom, degats_base=0)
+        arme_nom_ou_id = data.get("arme")
+
+        if arme_nom_ou_id:
+            # Essayer d'abord avec l'ID (ancien format)
+            if arme_nom_ou_id in DEFINITIONS_ARMES:
+                arme_data = DEFINITIONS_ARMES[arme_nom_ou_id]
+                arme_chargee = Arme(
+                    nom=arme_data["nom"],
+                    degats_base=arme_data["degats_base"],
+                    bonus_force=arme_data.get("bonus_force", 0),
+                    bonus_agilite=arme_data.get("bonus_agilite", 0),
+                    bonus_intelligence=arme_data.get("bonus_intelligence", 0),
+                    bonus_vitalite=arme_data.get("bonus_vitalite", 0),
+                    bonus_mana=arme_data.get("bonus_mana", 0),
+                    bonus_energie=arme_data.get("bonus_energie", 0),
+                    bonus_rage=arme_data.get("bonus_rage", 0)
+                )
+            else:
+                # Si pas trouvé par ID, chercher par nom (nouveau format)
+                arme_trouvee = None
+                for arme_id, arme_data in DEFINITIONS_ARMES.items():
+                    if arme_data.get("nom") == arme_nom_ou_id:
+                        arme_trouvee = arme_data
+                        break
+
+                if arme_trouvee:
+                    arme_chargee = Arme(
+                        nom=arme_trouvee["nom"],
+                        degats_base=arme_trouvee["degats_base"],
+                        bonus_force=arme_trouvee.get("bonus_force", 0),
+                        bonus_agilite=arme_trouvee.get("bonus_agilite", 0),
+                        bonus_intelligence=arme_trouvee.get("bonus_intelligence", 0),
+                        bonus_vitalite=arme_trouvee.get("bonus_vitalite", 0),
+                        bonus_mana=arme_trouvee.get("bonus_mana", 0),
+                        bonus_energie=arme_trouvee.get("bonus_energie", 0),
+                        bonus_rage=arme_trouvee.get("bonus_rage", 0)
+                    )
+                else:
+                    # Arme non trouvée : créer une arme par défaut pour éviter les erreurs
+                    print(f"Avertissement: Arme '{arme_nom_ou_id}' introuvable dans DEFINITIONS_ARMES lors du chargement.")
+                    print(f"  → Création d'une arme par défaut. Vous pouvez rééquiper une arme depuis votre inventaire.")
+                    arme_chargee = Arme(nom=arme_nom_ou_id, degats_base=0)
 
 
         perso = cls(
@@ -674,6 +698,18 @@ class Personnage(BaseCombatant):
         perso.energie = data.get("energie", 0.0)
         perso.rage = data.get("rage", 0.0)
         perso.or_ = data.get("or_", 100)  # Charger l'or (100 par défaut pour anciennes sauvegardes)
+
+        # Charger le temps de jeu (si disponible dans les métadonnées)
+        metadonnees = data.get("metadonnees", {})
+        if metadonnees.get("temps_jeu_secondes"):
+            # Si on a le temps de jeu, on peut calculer le temps de début approximatif
+            from datetime import datetime, timedelta
+            temps_jeu_secondes = metadonnees["temps_jeu_secondes"]
+            perso.temps_jeu_debut = datetime.now() - timedelta(seconds=temps_jeu_secondes)
+        else:
+            # Sinon, initialiser avec maintenant (nouveau personnage ou ancienne sauvegarde)
+            from datetime import datetime
+            perso.temps_jeu_debut = datetime.now()
 
         # Charger les bonus de formation achetés
         perso.bonus_formation_achetes = data.get("bonus_formation_achetes", [])

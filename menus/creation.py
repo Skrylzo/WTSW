@@ -1,6 +1,7 @@
 # menus/creation.py
 # Fonctions de création de personnage
 
+from datetime import datetime
 from classes.base_combatant import Personnage
 from classes.arme import Arme
 from data.races_classes import DEFINITIONS_RACES_CLASSES
@@ -98,6 +99,9 @@ def creer_personnage():
 
     # Créer le personnage avec les stats de départ
     joueur = Personnage(nom, race_choisie, specialisation_choisie_nom, force, agilite, vitalite, intelligence)
+
+    # Initialiser le temps de jeu
+    joueur.temps_jeu_debut = datetime.now()
 
     # Appliquer les bonus de debug si nécessaire
     appliquer_bonus_debug(joueur, nom)

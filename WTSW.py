@@ -4,8 +4,7 @@
 # Importation depuis la nouvelle structure modulaire
 from menus import (
     menu_principal,
-    sauvegarder_jeu,
-    charger_jeu,
+    menu_sauvegarde_manuelle,
     allouer_points_attributs,
     menu_personnage,
     menu_capitale,
@@ -71,7 +70,7 @@ if __name__ == "__main__":
                     continue
 
             elif choix_aventure == '4':
-                sauvegarder_jeu(joueur_principal)
+                menu_sauvegarde_manuelle(joueur_principal)
 
             elif choix_aventure == '5':
                 print("Quitter l'aventure. Votre progression actuelle n'est pas sauvegardée si vous n'avez pas sauvegardé manuellement.")

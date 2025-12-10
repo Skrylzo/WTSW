@@ -59,6 +59,10 @@ def menu_capitale(joueur):
         print("Erreur : Impossible de trouver votre capitale.")
         return
 
+    # Sauvegarde automatique lors de l'entrée dans la capitale
+    from .sauvegarde import sauvegarder_automatique
+    sauvegarder_automatique(joueur)
+
     while True:
         print(f"\n{'='*60}")
         print(f"--- {hub.nom.upper()} ---")

@@ -21,7 +21,8 @@ def menu_principal():
                 return joueur
         elif choix == '2':
             nom_a_charger = input("Entrez le nom du personnage à charger : ")
-            joueur = charger_jeu(nom_a_charger)
+            from .sauvegarde import menu_gestion_sauvegardes
+            joueur = menu_gestion_sauvegardes(nom_a_charger)
             if joueur:
                 return joueur
         elif choix == '3':
@@ -49,7 +50,8 @@ def menu_personnage(joueur):
         elif choix == '3':
             allouer_points_attributs(joueur)
         elif choix == '4':
-            sauvegarder_jeu(joueur)
+            from .sauvegarde import menu_sauvegarde_manuelle
+            menu_sauvegarde_manuelle(joueur)
         elif choix == '5':
             joueur.afficher_capacites()
         elif choix == '6':
