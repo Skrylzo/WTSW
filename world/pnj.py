@@ -79,7 +79,7 @@ def obtenir_pnj(id_pnj: str) -> Optional[PNJ]:
 def parler_a_pnj(joueur, id_pnj: str) -> bool:
     """
     Permet au joueur de parler à un PNJ.
-    Fait progresser les quêtes si nécessaire.
+    Donne les quêtes si le PNJ est un mentor, et fait progresser les quêtes.
 
     :param joueur: Le personnage joueur
     :param id_pnj: ID du PNJ
@@ -96,8 +96,55 @@ def parler_a_pnj(joueur, id_pnj: str) -> bool:
     if pnj.description:
         print(f"{pnj.description}\n")
 
-    dialogue = pnj.parler(joueur)
-    print(dialogue)
+    # Vérifier si ce PNJ est un mentor qui peut donner une quête
+    quete_donnee = False
+    if hasattr(joueur, 'systeme_quetes') and pnj.royaume:
+        from data.mentors_quetes import obtenir_quete_suivante_mentor, obtenir_premiere_quete_royaume, obtenir_mentor_quete
+        from world import obtenir_royaume_du_joueur
+
+        # Obtenir le royaume actuel
+        royaume_actuel = getattr(joueur, 'royaume_actuel', None)
+        if not royaume_actuel:
+            royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
+            royaume_actuel = royaume_joueur.nom if royaume_joueur else None
+
+        if royaume_actuel == pnj.royaume:
+            # Vérifier si ce mentor peut donner la première quête
+            mentor_id, premiere_quete_id = obtenir_premiere_quete_royaume(royaume_actuel)
+            if mentor_id == id_pnj:
+                premiere_quete = joueur.systeme_quetes.obtenir_quete(premiere_quete_id)
+                if premiere_quete and premiere_quete.statut.value == "disponible":
+                    peut_accepter, _ = premiere_quete.peut_etre_acceptee(joueur, joueur.systeme_quetes.quetes_completees)
+                    if peut_accepter:
+                        success, message = joueur.systeme_quetes.accepter_quete(premiere_quete_id, joueur)
+                        if success:
+                            print(f"\n📖 {pnj.nom} vous confie une mission :")
+                            print(f"\n{premiere_quete.nom}")
+                            print(f"\n{premiere_quete.description}\n")
+                            quete_donnee = True
+
+            # Sinon, vérifier s'il peut donner une quête suivante
+            if not quete_donnee:
+                quetes_royaume = joueur.systeme_quetes.obtenir_quetes_royaume(royaume_actuel)
+                for quete in quetes_royaume:
+                    if quete.statut.value == "disponible":
+                        mentor_quete_id = obtenir_mentor_quete(royaume_actuel, quete.id_quete)
+                        if mentor_quete_id == id_pnj:
+                            peut_accepter, _ = quete.peut_etre_acceptee(joueur, joueur.systeme_quetes.quetes_completees)
+                            if peut_accepter:
+                                success, message = joueur.systeme_quetes.accepter_quete(quete.id_quete, joueur)
+                                if success:
+                                    print(f"\n📖 {pnj.nom} vous confie une nouvelle mission :")
+                                    print(f"\n{quete.nom}")
+                                    print(f"\n{quete.description}\n")
+                                    quete_donnee = True
+                                    break
+
+    # Afficher le dialogue normal si aucune quête n'a été donnée
+    if not quete_donnee:
+        dialogue = pnj.parler(joueur)
+        print(dialogue)
+
     print(f"{'='*60}\n")
 
     # Progresser les quêtes "Parler à un PNJ"

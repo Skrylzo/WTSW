@@ -25,7 +25,7 @@ sa paix. Il vous raconte des fragments de l'histoire oubliée d'Aerthos, avant q
         id_quete="aerthos_sec_2_cristaux_anciens",
         nom="Les Cristaux Anciens des Montagnes",
         description="""Les Montagnes de Cristal résonnent d'une énergie étrange. Des cristaux
-anciens, datant de l'époque où Aerion scella Zarathos, commencent à s'activer. Vous devez découvrir pourquoi.""",
+anciens, datant de l'époque où Aerion scella Zarthos, commencent à s'activer. Vous devez découvrir pourquoi.""",
         type_quete=TypeQuete.SECONDAIRE,
         royaume="Aerthos",
         objectifs=[
@@ -115,7 +115,7 @@ QUETES_SECONDAIRES_VRAKTHAR = [
         nom="La Langue Ancienne des Démons",
         description="""Les runes anciennes que vous avez trouvées sont écrites dans la langue
 oubliée des anciens démons. Un érudit démoniaque peut vous aider à les déchiffrer, révélant
-des secrets sur Krathos le Sage et l'époque du scellement.""",
+des secrets sur l'ancien Roi Démon et l'époque du scellement.""",
         type_quete=TypeQuete.SECONDAIRE,
         royaume="Vrak'thar",
         objectifs=[
@@ -129,15 +129,15 @@ des secrets sur Krathos le Sage et l'époque du scellement.""",
 
     Quete(
         id_quete="vrakthar_sec_2_sagesse_krathos",
-        nom="La Sagesse de Krathos",
-        description="""Les runes déchiffrées révèlent des fragments de la sagesse de Krathos le Sage.
-Même en tant que démon, il reconnaissait que Zarathos était une menace pour tous. Ces connaissances
+        nom="La Sagesse de l'Ancien Roi Démon",
+        description="""Les runes déchiffrées révèlent des fragments de la sagesse de l'ancien Roi Démon.
+Même en tant que démon, il reconnaissait que Zarthos était une menace pour tous. Ces connaissances
 pourraient vous aider à comprendre pourquoi même les démons doivent s'opposer à l'Ordre.""",
         type_quete=TypeQuete.SECONDAIRE,
         royaume="Vrak'thar",
         objectifs=[
             ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer les Terres Brûlées", "Terres_Brulees", 1),
-            ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Trouver un fragment de la sagesse de Krathos", "fragment_sagesse", 1),
+            ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Trouver un fragment de la sagesse de l'ancien Roi Démon", "fragment_sagesse", 1),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Consulter un gardien ancien", "gardien_ancien", 1)
         ],
         recompenses={"xp": 600, "or": 300},

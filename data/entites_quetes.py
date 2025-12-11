@@ -78,9 +78,9 @@ ENNEMIS_QUETES = {
         ],
     },
 
-    # Serviteurs de Zarathos (combat final)
+    # Serviteurs de Zarthos (combat final)
     "serviteur_zarathos": {
-        "nom": "Serviteur de Zarathos",
+        "nom": "Serviteur de Zarthos",
         "vie_max": 200,
         "vitesse": 20,
         "attaque": 40,
@@ -150,9 +150,9 @@ OBJETS_QUETES = {
     },
 
     "document_krathos": {
-        "nom": "Document sur Krathos",
+        "nom": "Document sur l'Ancien Roi Démon",
         "type": "matériau",
-        "description": "Des documents anciens révélant l'histoire de Krathos le Sage.",
+        "description": "Des documents anciens révélant l'histoire de l'ancien Roi Démon.",
         "rarete": "épique"
     },
 
@@ -229,16 +229,16 @@ OBJETS_QUETES = {
     },
 
     "relique_krathos": {
-        "nom": "Relique de Krathos",
+        "nom": "Relique de l'Ancien Roi Démon",
         "type": "équipement",
-        "description": "L'âme de Krathos le Sage scellée dans une rune de feu ancienne.",
+        "description": "L'âme de l'ancien Roi Démon scellée dans une rune de feu ancienne.",
         "rarete": "légendaire"
     },
 
     "renforcement_sceaux": {
         "nom": "Renforcement des Sceaux",
         "type": "matériau",
-        "description": "Un artefact permettant de renforcer les sceaux de Zarathos.",
+        "description": "Un artefact permettant de renforcer les sceaux de Zarthos.",
         "rarete": "légendaire"
     },
 
@@ -281,7 +281,7 @@ OBJETS_QUETES = {
     "fragment_sagesse": {
         "nom": "Fragment de Sagesse",
         "type": "matériau",
-        "description": "Un fragment de la sagesse de Krathos le Sage.",
+        "description": "Un fragment de la sagesse de l'ancien Roi Démon.",
         "rarete": "épique"
     },
 
@@ -303,7 +303,7 @@ OBJETS_QUETES = {
     "Artefact_Legendaire": {
         "nom": "Artefact Légendaire",
         "type": "équipement",
-        "description": "Un artefact légendaire obtenu après avoir empêché la résurrection de Zarathos.",
+        "description": "Un artefact légendaire obtenu après avoir empêché la résurrection de Zarthos.",
         "rarete": "légendaire"
     },
 
@@ -339,7 +339,7 @@ OBJETS_QUETES = {
     "Rune_de_Feu_Ancienne": {
         "nom": "Rune de Feu Ancienne",
         "type": "équipement",
-        "description": "Une rune de feu ancienne, fragment de la relique de Krathos.",
+        "description": "Une rune de feu ancienne, fragment de la relique de l'ancien Roi Démon.",
         "rarete": "légendaire"
     },
 }

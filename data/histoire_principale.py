@@ -1,29 +1,29 @@
 # data/histoire_principale.py
-# Histoire principale du jeu : Zarathos le Dévoreur et l'Ordre des Ombres Éternelles
+# Histoire principale du jeu : Zarthos le Dévoreur et l'Ordre des Ombres Éternelles
 
 from world.quetes import Quete, ObjectifQuete, TypeQuete, TypeObjectif
 
 # Introduction de l'histoire principale
 INTRODUCTION_HISTOIRE_PRINCIPALE = """
-Il y a des millénaires, avant que l'histoire ne soit écrite, un être d'une puissance inimaginable
-menaçait de détruire tout ce qui existait. Zarathos le Dévoreur, un Ancien Dieu du chaos et de la
+Il y a des millénaires, avant que l'histoire ne soit effacée, un être d'une puissance inimaginable
+menaçait de détruire tout ce qui existait. Zarthos le Dévoreur, un Ancien Dieu du chaos et de la
 destruction pure, cherchait à réduire Valdoria en cendres.
 
-Face à cette menace, les anciens dirigeants des quatre royaumes - même le Roi Démon Krathos le Sage,
-qui reconnaissait que Zarathos menaçait jusqu'à son propre pouvoir - s'unirent au péril de leur vie
+Face à cette menace, les anciens dirigeants des quatre royaumes - même le Roi Démon,
+qui reconnaissait que Zarthos menaçait jusqu'à son propre pouvoir - s'unirent au péril de leur vie
 pour sceller cette entité maléfique. Chaque roi sacrifia son âme, l'emprisonnant dans une relique
 sacrée cachée dans son royaume respectif.
 
 L'histoire de cette époque fut effacée, volontairement oubliée pour éviter que quiconque ne tente
-de réveiller Zarathos. Mais aujourd'hui, un ordre secret - l'Ordre des Ombres Éternelles - œuvre
+de réveiller Zarthos. Mais aujourd'hui, un ordre secret - l'Ordre des Ombres Éternelles - œuvre
 dans l'ombre pour briser les sceaux et libérer le Dévoreur.
 
 Infiltré à tous les niveaux, même parmi les plus hauts dignitaires, l'Ordre manipule, ensorcelle
-et corrompt. Certains de ses membres croient naïvement qu'ils seront récompensés par Zarathos,
+et corrompt. Certains de ses membres croient naïvement qu'ils seront récompensés par Zarthos,
 ignorant qu'il n'est que destruction pure.
 
 Votre mission : découvrir la vérité, démasquer les traîtres, protéger les reliques sacrées,
-et empêcher la résurrection de Zarathos avant qu'il ne soit trop tard.
+et empêcher la résurrection de Zarthos avant qu'il ne soit trop tard.
 """
 
 # Quêtes principales (progression globale)
@@ -37,7 +37,7 @@ mais vous n'avez pas encore de preuves concrètes. Explorez votre royaume et dé
         type_quete=TypeQuete.PRINCIPALE,
         objectifs=[
             ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer 2 zones de votre royaume", "zone", 2),
-            ObjectifQuete(TypeObjectif.PARLER_PNJ, "Parler au dirigeant de votre royaume", "roi", 1)
+            ObjectifQuete(TypeObjectif.PARLER_PNJ, "Parler à votre mentor dans la capitale", "mentor", 1)
         ],
         recompenses={"xp": 500, "or": 200},
         niveau_requis=1
@@ -77,9 +77,9 @@ Ils cherchent à réveiller quelque chose d'ancien et de terrifiant. Vous devez 
 
     "revelation_zarathos": Quete(
         id_quete="revelation_zarathos",
-        nom="La Révélation : Zarathos",
+        nom="La Révélation : Zarthos",
         description="""Vous avez découvert la vérité terrifiante : l'Ordre cherche à réveiller
-Zarathos le Dévoreur, un Ancien Dieu du chaos qui fut scellé il y a des millénaires par les anciens
+Zarthos le Dévoreur, un Ancien Dieu du chaos qui fut scellé il y a des millénaires par les anciens
 rois au prix de leur vie. Chaque royaume protège une relique contenant l'âme d'un ancien roi,
 et l'Ordre veut les voler pour briser les sceaux.""",
         type_quete=TypeQuete.PRINCIPALE,
@@ -98,7 +98,7 @@ et l'Ordre veut les voler pour briser les sceaux.""",
         nom="Les Reliques Perdues",
         description="""Les traîtres ont réussi à voler les quatre reliques sacrées et les ont
 livrées à l'Ordre des Ombres Éternelles. L'Ordre a maintenant accès à toutes les reliques et prépare
-le rituel final qui réveillera Zarathos le Dévoreur. Vous devez découvrir où l'Ordre prépare ce
+le rituel final qui réveillera Zarthos le Dévoreur. Vous devez découvrir où l'Ordre prépare ce
 rituel de résurrection avant qu'il ne soit trop tard.""",
         type_quete=TypeQuete.PRINCIPALE,
         objectifs=[
@@ -115,15 +115,15 @@ rituel de résurrection avant qu'il ne soit trop tard.""",
         id_quete="affrontement_final",
         nom="L'Affrontement Final - Empêcher la Résurrection",
         description="""L'Ordre des Ombres Éternelles a rassemblé les quatre reliques sacrées et
-a commencé le rituel de résurrection de Zarathos le Dévoreur. Le rituel est en cours, les sceaux
-se brisent progressivement. Vous devez interrompre le rituel AVANT que Zarathos ne soit complètement
+a commencé le rituel de résurrection de Zarthos le Dévoreur. Le rituel est en cours, les sceaux
+se brisent progressivement. Vous devez interrompre le rituel AVANT que Zarthos ne soit complètement
 réveillé. C'est le combat final épique qui déterminera le sort de Valdoria - vous devez arrêter
 la résurrection alors qu'elle est déjà en cours. L'ordre dans lequel vous avez complété les royaumes
 influencera le déroulement de cette confrontation finale et les alliés/ennemis que vous rencontrerez.""",
         type_quete=TypeQuete.PRINCIPALE,
         objectifs=[
             ObjectifQuete(TypeObjectif.COMPLETER_DONJON, "Interrompre le rituel de résurrection en cours", "rituel_resurrection_zarathos", 1),
-            ObjectifQuete(TypeObjectif.TUER_ENNEMI, "Éliminer les serviteurs de Zarathos et les membres de l'Ordre", "serviteur_zarathos", 15),
+            ObjectifQuete(TypeObjectif.TUER_ENNEMI, "Éliminer les serviteurs de Zarthos et les membres de l'Ordre", "serviteur_zarathos", 15),
             ObjectifQuete(TypeObjectif.TUER_ENNEMI, "Affronter le chef de l'Ordre", "chef_ordre", 1),
             ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Récupérer les reliques et renforcer les sceaux", "renforcement_sceaux", 1)
         ],
@@ -154,7 +154,7 @@ RELIQUES_ROYAUMES = {
         "gardien": "L'Oracle Astral"
     },
     "Vrak'thar": {
-        "nom": "L'Âme de Krathos le Sage",
+        "nom": "L'Âme de l'Ancien Roi Démon",
         "description": "L'âme de l'ancien Roi Démon, scellée dans une rune de feu ancienne",
         "emplacement": "Sanctuaire des Flammes Éternelles",
         "gardien": "Le Gardien des Abysses"
@@ -164,10 +164,10 @@ RELIQUES_ROYAUMES = {
 # Informations sur l'Ordre des Ombres Éternelles
 ORDRE_OMBRES_ETERNELLES = {
     "nom": "L'Ordre des Ombres Éternelles",
-    "description": """Un ordre secret qui œuvre dans l'ombre pour réveiller Zarathos le Dévoreur.
+    "description": """Un ordre secret qui œuvre dans l'ombre pour réveiller Zarthos le Dévoreur.
 Ils sont infiltrés à tous les niveaux : fidèles convaincus, personnes ensorcelées, ou simplement
 corrompues par la promesse de pouvoir.""",
-    "objectif": "Réveiller Zarathos le Dévoreur en volant les quatre reliques sacrées",
+    "objectif": "Réveiller Zarthos le Dévoreur en volant les quatre reliques sacrées",
     "methodes": ["Infiltration", "Envoûtement", "Corruption", "Vol de reliques"],
     "symboles": "Des runes anciennes représentant des ombres entrelacées et un œil démoniaque"
 }

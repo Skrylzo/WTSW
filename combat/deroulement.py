@@ -343,17 +343,28 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
                     if roll > chance_drop:
                         continue
 
-                    # Vérifier la quantité avant ajout
-                    quantite_avant = joueur.compter_objet(nom_loot)
-
-                    # Chercher l'objet dans DEFINITIONS_OBJETS par nom
+                    # Chercher l'objet dans DEFINITIONS_OBJETS
+                    # D'abord par ID (si nom_loot est un ID), puis par nom
                     objet_data = None
                     obj_id_trouve = None
-                    for obj_id, obj_def in DEFINITIONS_OBJETS.items():
-                        if obj_def["nom"] == nom_loot:
-                            objet_data = obj_def
-                            obj_id_trouve = obj_id
-                            break
+
+                    # Essayer de trouver par ID d'abord (cas où nom_loot = "rune_ancienne")
+                    if nom_loot in DEFINITIONS_OBJETS:
+                        obj_id_trouve = nom_loot
+                        objet_data = DEFINITIONS_OBJETS[nom_loot]
+                    else:
+                        # Sinon chercher par nom (cas où nom_loot = "Rune Ancienne")
+                        for obj_id, obj_def in DEFINITIONS_OBJETS.items():
+                            if obj_def["nom"] == nom_loot:
+                                objet_data = obj_def
+                                obj_id_trouve = obj_id
+                                break
+
+                    # Déterminer le nom d'affichage de l'objet
+                    nom_affichage = objet_data["nom"] if objet_data else nom_loot
+
+                    # Vérifier la quantité avant ajout (utiliser le nom d'affichage)
+                    quantite_avant = joueur.compter_objet(nom_affichage)
 
                     # Créer un nouvel objet avec les données de DEFINITIONS_OBJETS si disponible
                     if objet_data:
@@ -380,12 +391,12 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
                     if obj_id_trouve:
                         progresser_quetes_collecter_objet(joueur, obj_id_trouve, quantite=1)
 
-                    # Afficher l'objet obtenu
-                    quantite_apres = joueur.compter_objet(nom_loot)
+                    # Afficher l'objet obtenu (utiliser le nom d'affichage)
+                    quantite_apres = joueur.compter_objet(nom_affichage)
                     if quantite_avant == 0:
-                        print(f"  ✓ {nom_loot} ajouté à l'inventaire")
+                        print(f"  ✓ {nom_affichage} ajouté à l'inventaire")
                     else:
-                        print(f"  ✓ {nom_loot} (quantité: {quantite_avant} → {quantite_apres})")
+                        print(f"  ✓ {nom_affichage} (quantité: {quantite_avant} → {quantite_apres})")
 
                     objets_ennemi.append(nom_loot)
                     objets_obtenus.append(nom_loot)

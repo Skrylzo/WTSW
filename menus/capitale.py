@@ -64,16 +64,8 @@ def menu_capitale(joueur):
     from .sauvegarde import sauvegarder_automatique
     sauvegarder_automatique(joueur)
 
-    # Déclencher les quêtes de royaume disponibles si le système de quêtes existe
-    if hasattr(joueur, 'systeme_quetes'):
-        from world.declenchement_quetes import verifier_et_declencher_quetes_royaume
-        # Utiliser royaume_actuel si disponible, sinon le royaume de la race
-        royaume_actuel = getattr(joueur, 'royaume_actuel', None)
-        if not royaume_actuel:
-            royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
-            royaume_actuel = royaume_joueur.nom if royaume_joueur else None
-        if royaume_actuel:
-            verifier_et_declencher_quetes_royaume(joueur, royaume_actuel)
+    # Ne plus déclencher automatiquement les quêtes de royaume
+    # Elles seront données par les mentors quand le joueur leur parle
 
     while True:
         print(f"\n{'='*60}")

@@ -12,27 +12,14 @@ initialiser_pnjs()
 def obtenir_pnjs_capitale(joueur) -> List[str]:
     """
     Retourne la liste des IDs de PNJ disponibles dans la capitale du joueur.
+    Ne retourne que les PNJ visibles (débloqués selon les quêtes complétées).
 
     :param joueur: Le personnage joueur
-    :return: Liste des IDs de PNJ disponibles
+    :return: Liste des IDs de PNJ disponibles et visibles
     """
-    # Obtenir le royaume actuel du joueur
-    royaume_actuel = getattr(joueur, 'royaume_actuel', None)
-    if not royaume_actuel:
-        from world.royaumes import obtenir_royaume_du_joueur
-        royaume_actuel = obtenir_royaume_du_joueur(joueur.race)
-        if royaume_actuel:
-            royaume_actuel = royaume_actuel.nom
-
-    pnjs_disponibles = []
-
-    # Parcourir tous les PNJ et trouver ceux du royaume actuel
-    for pnj_id, pnj in PNJS.items():
-        # Inclure les PNJ du royaume actuel ou les PNJ génériques (sans royaume spécifique)
-        if pnj.royaume == royaume_actuel or pnj.royaume is None:
-            pnjs_disponibles.append(pnj_id)
-
-    return pnjs_disponibles
+    from data.pnjs_deblocage import obtenir_pnjs_visibles_capitale
+    # Utiliser directement la fonction qui gère la visibilité
+    return obtenir_pnjs_visibles_capitale(joueur)
 
 
 def menu_parler_pnj(joueur):

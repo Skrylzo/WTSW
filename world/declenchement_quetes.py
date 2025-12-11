@@ -7,7 +7,8 @@ from world import obtenir_royaume_du_joueur
 
 def verifier_et_declencher_quetes_royaume(joueur, royaume_nom: str):
     """
-    Vérifie et déclenche automatiquement les quêtes de royaume disponibles.
+    Vérifie et déclenche automatiquement UNIQUEMENT la première quête de royaume disponible
+    (celle sans prérequis). Les autres quêtes seront données par les mentors après complétion.
 
     :param joueur: Le personnage joueur
     :param royaume_nom: Nom du royaume où se trouve le joueur
@@ -20,16 +21,17 @@ def verifier_et_declencher_quetes_royaume(joueur, royaume_nom: str):
     # Obtenir toutes les quêtes de royaume pour ce royaume
     quetes_royaume = systeme_quetes.obtenir_quetes_royaume(royaume_nom)
 
-    # Trouver la première quête disponible non acceptée
+    # Trouver UNIQUEMENT la première quête disponible (sans prérequis)
+    # Les autres seront données par les mentors après complétion
     for quete in quetes_royaume:
         if quete.statut == StatutQuete.DISPONIBLE:
-            peut_accepter, message = quete.peut_etre_acceptee(joueur, systeme_quetes.quetes_completees)
-            if peut_accepter:
-                # Accepter automatiquement la première quête disponible
-                systeme_quetes.accepter_quete(quete.id_quete, joueur)
-                print(f"\n📖 Nouvelle quête disponible : {quete.nom}")
-                print(f"   {quete.description[:100]}...")
-                break
+            # Ne déclencher que les quêtes sans prérequis (première quête de la chaîne)
+            if not quete.prerequis:
+                peut_accepter, message = quete.peut_etre_acceptee(joueur, systeme_quetes.quetes_completees)
+                if peut_accepter:
+                    # Ne pas accepter automatiquement - sera donné par le mentor
+                    # On marque juste qu'elle est disponible pour le mentor
+                    break
 
 
 def verifier_et_declencher_quetes_principales(joueur):
@@ -65,6 +67,8 @@ def verifier_et_declencher_quetes_principales(joueur):
 def verifier_deblocage_quetes_apres_completion(joueur, quete_completee_id: str):
     """
     Vérifie si de nouvelles quêtes doivent être débloquées après la complétion d'une quête.
+    Pour les quêtes principales : débloque automatiquement.
+    Pour les quêtes de royaume : débloque mais ne les accepte pas (seront données par les mentors).
 
     :param joueur: Le personnage joueur
     :param quete_completee_id: ID de la quête qui vient d'être complétée
@@ -73,24 +77,43 @@ def verifier_deblocage_quetes_apres_completion(joueur, quete_completee_id: str):
         return
 
     systeme_quetes: SystemeQuetes = joueur.systeme_quetes
+    quete_completee = systeme_quetes.obtenir_quete(quete_completee_id)
 
-    # Vérifier toutes les quêtes pour voir si leurs prérequis sont maintenant remplis
-    for quete in systeme_quetes.quetes.values():
-        if quete.statut == StatutQuete.DISPONIBLE:
-            # Si cette quête a la quête complétée comme prérequis
-            if quete_completee_id in quete.prerequis:
-                # Vérifier si tous les prérequis sont remplis
+    if not quete_completee:
+        return
+
+    # Pour les quêtes de royaume : débloquer la quête suivante dans la chaîne des mentors
+    if quete_completee.type_quete == TypeQuete.ROYAUME and quete_completee.royaume:
+        from data.mentors_quetes import obtenir_quete_suivante_mentor
+        mentor_id, quete_suivante_id = obtenir_quete_suivante_mentor(quete_completee.royaume, quete_completee_id)
+
+        if quete_suivante_id:
+            quete_suivante = systeme_quetes.obtenir_quete(quete_suivante_id)
+            if quete_suivante and quete_suivante.statut == StatutQuete.DISPONIBLE:
+                # Vérifier que tous les prérequis sont remplis
                 prerequis_remplis = all(prereq_id in systeme_quetes.quetes_completees
-                                       for prereq_id in quete.prerequis)
-
+                                       for prereq_id in quete_suivante.prerequis)
                 if prerequis_remplis:
-                    # La quête peut maintenant être acceptée
-                    peut_accepter, _ = quete.peut_etre_acceptee(joueur, systeme_quetes.quetes_completees)
-                    if peut_accepter:
-                        # Accepter automatiquement si c'est une quête principale ou de royaume
-                        if quete.type_quete in [TypeQuete.PRINCIPALE, TypeQuete.ROYAUME]:
+                    # La quête est débloquée mais pas acceptée - le mentor la donnera
+                    # On peut juste afficher un message informatif
+                    from world.pnj import obtenir_pnj
+                    mentor = obtenir_pnj(mentor_id) if mentor_id else None
+                    if mentor:
+                        print(f"\n💡 {mentor.nom} a une nouvelle mission pour vous. Parlez-lui pour en savoir plus.")
+
+    # Pour les quêtes principales : débloquer et accepter automatiquement
+    elif quete_completee.type_quete == TypeQuete.PRINCIPALE:
+        # Vérifier toutes les quêtes principales pour voir si leurs prérequis sont maintenant remplis
+        for quete in systeme_quetes.quetes.values():
+            if quete.type_quete == TypeQuete.PRINCIPALE and quete.statut == StatutQuete.DISPONIBLE:
+                if quete_completee_id in quete.prerequis:
+                    prerequis_remplis = all(prereq_id in systeme_quetes.quetes_completees
+                                           for prereq_id in quete.prerequis)
+                    if prerequis_remplis:
+                        peut_accepter, _ = quete.peut_etre_acceptee(joueur, systeme_quetes.quetes_completees)
+                        if peut_accepter:
                             systeme_quetes.accepter_quete(quete.id_quete, joueur)
-                            print(f"\n📖 Nouvelle quête débloquée : {quete.nom}")
+                            print(f"\n📖 Nouvelle quête principale débloquée : {quete.nom}")
                             print(f"   {quete.description[:100]}...")
 
 

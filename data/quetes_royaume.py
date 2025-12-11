@@ -15,11 +15,11 @@ sur les arbres près des lieux de disparition.""",
         type_quete=TypeQuete.ROYAUME,
         royaume="Aerthos",
         objectifs=[
-            ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer la Forêt de Lumière Argentée", "Silvanus'Heart", 1),
+            ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer La Forêt de Lumière Argentée (Silvanus'Heart)", "Silvanus'Heart", 1),
             ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Collecter 3 symboles suspects", "symbole_ombre", 3),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Parler à Faelar Éternelbranche", "Faelar", 1)
         ],
-        recompenses={"xp": 600, "or": 250},
+        recompenses={"xp": 600, "or": 250, "objets": ["cle_donjon_aerthos_1"]},
         niveau_requis=1
     ),
 
@@ -92,11 +92,11 @@ l'intérieur. Quelqu'un dans les rangs nains travaille pour l'ennemi.""",
         type_quete=TypeQuete.ROYAUME,
         royaume="Khazak-Dûm",
         objectifs=[
-            ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer les Tunnels de la Basalte", "Tunnels_Basalte", 1),
+            ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer Les Tunnels de la Basalte et les Grandes Mines (Grom's Veins)", "Tunnels_Basalte", 1),
             ObjectifQuete(TypeObjectif.TUER_ENNEMI, "Éliminer les créatures des mines", "creature_mine", 5),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Parler à Borina Yer", "Borina", 1)
         ],
-        recompenses={"xp": 600, "or": 250},
+        recompenses={"xp": 600, "or": 250, "objets": ["cle_donjon_khazak_3"]},
         niveau_requis=1
     ),
 
@@ -109,7 +109,7 @@ cherche à comprendre comment briser les sceaux.""",
         type_quete=TypeQuete.ROYAUME,
         royaume="Khazak-Dûm",
         objectifs=[
-            ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer les Galeries du Savoir", "Galeries_Savoir", 1),
+            ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer les Galeries du Savoir et de l'Ingénierie", "Galeries_Savoir", 1),
             ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Récupérer les plans volés", "plans_anciens", 1),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Parler à Zamir Oural", "Zamir", 1)
         ],
@@ -169,11 +169,11 @@ derrière ces attaques.""",
         type_quete=TypeQuete.ROYAUME,
         royaume="Luthesia",
         objectifs=[
-            ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer les Plaines Centrales", "Plaines_Centrales", 1),
+            ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer les Plaines Centrales et les Fiefs du Royaume", "Plaines_Centrales", 1),
             ObjectifQuete(TypeObjectif.TUER_ENNEMI, "Éliminer 5 groupes de brigands", "brigand", 5),
             ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Récupérer des documents sur les brigands", "document_brigand", 1)
         ],
-        recompenses={"xp": 600, "or": 250},
+        recompenses={"xp": 600, "or": 250, "objets": ["cle_donjon_luthesia_2"]},
         niveau_requis=1
     ),
 
@@ -186,7 +186,7 @@ les secrets de la relique d'Hélios le Premier.""",
         type_quete=TypeQuete.ROYAUME,
         royaume="Luthesia",
         objectifs=[
-            ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer les Forêts Luminescentes", "Forets_Luminescentes", 1),
+            ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer les Forêts Luminescentes et les Tours d'Ivoire", "Forets_Luminescentes", 1),
             ObjectifQuete(TypeObjectif.COMPLETER_DONJON, "Nettoyer l'Observatoire des Astres", "Observatoire_Astres", 1),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Parler à Dame Seraphina Veritas", "Seraphina", 1)
         ],
@@ -246,25 +246,25 @@ démons - apparaissent dans des endroits sacrés. Quelque chose ne va pas.""",
         type_quete=TypeQuete.ROYAUME,
         royaume="Vrak'thar",
         objectifs=[
-            ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer les Terres Brûlées", "Terres_Brulees", 1),
+            ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer Les Plaines de Cendres Hurlantes (Phonétique suggérée : Ash'Vaal)", "Terres_Brulees", 1),
             ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Collecter 3 runes anciennes", "rune_ancienne", 3),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Consulter un érudit démon sur ces runes", "erudit_demon", 1)
         ],
-        recompenses={"xp": 600, "or": 250},
+        recompenses={"xp": 600, "or": 250, "objets": ["cle_donjon_vrakthar_3"]},
         niveau_requis=1
     ),
 
     Quete(
         id_quete="vrakthar_2_secret_krathos",
-        nom="Le Secret de Krathos",
-        description="""Les runes révèlent une vérité choquante : l'ancien Roi Démon Krathos le Sage
-a sacrifié son âme pour sceller Zarathos. Cette histoire a été effacée, mais l'Ordre cherche à
-comprendre comment briser le sceau de Krathos. Vous devez découvrir où se trouve la relique.""",
+        nom="Le Secret de l'Ancien Roi Démon",
+        description="""Les runes révèlent une vérité choquante : l'ancien Roi Démon
+a sacrifié son âme pour sceller Zarthos. Cette histoire a été effacée, mais l'Ordre cherche à
+comprendre comment briser le sceau du Roi Démon. Vous devez découvrir où se trouve la relique.""",
         type_quete=TypeQuete.ROYAUME,
         royaume="Vrak'thar",
         objectifs=[
             ObjectifQuete(TypeObjectif.COMPLETER_DONJON, "Explorer le Sanctuaire des Flammes Éternelles", "Sanctuaire_Flammes", 1),
-            ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Trouver des documents sur Krathos", "document_krathos", 1),
+            ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Trouver des documents sur l'ancien Roi Démon", "document_krathos", 1),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Parler à un gardien ancien", "gardien_ancien", 1)
         ],
         recompenses={"xp": 1000, "or": 400},
@@ -276,8 +276,8 @@ comprendre comment briser le sceau de Krathos. Vous devez découvrir où se trou
         id_quete="vrakthar_3_traison_demons",
         nom="La Trahison des Démons",
         description="""Même parmi les démons, l'Ordre a des agents. Certains croient naïvement qu'ils
-seront récompensés par Zarathos, ignorant qu'il ne veut que la destruction. Vous devez découvrir
-qui est le traître avant qu'il ne révèle l'emplacement de la relique de Krathos.""",
+seront récompensés par Zarthos, ignorant qu'il ne veut que la destruction. Vous devez découvrir
+qui est le traître avant qu'il ne révèle l'emplacement de la relique de l'ancien Roi Démon.""",
         type_quete=TypeQuete.ROYAUME,
         royaume="Vrak'thar",
         objectifs=[
@@ -295,7 +295,7 @@ qui est le traître avant qu'il ne révèle l'emplacement de la relique de Krath
         nom="La Relique Volée",
         description="""Le traître a été démasqué ! Mais avant que vous ne puissiez l'arrêter,
 il a activé un rituel qui corrompt les flammes éternelles et lui a permis de voler la relique
-contenant l'âme de Krathos le Sage. Malgré vos efforts, le traître réussit à s'enfuir avec
+contenant l'âme de l'ancien Roi Démon. Malgré vos efforts, le traître réussit à s'enfuir avec
 la relique et à rejoindre l'Ordre des Ombres Éternelles. Vous devez arrêter le rituel, mais
 la relique est déjà perdue.""",
         type_quete=TypeQuete.ROYAUME,
@@ -338,7 +338,7 @@ TRAITRES_ROYAUMES = {
     },
     "Vrak'thar": {
         "nom": "Un conseiller démoniaque majeur",
-        "description": "Convaincu qu'il sera récompensé par Zarathos, ignorant que le Dévoreur ne veut que destruction",
+        "description": "Convaincu qu'il sera récompensé par Zarthos, ignorant que le Dévoreur ne veut que destruction",
         "revele_dans": "vrakthar_3_traison_demons"
     }
 }

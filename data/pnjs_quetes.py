@@ -65,7 +65,7 @@ def initialiser_pnjs():
         dialogue_par_defaut="Ces cristaux résonnent d'une énergie ancienne... Ils datent de l'époque du scellement.",
         quetes_liees=["aerthos_sec_2_cristaux_anciens"],
         dialogues_quetes={
-            "aerthos_sec_2_cristaux_anciens": "Ces cristaux résonnants que vous avez collectés... Ils datent de l'époque où Aerion scella Zarathos. Leur activation est un signe que quelque chose perturbe les anciens sceaux.",
+            "aerthos_sec_2_cristaux_anciens": "Ces cristaux résonnants que vous avez collectés... Ils datent de l'époque où Aerion scella Zarthos. Leur activation est un signe que quelque chose perturbe les anciens sceaux.",
             "aerthos_sec_2_cristaux_anciens_complete": "Ces cristaux révèlent des fragments de l'histoire oubliée. Merci de les avoir collectés. Ils confirment que les anciens sceaux sont en danger."
         }
     ))
@@ -75,10 +75,10 @@ def initialiser_pnjs():
         nom="Esprit Perdu",
         description="Un esprit de la forêt ancienne errant dans les Lacs Scintillants.",
         royaume="Aerthos",
-        dialogue_par_defaut="Je me souviens... avant que l'histoire ne soit effacée... Aerion... Zarathos...",
+        dialogue_par_defaut="Je me souviens... avant que l'histoire ne soit effacée... Aerion... Zarthos...",
         quetes_liees=["aerthos_sec_1_esprit_perdu"],
         dialogues_quetes={
-            "aerthos_sec_1_esprit_perdu": "Je me souviens... avant que l'histoire ne soit effacée... Aerion l'Ancien... Zarathos le Dévoreur... Le fragment de mémoire que vous cherchez contient ces souvenirs perdus.",
+            "aerthos_sec_1_esprit_perdu": "Je me souviens... avant que l'histoire ne soit effacée... Aerion l'Ancien... Zarthos le Dévoreur... Le fragment de mémoire que vous cherchez contient ces souvenirs perdus.",
             "aerthos_sec_1_esprit_perdu_complete": "Merci d'avoir récupéré mon fragment de mémoire. Je peux maintenant trouver la paix. L'histoire ne doit pas être oubliée..."
         }
     ))
@@ -216,7 +216,7 @@ def initialiser_pnjs():
         quetes_liees=["luthesia_4_vol_relique"],
         dialogues_quetes={
             "luthesia_4_vol_relique": "La perte de la relique contenant l'âme d'Hélios le Premier est un désastre. Le traître a réussi à s'enfuir avec elle malgré vos efforts. Purifiez les terres autour de l'Observatoire, mais la relique est déjà perdue.",
-            "luthesia_4_vol_relique_complete": "Merci pour votre aide. Vous avez purifié nos terres, mais la relique est perdue. L'Ordre doit être arrêté avant qu'il ne réveille Zarathos."
+            "luthesia_4_vol_relique_complete": "Merci pour votre aide. Vous avez purifié nos terres, mais la relique est perdue. L'Ordre doit être arrêté avant qu'il ne réveille Zarthos."
         }
     ))
 
@@ -226,12 +226,12 @@ def initialiser_pnjs():
         nom="Érudit Démoniaque",
         description="Un érudit démon expert en runes anciennes.",
         royaume="Vrak'thar",
-        dialogue_par_defaut="Ces runes sont écrites dans la langue oubliée des anciens démons... Elles parlent de Krathos le Sage.",
+        dialogue_par_defaut="Ces runes sont écrites dans la langue oubliée des anciens démons... Elles parlent de l'ancien Roi Démon.",
         quetes_liees=["vrakthar_1_rituels_sombres", "vrakthar_sec_1_langue_ancienne"],
         dialogues_quetes={
             "vrakthar_1_rituels_sombres": "Ces runes anciennes que vous avez trouvées... Elles sont écrites dans la langue oubliée des anciens démons. Elles révèlent que même dans Vrak'thar, des rituels encore plus sombres sont pratiqués. Explorez les Terres Brûlées.",
             "vrakthar_1_rituels_sombres_complete": "Merci d'avoir découvert la vérité sur ces rituels. Même dans notre royaume, l'Ordre agit dans l'ombre.",
-            "vrakthar_sec_1_langue_ancienne": "Les runes que vous avez collectées sont écrites dans la langue oubliée des anciens démons. Je peux vous aider à les déchiffrer, révélant des secrets sur Krathos le Sage et l'époque du scellement.",
+            "vrakthar_sec_1_langue_ancienne": "Les runes que vous avez collectées sont écrites dans la langue oubliée des anciens démons. Je peux vous aider à les déchiffrer, révélant des secrets sur l'ancien Roi Démon et l'époque du scellement.",
             "vrakthar_sec_1_langue_ancienne_complete": "Les runes déchiffrées révèlent des fragments de l'histoire oubliée. Merci de les avoir déchiffrées. Même nous, les démons, devons nous opposer à l'Ordre."
         }
     ))
@@ -241,12 +241,12 @@ def initialiser_pnjs():
         nom="Gardien Ancien",
         description="Un gardien ancien des secrets de Vrak'thar.",
         royaume="Vrak'thar",
-        dialogue_par_defaut="Krathos le Sage a sacrifié son âme pour sceller Zarathos... Cette histoire a été effacée.",
+        dialogue_par_defaut="L'ancien Roi Démon a sacrifié son âme pour sceller Zarthos... Cette histoire a été effacée.",
         quetes_liees=["vrakthar_2_secret_krathos", "vrakthar_sec_2_sagesse_krathos"],
         dialogues_quetes={
-            "vrakthar_2_secret_krathos": "Les runes révèlent une vérité choquante : l'ancien Roi Démon Krathos le Sage a sacrifié son âme pour sceller Zarathos. Cette histoire a été effacée, mais l'Ordre cherche à comprendre comment briser le sceau de Krathos.",
-            "vrakthar_sec_2_sagesse_krathos": "Les runes déchiffrées révèlent des fragments de la sagesse de Krathos le Sage. Même en tant que démon, il reconnaissait que Zarathos était une menace pour tous. Trouvez un fragment de sa sagesse dans les Terres Brûlées.",
-            "vrakthar_sec_2_sagesse_krathos_complete": "Le fragment de sagesse de Krathos que vous avez trouvé confirme que même les démons doivent s'opposer à l'Ordre. Merci de l'avoir récupéré."
+            "vrakthar_2_secret_krathos": "Les runes révèlent une vérité choquante : l'ancien Roi Démon a sacrifié son âme pour sceller Zarthos. Cette histoire a été effacée, mais l'Ordre cherche à comprendre comment briser le sceau du Roi Démon.",
+            "vrakthar_sec_2_sagesse_krathos": "Les runes déchiffrées révèlent des fragments de la sagesse de l'ancien Roi Démon. Même en tant que démon, il reconnaissait que Zarthos était une menace pour tous. Trouvez un fragment de sa sagesse dans les Terres Brûlées.",
+            "vrakthar_sec_2_sagesse_krathos_complete": "Le fragment de sagesse de l'ancien Roi Démon que vous avez trouvé confirme que même les démons doivent s'opposer à l'Ordre. Merci de l'avoir récupéré."
         }
     ))
 
@@ -258,8 +258,8 @@ def initialiser_pnjs():
         dialogue_par_defaut="Même parmi nous, l'Ordre a des agents. Certains croient naïvement qu'ils seront récompensés...",
         quetes_liees=["vrakthar_3_traison_demons"],
         dialogues_quetes={
-            "vrakthar_3_traison_demons": "Même parmi nous, l'Ordre a des agents. Certains croient naïvement qu'ils seront récompensés par Zarathos, ignorant qu'il ne veut que la destruction. Parlez à chacun de nous et trouvez la preuve de la trahison.",
-            "vrakthar_3_traison_demons_complete": "Le traître a été démasqué. Merci de l'avoir découvert avant qu'il ne révèle l'emplacement de la relique de Krathos."
+            "vrakthar_3_traison_demons": "Même parmi nous, l'Ordre a des agents. Certains croient naïvement qu'ils seront récompensés par Zarthos, ignorant qu'il ne veut que la destruction. Parlez à chacun de nous et trouvez la preuve de la trahison.",
+            "vrakthar_3_traison_demons_complete": "Le traître a été démasqué. Merci de l'avoir découvert avant qu'il ne révèle l'emplacement de la relique de l'ancien Roi Démon."
         }
     ))
 
@@ -268,7 +268,7 @@ def initialiser_pnjs():
         nom="Traître Démoniaque",
         description="Un conseiller démoniaque majeur révélé comme traître.",
         royaume="Vrak'thar",
-        dialogue_par_defaut="Je croyais que Zarathos me récompenserait... Mais la relique de Krathos est maintenant perdue !"
+        dialogue_par_defaut="Je croyais que Zarthos me récompenserait... Mais la relique de l'ancien Roi Démon est maintenant perdue !"
     ))
 
     enregistrer_pnj(PNJ(
@@ -279,8 +279,8 @@ def initialiser_pnjs():
         dialogue_par_defaut="Bienvenue dans Vrak'thar. Des rituels encore plus sombres sont pratiqués dans notre royaume.",
         quetes_liees=["vrakthar_4_vol_relique"],
         dialogues_quetes={
-            "vrakthar_4_vol_relique": "La relique contenant l'âme de Krathos le Sage a été volée. Malgré vos efforts, le traître a réussi à s'enfuir avec elle. Arrêtez le rituel de corruption avant qu'il ne détruise tout.",
-            "vrakthar_4_vol_relique_complete": "Merci pour votre aide. Même nous, les démons, reconnaissons que Zarathos est une menace. La relique de Krathos est perdue, mais vous avez arrêté le rituel. L'Ordre doit être stoppé."
+            "vrakthar_4_vol_relique": "La relique contenant l'âme de l'ancien Roi Démon a été volée. Malgré vos efforts, le traître a réussi à s'enfuir avec elle. Arrêtez le rituel de corruption avant qu'il ne détruise tout.",
+            "vrakthar_4_vol_relique_complete": "Merci pour votre aide. Même nous, les démons, reconnaissons que Zarthos est une menace. La relique de l'ancien Roi Démon est perdue, mais vous avez arrêté le rituel. L'Ordre doit être stoppé."
         }
     ))
 
@@ -319,7 +319,7 @@ def initialiser_pnjs():
         dialogue_par_defaut="La relique que je protège contient l'âme d'un ancien roi. L'Ordre cherche à la voler...",
         quetes_liees=["revelation_zarathos"],
         dialogues_quetes={
-            "revelation_zarathos": "La relique que je protège contient l'âme d'un ancien roi qui sacrifia sa vie pour sceller Zarathos le Dévoreur. L'Ordre des Ombres Éternelles cherche à voler toutes les reliques pour briser les sceaux et réveiller cette entité maléfique. Explorez la zone où se trouve la relique, mais soyez vigilant."
+            "revelation_zarathos": "La relique que je protège contient l'âme d'un ancien roi qui sacrifia sa vie pour sceller Zarthos le Dévoreur. L'Ordre des Ombres Éternelles cherche à voler toutes les reliques pour briser les sceaux et réveiller cette entité maléfique. Explorez la zone où se trouve la relique, mais soyez vigilant."
         }
     ))
 
@@ -328,10 +328,10 @@ def initialiser_pnjs():
         nom="Informateur",
         description="Un informateur connaissant l'emplacement du sanctuaire de l'Ordre.",
         royaume=None,
-        dialogue_par_defaut="Le sanctuaire de l'Ordre se trouve dans un lieu secret... Ils préparent le rituel de résurrection de Zarathos.",
+        dialogue_par_defaut="Le sanctuaire de l'Ordre se trouve dans un lieu secret... Ils préparent le rituel de résurrection de Zarthos.",
         quetes_liees=["reliques_volees"],
         dialogues_quetes={
-            "reliques_volees": "Les traîtres ont réussi à voler les quatre reliques sacrées. L'Ordre les a rassemblées dans leur sanctuaire secret et prépare le rituel de résurrection de Zarathos. Vous devez localiser ce sanctuaire et infiltrer le lieu du rituel avant qu'il ne soit trop tard."
+            "reliques_volees": "Les traîtres ont réussi à voler les quatre reliques sacrées. L'Ordre les a rassemblées dans leur sanctuaire secret et prépare le rituel de résurrection de Zarthos. Vous devez localiser ce sanctuaire et infiltrer le lieu du rituel avant qu'il ne soit trop tard."
         }
     ))
 
