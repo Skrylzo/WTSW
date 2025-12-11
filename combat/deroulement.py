@@ -70,6 +70,12 @@ def tour_joueur(joueur, ennemis):
         joueur.appliquer_effets(phase='sous_30hp')
     joueur.appliquer_effets(phase='tour')
 
+    # Vérifier l'étourdissement
+    if joueur.est_etourdi():
+        print(f"{joueur.nom} est étourdi et ne peut pas agir ce tour !")
+        joueur.retirer_effets_expires()
+        return True
+
     ennemis_vivants = [e for e in ennemis if e.est_vivant]
     if not ennemis_vivants:
         print("Il n'y a plus d'ennemis vivants. Fin du combat pour le joueur.")
@@ -166,6 +172,12 @@ def tour_ennemis(joueur, ennemis):
             continue
 
         ennemi.appliquer_effets(phase='tour')
+
+        # Vérifier l'étourdissement
+        if ennemi.est_etourdi():
+            print(f"{ennemi.nom} est étourdi et ne peut pas agir ce tour !")
+            ennemi.retirer_effets_expires()
+            continue
 
         # Affichage du début de l'attaque (séparé de la logique)
         afficher_tour_ennemis(joueur, ennemi)

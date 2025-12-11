@@ -27,6 +27,10 @@ class Effet:
         if self.condition is None:
             return True
         if isinstance(self.condition, str):
+            # Conditions spéciales qui sont toujours actives tant que la durée > 0
+            if self.condition == "etourdi" or self.condition == "invulnerable":
+                return self.duree_actuelle > 0
+
             if self.condition == phase:
                 # Conditions spéciales basées sur la phase
                 if phase == 'sous_30hp':

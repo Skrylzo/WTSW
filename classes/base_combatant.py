@@ -30,6 +30,11 @@ class BaseCombatant:
         self.effets_actifs = [] # Liste pour stocker les effets actifs
 
     def prendre_degats(self, degats):
+        # Vérifier l'invulnérabilité
+        if self.est_invulnerable():
+            print(f"{self.nom} est invulnérable et ignore les dégâts !")
+            return
+
         # Cette méthode prend les dégâts finaux après toutes les réductions.
         self.vie -= degats
         if self.vie <= 0:
@@ -70,7 +75,38 @@ class BaseCombatant:
             effet.deja_applique = True
 
     def retirer_effets_expires(self):
-        self.effets_actifs = [e for e in self.effets_actifs if e.duree_actuelle > 0]
+        # Décrémenter les effets avec condition "etourdi" et "invulnerable" à la fin du tour
+        for effet in list(self.effets_actifs):
+            if effet.condition == "etourdi" or effet.condition == "invulnerable":
+                effet.duree_actuelle -= 1
+                if effet.duree_actuelle <= 0:
+                    print(f"{self.nom} n'est plus affecté par {effet.nom}.")
+                    self.effets_actifs.remove(effet)
+
+        # Retirer les autres effets expirés
+        for effet in list(self.effets_actifs):
+            if effet.duree_actuelle <= 0:
+                self.effets_actifs.remove(effet)
+
+    def est_etourdi(self):
+        """
+        Vérifie si le combatant est étourdi (ne peut pas agir ce tour).
+        :return: True si étourdi, False sinon
+        """
+        for effet in self.effets_actifs:
+            if effet.condition == "etourdi" and effet.duree_actuelle > 0:
+                return True
+        return False
+
+    def est_invulnerable(self):
+        """
+        Vérifie si le combatant est invulnérable (ignore les dégâts).
+        :return: True si invulnérable, False sinon
+        """
+        for effet in self.effets_actifs:
+            if effet.condition == "invulnerable" and effet.duree_actuelle > 0:
+                return True
+        return False
 
     def appliquer_effets(self, phase):
         for effet in list(self.effets_actifs):

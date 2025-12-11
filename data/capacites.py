@@ -16,11 +16,11 @@ TOUTES_LES_CAPACITES_DATA = {
     },
     "hurlement_terrifiant": {
         "nom": "Hurlement Terrifiant", "description": "Terrifie les ennemis proches, réduisant leur attaque.",
-        "cout_energie": 40, "effet_data": {"nom": "Terreur", "description": "Attaque réduite de 20%", "duree": 2, "effet_attaque": -20}, "niveau_requis": 10
+        "cout_energie": 40, "type_cible": "aoe", "effet_data": {"nom": "Terreur", "description": "Attaque réduite de 20%", "duree": 2, "effet_attaque": -20}, "niveau_requis": 10
     },
     "chair_corrompue": {
         "nom": "Chair Corrompue", "description": "Vous rend temporairement plus résistant, au coût de votre vie actuelle.",
-        "cout_energie": 20, "effet_data": {"nom": "Résistance Corrompue", "description": "Défense augmentée de 30", "duree": 2, "effet_defense": 30},
+        "cout_energie": 20, "type_cible": "soi", "effet_data": {"nom": "Résistance Corrompue", "description": "Défense augmentée de 30", "duree": 2, "effet_defense": 30},
         "soin_fixe": -0.10, "niveau_requis": 15
     },
     "festin_d_ames": {
@@ -30,11 +30,11 @@ TOUTES_LES_CAPACITES_DATA = {
 
     "malediction_affaiblissement": {
         "nom": "Malédiction d'Affaiblissement", "description": "Affaiblit un ennemi, réduisant son attaque.",
-        "cout_mana": 20, "effet_data": {"nom": "Affaiblissement", "description": "Attaque réduite de 15%", "duree": 3, "effet_attaque": -15}, "niveau_requis": 1
+        "cout_mana": 20, "type_cible": "unique", "effet_data": {"nom": "Affaiblissement", "description": "Attaque réduite de 15%", "duree": 3, "effet_attaque": -15}, "niveau_requis": 1
     },
     "toucher_corrupteur": {
         "nom": "Toucher Corrupteur", "description": "Inflige des dégâts de ténèbres et applique un effet de poison.",
-        "cout_mana": 30, "degats_fixes": 10, "effet_data": {"nom": "Poison", "description": "Subit 5 dégâts par tour", "duree": 3, "effet_vie": -5, "condition": "tour"}, "niveau_requis": 5, "peut_critiquer": True
+        "cout_mana": 30, "degats_fixes": 10, "type_cible": "unique", "effet_data": {"nom": "Poison", "description": "Subit 5 dégâts par tour", "duree": 3, "effet_vie": -5, "condition": "tour"}, "niveau_requis": 5, "peut_critiquer": True
     },
     "voile_des_tenebres": {
         "nom": "Voile des Ténèbres", "description": "Vous enveloppe d'un voile protecteur, augmentant votre défense.",
@@ -42,7 +42,7 @@ TOUTES_LES_CAPACITES_DATA = {
     },
     "drain_essence": {
         "nom": "Drain d'Essence", "description": "Draine le mana d'un ennemi pour recharger le vôtre.",
-        "cout_mana": 10, "degats_fixes": 5, "effet_data": {"nom": "Drain Mana", "description": "Vol de 10 Mana", "duree": 1, "effet_regen_mana": 10}, "niveau_requis": 15, "peut_critiquer": True
+        "cout_mana": 10, "degats_fixes": 5, "type_cible": "unique", "effet_data": {"nom": "Drain Mana", "description": "Vol de 10 Mana", "duree": 1, "effet_regen_mana": 10}, "niveau_requis": 15, "peut_critiquer": True
     },
     "pestilence_demoniaque": {
         "nom": "Pestilence Démoniaque", "description": "Déchaîne une épidémie qui inflige de lourds dégâts de zone et des dégâts sur la durée.",
@@ -51,7 +51,7 @@ TOUTES_LES_CAPACITES_DATA = {
 
     "lame_incandescente": {
         "nom": "Lame Incandescente", "description": "Votre arme s'embrase. Inflige des dégâts physiques et de feu à un ennemi unique. Chance accrue de coup critique si vie < 50%.",
-        "cout_energie": 12, "degats_fixes": 20, "niveau_requis": 1, "peut_critiquer": True
+        "cout_energie": 12, "degats_fixes": 20, "type_cible": "unique", "niveau_requis": 1, "peut_critiquer": True
     },
     "souffle_de_fournaise": {
         "nom": "Souffle de Fournaise", "description": "Crache un jet de flammes ardentes, infligeant des dégâts de zone et brûlant les ennemis.",
@@ -64,7 +64,7 @@ TOUTES_LES_CAPACITES_DATA = {
     },
     "ruee_cendree": {
         "nom": "Ruée Cendrée", "description": "Transforme en jet de braises, inflige de gros dégâts physiques et laisse une flaque ralentissante et brûlante.",
-        "cout_energie": 20, "degats_fixes": 30, "effet_data": {"nom": "Cendres Ardentes", "description": "Ralenti, subit 5 dégâts de feu par tour", "duree": 1, "effet_vitesse": -10, "effet_vie": -5, "condition": "tour"}, "niveau_requis": 15, "peut_critiquer": True
+        "cout_energie": 20, "degats_fixes": 30, "type_cible": "unique", "effet_data": {"nom": "Cendres Ardentes", "description": "Ralenti, subit 5 dégâts de feu par tour", "duree": 1, "effet_vitesse": -10, "effet_vie": -5, "condition": "tour"}, "niveau_requis": 15, "peut_critiquer": True
     },
     "reincarnation_flamboyante": {
         "nom": "Réincarnation Flamboyante", "description": "Si dégâts mortels, explose, renaît avec 50% vie et bonus temporaire Attaque/Vitesse (une fois par combat).",
@@ -73,7 +73,7 @@ TOUTES_LES_CAPACITES_DATA = {
 
     "chatiment_sacre": {
         "nom": "Châtiment Sacré", "description": "Inflige des dégâts sacrés à un ennemi unique.",
-        "cout_mana": 18, "degats_fixes": 20, "niveau_requis": 1, "peut_critiquer": True
+        "cout_mana": 18, "degats_fixes": 20, "type_cible": "unique", "niveau_requis": 1, "peut_critiquer": True
     },
     "protection_divine": {
         "nom": "Protection Divine", "description": "Augmente votre défense et vous rend plus résistant.",
@@ -85,7 +85,7 @@ TOUTES_LES_CAPACITES_DATA = {
     },
     "marteau_de_justice": {
         "nom": "Marteau de Justice", "description": "Lance un marteau qui étourdit et inflige des dégâts à un ennemi.",
-        "cout_mana": 40, "degats_fixes": 30, "effet_data": {"nom": "Étourdissement", "description": "Cible ne peut pas agir", "duree": 1, "condition": "etourdi"}, "niveau_requis": 15, "peut_critiquer": True
+        "cout_mana": 40, "degats_fixes": 30, "type_cible": "unique", "effet_data": {"nom": "Étourdissement", "description": "Cible ne peut pas agir", "duree": 1, "condition": "etourdi"}, "niveau_requis": 15, "peut_critiquer": True
     },
     "jugement_dernier": {
         "nom": "Jugement Dernier", "description": "Frappe tous les ennemis avec la fureur divine, infligeant d'énormes dégâts sacrés.",
@@ -93,20 +93,20 @@ TOUTES_LES_CAPACITES_DATA = {
     },
 
     "invocation_mineure": {
-        "nom": "Invocation Mineure", "description": "Invoque une petite créature pour combattre à vos côtés.",
-        "cout_mana": 20, "niveau_requis": 1
+        "nom": "Invocation Mineure", "description": "Invoque une petite créature pour combattre à vos côtés. Augmente temporairement votre attaque.",
+        "cout_mana": 20, "type_cible": "soi", "effet_data": {"nom": "Esprit Combattant", "description": "Attaque augmentée de 12 grâce à l'invocation", "duree": 3, "effet_attaque": 12}, "niveau_requis": 1
     },
     "lien_ethere": {
-        "nom": "Lien Éthéré", "description": "Partage une partie des dégâts subis par votre invocation avec l'ennemi.",
-        "cout_mana": 15, "niveau_requis": 5
+        "nom": "Lien Éthéré", "description": "Partage une partie des dégâts subis par votre invocation avec l'ennemi. Réduit les dégâts reçus.",
+        "cout_mana": 15, "type_cible": "soi", "effet_data": {"nom": "Lien Protecteur", "description": "Défense augmentée de 15 grâce au lien", "duree": 2, "effet_defense": 15}, "niveau_requis": 5
     },
     "transfert_douleur": {
-        "nom": "Transfert de Douleur", "description": "Transfère une partie des dégâts que vous subissez à votre invocation.",
-        "cout_mana": 25, "type_cible": "soi", "niveau_requis": 10
+        "nom": "Transfert de Douleur", "description": "Transfère une partie des dégâts que vous subissez à votre invocation. Réduit les dégâts reçus.",
+        "cout_mana": 25, "type_cible": "soi", "effet_data": {"nom": "Transfert Actif", "description": "Défense augmentée de 20 grâce au transfert", "duree": 2, "effet_defense": 20}, "niveau_requis": 10
     },
     "invocation_majeure": {
-        "nom": "Invocation Majeure", "description": "Invoque une créature plus puissante pour vous assister.",
-        "cout_mana": 40, "niveau_requis": 15
+        "nom": "Invocation Majeure", "description": "Invoque une créature plus puissante pour vous assister. Augmente temporairement votre attaque et défense.",
+        "cout_mana": 40, "type_cible": "soi", "effet_data": {"nom": "Esprit Puissant", "description": "Attaque +25, Défense +20 grâce à l'invocation", "duree": 4, "effet_attaque": 25, "effet_defense": 20}, "niveau_requis": 15
     },
     "essaim_demoniaque": {
         "nom": "Essaim Démoniaque", "description": "Déchaîne un essaim de démons mineurs qui attaquent tous les ennemis.",
@@ -115,7 +115,7 @@ TOUTES_LES_CAPACITES_DATA = {
 
     "assaut_eclair": {
         "nom": "Assaut Éclair", "description": "Porte une série de coups rapides et précis à un ennemi unique, avec une chance accrue de coup critique.",
-        "cout_energie": 12, "degats_fixes": 18, "niveau_requis": 1, "peut_critiquer": True
+        "cout_energie": 12, "degats_fixes": 18, "type_cible": "unique", "niveau_requis": 1, "peut_critiquer": True
     },
     "feinte_riposte": {
         "nom": "Feinte et Riposte", "description": "Augmente votre chance d'esquive pour le prochain tour. Si vous esquivez, vous contre-attaquez.",
@@ -136,19 +136,19 @@ TOUTES_LES_CAPACITES_DATA = {
 
     "tir_rapide": {
         "nom": "Tir Rapide", "description": "Décoche plusieurs flèches rapidement, infligeant des dégâts modérés.",
-        "cout_energie": 12, "degats_fixes": 15, "niveau_requis": 1, "peut_critiquer": True
+        "cout_energie": 12, "degats_fixes": 15, "type_cible": "unique", "niveau_requis": 1, "peut_critiquer": True
     },
     "fleche_cramoisie": {
         "nom": "Flèche Cramoisie", "description": "Une flèche qui saigne l'ennemi, infligeant des dégâts sur la durée.",
-        "cout_energie": 30, "degats_fixes": 10, "effet_data": {"nom": "Saignement", "description": "Subit 7 dégâts par tour", "duree": 3, "effet_vie": -7, "condition": "tour"}, "niveau_requis": 5, "peut_critiquer": True
+        "cout_energie": 30, "degats_fixes": 10, "type_cible": "unique", "effet_data": {"nom": "Saignement", "description": "Subit 7 dégâts par tour", "duree": 3, "effet_vie": -7, "condition": "tour"}, "niveau_requis": 5, "peut_critiquer": True
     },
     "salve_de_fleches": {
         "nom": "Salve de Flèches", "description": "Tire une volée de flèches sur une zone, blessant plusieurs ennemis.",
         "cout_energie": 40, "degats_fixes": 25, "type_cible": "aoe", "niveau_requis": 10, "peut_critiquer": True
     },
     "piege_a_epine": {
-        "nom": "Piège à Épine", "description": "Pose un piège qui immobilise et blesse le premier ennemi qui l'active.",
-        "cout_energie": 25, "niveau_requis": 15
+        "nom": "Piège à Épine", "description": "Pose un piège qui immobilise et blesse le premier ennemi qui l'active. Inflige des dégâts immédiats.",
+        "cout_energie": 25, "degats_fixes": 28, "type_cible": "unique", "niveau_requis": 15, "peut_critiquer": True
     },
     "pluie_de_fleches": {
         "nom": "Pluie de Flèches", "description": "Fait pleuvoir une nuée de flèches sur une large zone, infligeant des dégâts massifs.",
@@ -156,12 +156,12 @@ TOUTES_LES_CAPACITES_DATA = {
     },
 
     "lien_spirituel": {
-        "nom": "Lien Spirituel", "description": "Forme un lien avec un esprit pour renforcer un allié ou affaiblir un ennemi.",
-        "cout_mana": 18, "niveau_requis": 1
+        "nom": "Lien Spirituel", "description": "Forme un lien avec un esprit pour renforcer un allié ou affaiblir un ennemi. Augmente vos stats.",
+        "cout_mana": 18, "type_cible": "soi", "effet_data": {"nom": "Lien Spirituel", "description": "Attaque +12, Défense +8 grâce au lien", "duree": 2, "effet_attaque": 12, "effet_defense": 8}, "niveau_requis": 1
     },
     "projection_astrale": {
         "nom": "Projection Astrale", "description": "Projette une forme astrale qui attaque l'ennemi.",
-        "cout_mana": 22, "degats_fixes": 20, "niveau_requis": 5, "peut_critiquer": True
+        "cout_mana": 22, "degats_fixes": 20, "type_cible": "unique", "niveau_requis": 5, "peut_critiquer": True
     },
     "danse_des_ames": {
         "nom": "Danse des Âmes", "description": "Libère des esprits dansants qui soignent les alliés proches.",
@@ -178,11 +178,11 @@ TOUTES_LES_CAPACITES_DATA = {
 
     "frappe_celeste": {
         "nom": "Frappe Céleste", "description": "Décoche une flèche imprégnée de lumière du soleil, infligeant des dégâts physiques et de feu. Laisse une brûlure légère.",
-        "cout_energie": 15, "degats_fixes": 15, "effet_data": {"nom": "Brûlure Légère", "description": "Subit 5 dégâts de feu par tour", "duree": 1, "effet_vie": -5, "condition": "tour"}, "niveau_requis": 1, "peut_critiquer": True
+        "cout_energie": 15, "degats_fixes": 15, "type_cible": "unique", "effet_data": {"nom": "Brûlure Légère", "description": "Subit 5 dégâts de feu par tour", "duree": 1, "effet_vie": -5, "condition": "tour"}, "niveau_requis": 1, "peut_critiquer": True
     },
     "lance_solaire": {
         "nom": "Lance Solaire", "description": "Projette un rayon concentré sur un ennemi, infligeant des dégâts de feu importants et réduisant sa Défense.",
-        "cout_energie": 35, "degats_fixes": 25, "effet_data": {"nom": "Défense Réduite", "description": "Défense -15", "duree": 2, "effet_defense": -15}, "niveau_requis": 5, "peut_critiquer": True
+        "cout_energie": 35, "degats_fixes": 25, "type_cible": "unique", "effet_data": {"nom": "Défense Réduite", "description": "Défense -15", "duree": 2, "effet_defense": -15}, "niveau_requis": 5, "peut_critiquer": True
     },
     "explosion_radieuse": {
         "nom": "Explosion Radieuse", "description": "Libère une onde de lumière qui vous purifie d'un malus aléatoire et augmente temporairement votre Vitesse.",
@@ -190,7 +190,7 @@ TOUTES_LES_CAPACITES_DATA = {
     },
     "aura_de_guerison": {
         "nom": "Aura de Guérison", "description": "Dégage une aura de lumière qui vous soigne légèrement chaque tour et augmente votre Attaque.",
-        "cout_energie": 30, "type_cible": "soi", "effet_data": {"nom": "Aura Radiante", "description": "Soin de 5 par tour, Attaque +15", "duree": 3, "effet_regen_vie": 5, "effet_attaque": 15, "condition": "tour"}, "niveau_requis": 15
+        "cout_energie": 30, "type_cible": "soi", "effet_data": {"nom": "Aura Radiante", "description": "Soin de 5 par tour, Attaque +15", "duree": 3, "effet_vie": 5, "effet_attaque": 15, "condition": "tour"}, "niveau_requis": 15
     },
     "jugement_celeste": {
         "nom": "Jugement Céleste", "description": "Devient une source de lumière aveuglante. Tous les ennemis subissent de gros dégâts de feu et sont aveuglés. Dégâts de feu bonus et bouclier temporaire.",
@@ -199,7 +199,7 @@ TOUTES_LES_CAPACITES_DATA = {
 
     "frappe_frenetique": {
         "nom": "Frappe Frénétique", "description": "Une attaque rapide et brutale qui blesse l'ennemi.",
-        "cout_rage": 10, "degats_fixes": 18, "niveau_requis": 1, "peut_critiquer": True
+        "cout_rage": 10, "degats_fixes": 18, "type_cible": "unique", "niveau_requis": 1, "peut_critiquer": True
     },
     "cri_de_guerre": {
         "nom": "Cri de Guerre", "description": "Pousse un cri qui terrifie les ennemis et augmente votre attaque.",
@@ -221,11 +221,11 @@ TOUTES_LES_CAPACITES_DATA = {
 
     "poing_de_roc": {
         "nom": "Poing de Roc", "description": "Frappe l'ennemi avec un poing renforcé par la roche, infligeant des dégâts physiques.",
-        "cout_energie": 10, "degats_fixes": 15, "niveau_requis": 1, "peut_critiquer": True
+        "cout_energie": 10, "degats_fixes": 15, "type_cible": "unique", "niveau_requis": 1, "peut_critiquer": True
     },
     "racine_du_monde": {
-        "nom": "Racine du Monde", "description": "Invoque des racines qui immobilisent un ennemi.",
-        "cout_energie": 30, "effet_data": {"nom": "Immobilisation", "description": "Cible immobilisée", "duree": 2, "condition": "immobilise"}, "niveau_requis": 5
+        "nom": "Racine du Monde", "description": "Invoque des racines qui étourdissent un ennemi.",
+        "cout_energie": 30, "type_cible": "unique", "effet_data": {"nom": "Étourdissement", "description": "Cible étourdie, ne peut pas agir", "duree": 2, "condition": "etourdi"}, "niveau_requis": 5
     },
     "ebranlement_terrestre": {
         "nom": "Ébranlement Terrestre", "description": "Frappe le sol, étourdissant et blessant les ennemis proches.",
@@ -241,20 +241,20 @@ TOUTES_LES_CAPACITES_DATA = {
     },
 
     "deploiement_tourelle_minotaure": {
-        "nom": "Déploiement de Tourelle Minotaure", "description": "Déploie une tourelle qui attaque automatiquement les ennemis.",
-        "cout_mana": 15, "niveau_requis": 1
+        "nom": "Déploiement de Tourelle Minotaure", "description": "Déploie une tourelle qui attaque automatiquement les ennemis. Augmente temporairement votre attaque.",
+        "cout_mana": 15, "type_cible": "soi", "effet_data": {"nom": "Tourelle Active", "description": "Attaque augmentée de 12 grâce à la tourelle", "duree": 3, "effet_attaque": 12}, "niveau_requis": 1
     },
     "grenade_fumigene": {
         "nom": "Grenade Fumigène", "description": "Lance une grenade qui ralentit les ennemis et réduit leur précision.",
-        "cout_mana": 20, "effet_data": {"nom": "Fumée", "description": "Vitesse -15, Précision -10%", "duree": 2, "effet_vitesse": -15}, "niveau_requis": 5
+        "cout_mana": 20, "type_cible": "aoe", "effet_data": {"nom": "Fumée", "description": "Vitesse -15, Précision -10%", "duree": 2, "effet_vitesse": -15}, "niveau_requis": 5
     },
     "champ_repulsif": {
         "nom": "Champ Répulsif", "description": "Crée un champ qui repousse et étourdit les ennemis proches.",
         "cout_mana": 25, "type_cible": "aoe", "effet_data": {"nom": "Repulsion", "description": "Cible étourdie, repoussée", "duree": 1, "condition": "etourdi"}, "niveau_requis": 10
     },
     "rechargement_express": {
-        "nom": "Rechargement Express", "description": "Réduit le temps de recharge d'une capacité ou répare une tourelle.",
-        "cout_mana": 10, "type_cible": "soi", "niveau_requis": 15
+        "nom": "Rechargement Express", "description": "Réduit le temps de recharge d'une capacité ou répare une tourelle. Régénère rapidement votre mana.",
+        "cout_mana": 10, "type_cible": "soi", "effet_data": {"nom": "Rechargement", "description": "Régénération de mana augmentée", "duree": 1, "effet_regen_mana": 30}, "niveau_requis": 15
     },
     "artillerie_l_ourde": {
         "nom": "Artillerie Lourde", "description": "Déploie un mortier qui inflige de très gros dégâts de zone avec un effet de feu persistant.",
