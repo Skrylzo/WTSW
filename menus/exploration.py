@@ -120,7 +120,20 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
     """
     Explore une zone : menu d'actions (combat, parler aux PNJ, donjon).
     """
-    biome_cible = trouver_biome_par_nom(royaume, zone_id)
+    try:
+        biome_cible = trouver_biome_par_nom(royaume, zone_id)
+    except Exception as e:
+        print(f"\n⚠️  Erreur lors de la recherche du biome : {e}")
+        print("Retour au menu précédent...")
+        import traceback
+        traceback.print_exc()
+        return
+
+    # Progresser les quêtes "explorer zone" dès l'entrée dans la zone
+    # "Explorer" signifie entrer dans la zone, pas la compléter
+    if hasattr(joueur, 'systeme_quetes'):
+        from world.progression_quetes import progresser_quetes_explorer_zone
+        progresser_quetes_explorer_zone(joueur, zone_id)
 
     # Afficher les informations du biome
     if biome_cible:
@@ -152,8 +165,12 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
 
     # Menu d'actions dans la zone
     while True:
+        try:
+            zone_id_upper = zone_id.upper()
+        except Exception:
+            zone_id_upper = zone_id
         print(f"\n{'='*60}")
-        print(f"--- {zone_id.upper()} ---")
+        print(f"--- {zone_id_upper} ---")
         print(f"{'='*60}\n")
 
         # Vérifier les PNJ présents dans la zone
@@ -183,9 +200,34 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
 
         # Option 3 : Explorer le donjon (si disponible)
         if a_donjon:
-            print(f"{option_num}. Explorer le donjon : {biome_cible.donjon_nom}")
-            options.append('donjon')
-            option_num += 1
+            from data.cles_donjons import joueur_possede_cle_donjon, donjon_requiert_cle, obtenir_cle_donjon
+            from data.objets import DEFINITIONS_OBJETS
+
+            # Vérifier si ce donjon nécessite une clé
+            if donjon_requiert_cle(biome_cible.donjon_nom):
+                # Ce donjon nécessite une clé, vérifier si le joueur l'a
+                possede_cle = joueur_possede_cle_donjon(joueur, biome_cible.donjon_nom)
+
+                if possede_cle:
+                    print(f"{option_num}. Explorer le donjon : {biome_cible.donjon_nom}")
+                    options.append('donjon')
+                    option_num += 1
+                else:
+                    # Afficher l'option mais indiquer qu'une clé est nécessaire
+                    cle_id = obtenir_cle_donjon(biome_cible.donjon_nom)
+                    nom_cle = "clé"
+                    if cle_id:
+                        cle_data = DEFINITIONS_OBJETS.get(cle_id)
+                        if cle_data:
+                            nom_cle = cle_data.get("nom", "clé")
+                    print(f"{option_num}. Explorer le donjon : {biome_cible.donjon_nom} 🔒 (Clé requise : {nom_cle})")
+                    options.append('donjon_verrouille')
+                    option_num += 1
+            else:
+                # Ce donjon ne nécessite pas de clé (donjon non listé dans CLES_DONJONS)
+                print(f"{option_num}. Explorer le donjon : {biome_cible.donjon_nom}")
+                options.append('donjon')
+                option_num += 1
 
         # Option retour
         print(f"{option_num}. Retour")
@@ -204,6 +246,19 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
                     _parler_pnj_zone(joueur, pnjs_zone)
                 elif action == 'donjon':
                     _explorer_donjon(joueur, biome_cible, zone_id, systeme_chapitres)
+                elif action == 'donjon_verrouille':
+                    from data.cles_donjons import obtenir_cle_donjon
+                    from data.objets import DEFINITIONS_OBJETS
+                    cle_id = obtenir_cle_donjon(biome_cible.donjon_nom)
+                    nom_cle = "clé"
+                    if cle_id:
+                        cle_data = DEFINITIONS_OBJETS.get(cle_id)
+                        if cle_data:
+                            nom_cle = cle_data.get("nom", "clé")
+                    print(f"\n🔒 Ce donjon est verrouillé !")
+                    print(f"Vous avez besoin de la {nom_cle} pour y accéder.")
+                    print(f"Complétez les quêtes de royaume pour obtenir cette clé.")
+                    input("\nAppuyez sur Entrée pour continuer...")
                 elif action == 'retour':
                     break
             else:
@@ -228,15 +283,9 @@ def _lancer_combat_zone(joueur, biome_cible, zone_id: str, systeme_chapitres: Sy
 
     # Après le combat, vérifier si le joueur a gagné
     if joueur.est_vivant:
-        print(f"\nVous avez exploré {zone_id} avec succès.")
-        chapitre = systeme_chapitres.obtenir_chapitre_actuel()
-        if chapitre:
-            chapitre.completer_zone(zone_id)
-
-        # Progresser les quêtes : zone explorée
-        if hasattr(joueur, 'systeme_quetes'):
-            from world.progression_quetes import progresser_quetes_explorer_zone
-            progresser_quetes_explorer_zone(joueur, zone_id)
+        print(f"\nVous avez vaincu les ennemis de {zone_id}.")
+        # Note : La zone n'est complétée qu'après avoir battu le boss du donjon
+        # Les combats normaux servent uniquement au farming et à la progression
     else:
         # Le joueur est déjà téléporté à sa capitale par deroulement_combat
         return
@@ -294,35 +343,152 @@ def _parler_pnj_zone(joueur, pnjs_zone: list):
 def _explorer_donjon(joueur, biome_cible, zone_id: str, systeme_chapitres: SystemeChapitres):
     """
     Explore le donjon de la zone.
+    Le donjon consiste en une série de combats contre des mobs du biome, puis le boss final.
+    Nécessite une clé pour y accéder.
     """
     if not biome_cible or not biome_cible.donjon_nom:
         print("\nAucun donjon disponible dans cette zone.")
         input("\nAppuyez sur Entrée pour continuer...")
         return
 
+    # Vérifier si le joueur possède la clé nécessaire
+    from data.cles_donjons import joueur_possede_cle_donjon, donjon_requiert_cle, obtenir_cle_donjon
+    from data.objets import DEFINITIONS_OBJETS
+
+    # Vérifier si ce donjon nécessite une clé
+    if donjon_requiert_cle(biome_cible.donjon_nom):
+        # Ce donjon nécessite une clé, vérifier si le joueur l'a
+        if not joueur_possede_cle_donjon(joueur, biome_cible.donjon_nom):
+            cle_id = obtenir_cle_donjon(biome_cible.donjon_nom)
+            nom_cle = "clé"
+            if cle_id:
+                cle_data = DEFINITIONS_OBJETS.get(cle_id)
+                if cle_data:
+                    nom_cle = cle_data.get("nom", "clé")
+            print(f"\n🔒 Ce donjon est verrouillé !")
+            print(f"Vous avez besoin de la {nom_cle} pour y accéder.")
+            print(f"Complétez les quêtes de royaume pour obtenir cette clé.")
+            input("\nAppuyez sur Entrée pour continuer...")
+            return
+
+    # Demander confirmation avant d'entrer dans le donjon
     print(f"\n{'='*60}")
-    print(f"--- {biome_cible.donjon_nom.upper()} ---")
+    try:
+        donjon_nom_upper = biome_cible.donjon_nom.upper()
+    except Exception:
+        # En cas d'erreur avec upper() (caractères spéciaux), utiliser le nom tel quel
+        donjon_nom_upper = biome_cible.donjon_nom
+    print(f"--- {donjon_nom_upper} ---")
     print(f"{'='*60}\n")
 
-    print(f"Vous entrez dans {biome_cible.donjon_nom}...")
-    print("(Système de donjon à implémenter complètement)")
+    if biome_cible.description:
+        print(f"{biome_cible.description}\n")
 
-    # Pour l'instant, on lance juste un combat avec le boss
+    print("⚠️  Attention : Entrer dans ce donjon vous mènera à travers une série de combats")
+    print("   contre les créatures qui y résident, puis vous affronterez le gardien final.")
+    print("   Assurez-vous d'être prêt avant de continuer.\n")
+
+    while True:
+        reponse = input("Voulez-vous entrer dans le donjon ? (o/n): ").strip().lower()
+        if reponse in ('n', 'non', 'no'):
+            print("Vous rebroussez chemin. Il est peut-être sage de mieux vous préparer...")
+            return
+        elif reponse in ('o', 'oui', 'y', 'yes'):
+            break
+        else:
+            print("Réponse invalide. Veuillez répondre par 'o' (oui) ou 'n' (non).")
+
+    print(f"\nVous pénétrez dans les profondeurs de {biome_cible.donjon_nom}...")
+    print("L'air devient lourd et menaçant...\n")
+
+    # Déterminer le nombre de combats avant le boss (selon la difficulté du biome)
+    # Biome 1-2 : 2 combats, Biome 3-4 : 3 combats
+    nombre_combats_mobs = 2 if biome_cible.difficulte <= 2 else 3
+
+    # Vérifier qu'il y a des mobs disponibles
+    if not biome_cible.mobs_ids:
+        print("⚠️  Aucun ennemi défini pour ce biome. Passage direct au boss.")
+    else:
+        # Série de combats contre les mobs du biome
+        print(f"Vous allez devoir affronter {nombre_combats_mobs} groupes d'ennemis avant d'atteindre le gardien.\n")
+        input("Appuyez sur Entrée pour commencer...")
+
+        for combat_num in range(1, nombre_combats_mobs + 1):
+            print(f"\n{'='*60}")
+            print(f"--- COMBAT {combat_num}/{nombre_combats_mobs} ---")
+            print(f"{'='*60}\n")
+
+            # Obtenir des mobs aléatoires du biome (1-2 mobs par combat selon la difficulté)
+            nombre_mobs = 1 if biome_cible.difficulte <= 2 else 2
+            ennemis_ids = biome_cible.obtenir_mobs_aleatoires(nombre=nombre_mobs)
+
+            if ennemis_ids:
+                print(f"Des créatures hostiles apparaissent devant vous !")
+                deroulement_combat(joueur, ennemis_ids, niveau_biome=biome_cible.niveau_min)
+
+                # Si le joueur meurt, on sort du donjon
+                if not joueur.est_vivant:
+                    print(f"\n💀 Vous avez été vaincu dans {biome_cible.donjon_nom}...")
+                    print("Vous êtes transporté à votre capitale pour récupérer.")
+                    return
+
+                # Si ce n'est pas le dernier combat, proposer de continuer ou se retirer
+                if combat_num < nombre_combats_mobs:
+                    print(f"\n✓ Combat {combat_num} terminé. Vous pouvez continuer ou vous retirer.")
+                    while True:
+                        choix = input("Continuer ? (o/n): ").strip().lower()
+                        if choix in ('n', 'non', 'no'):
+                            print("Vous décidez de vous retirer du donjon pour mieux vous préparer...")
+                            return
+                        elif choix in ('o', 'oui', 'y', 'yes'):
+                            break
+                        else:
+                            print("Réponse invalide. Veuillez répondre par 'o' (oui) ou 'n' (non).")
+
+        print(f"\n{'='*60}")
+        print("--- VOUS ATTEIGNEZ LA SALLE DU GARDIEN ---")
+        print(f"{'='*60}\n")
+        print("Vous avez survécu aux épreuves du donjon.")
+        print("Le gardien final vous attend dans la salle principale...\n")
+        input("Appuyez sur Entrée pour affronter le gardien...")
+
+    # Combat final contre le boss
     if biome_cible.boss_id:
-        print(f"\nVous affrontez le gardien du donjon !")
+        print(f"\n{'='*60}")
+        print(f"--- AFFRONTEMENT FINAL ---")
+        print(f"{'='*60}\n")
+        print(f"Le gardien de {biome_cible.donjon_nom} se dresse devant vous !")
+        print("C'est maintenant ou jamais...\n")
+
         deroulement_combat(joueur, [biome_cible.boss_id], niveau_biome=biome_cible.niveau_min)
 
         if joueur.est_vivant:
-            print(f"\nVous avez vaincu le gardien de {biome_cible.donjon_nom} !")
+            print(f"\n{'='*60}")
+            print(f"🎉 VICTOIRE ! 🎉")
+            print(f"{'='*60}\n")
+            print(f"Vous avez vaincu le gardien de {biome_cible.donjon_nom} !")
+            print(f"La zone {zone_id} est maintenant considérée comme explorée et sécurisée.\n")
+
+            # Compléter la zone après avoir battu le boss
+            chapitre = systeme_chapitres.obtenir_chapitre_actuel()
+            if chapitre:
+                chapitre.completer_zone(zone_id)
 
             # Progresser les quêtes : donjon complété
+            # Note : La progression "explorer zone" pour les quêtes de royaume est déjà faite à l'entrée dans la zone
+            # Pour les quêtes principales, "explorer zone" signifie compléter le biome (donjon terminé)
             if hasattr(joueur, 'systeme_quetes'):
-                from world.progression_quetes import progresser_quetes_completer_donjon
+                from world.progression_quetes import progresser_quetes_completer_donjon, progresser_quetes_explorer_zone_principale
                 progresser_quetes_completer_donjon(joueur, biome_cible.donjon_nom)
+                # Progresser les quêtes principales "explorer zone" après complétion du donjon
+                progresser_quetes_explorer_zone_principale(joueur, zone_id)
         else:
+            print(f"\n💀 Vous avez été vaincu par le gardien...")
+            print("Vous êtes transporté à votre capitale pour récupérer.")
             return
     else:
-        print("(Aucun boss défini pour ce donjon)")
+        print("⚠️  Aucun boss défini pour ce donjon.")
+        print("Cette zone ne peut pas être complétée sans boss.")
 
     input("\nAppuyez sur Entrée pour continuer...")
 
