@@ -29,7 +29,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "journal_agent", "chance": 15}
+        ],
     },
 
     "anciens_racinaires": {
@@ -41,7 +43,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "symbole_ombre", "chance": 15}
+        ],
     },
 
     "arbres_c_ur": {
@@ -53,7 +57,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "document_krathos", "chance": 15}
+        ],
     },
 
     "automates_d_entra_nement": {
@@ -77,7 +83,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "document_brigand", "chance": 25}
+        ],
     },
 
     "cerfs_lumina": {
@@ -89,7 +97,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "symbole_ombre", "chance": 20}
+        ],
     },
 
     "charognards_de_cristaux": {
@@ -101,7 +111,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "rune_ancienne", "chance": 20}
+        ],
     },
 
     "chevaliers_ren_gats": {
@@ -113,7 +125,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "document_brigand", "chance": 30}
+        ],
     },
 
     "chevaux_ail_s_d_ther": {
@@ -137,7 +151,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "document_brigand", "chance": 15}
+        ],
     },
 
     "chim_res_d_exp_rience": {
@@ -161,7 +177,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_trahison_vrakthar", "chance": 20}
+        ],
     },
 
     "cr_atures_de_stalactite": {
@@ -173,7 +191,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_trahison_luthesia", "chance": 15}
+        ],
     },
 
     "cr_atures_mobs": {
@@ -209,7 +229,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "symbole_ombre", "chance": 25}
+        ],
     },
 
     "f_es_gardiennes": {
@@ -221,7 +243,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "symbole_ombre", "chance": 20}
+        ],
     },
 
     "f_es_pipettes": {
@@ -245,7 +269,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_trahison", "chance": 20}
+        ],
     },
 
     "fleurs_siffleuses": {
@@ -269,7 +295,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "rune_ancienne", "chance": 15}
+        ],
     },
 
     "gardes_c_lestes": {
@@ -293,7 +321,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_trahison", "chance": 20}
+        ],
     },
 
     "gardes_de_mycelium": {
@@ -305,7 +335,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "document_krathos", "chance": 20}
+        ],
     },
 
     "gardiens_de_s_l_nite": {
@@ -341,7 +373,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_trahison_luthesia", "chance": 20}
+        ],
     },
 
     "gardiens_runiques": {
@@ -419,7 +453,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_corruption", "chance": 25}
+        ],
     },
 
     "grimpeurs_de_pierre": {
@@ -431,7 +467,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "journal_agent", "chance": 15}
+        ],
     },
 
     "guenaudes_des_landes": {
@@ -443,7 +481,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "document_brigand", "chance": 20}
+        ],
     },
 
     "guetteurs_scintillants": {
@@ -455,7 +495,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_trahison_vrakthar", "chance": 15}
+        ],
     },
 
     "inquisiteurs_de_p_nitence": {
@@ -551,7 +593,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_corruption", "chance": 15}
+        ],
     },
 
     "l_oracle_astral": {
@@ -575,7 +619,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "document_krathos", "chance": 25}
+        ],
     },
 
     "le_baron_fant_me": {
@@ -695,7 +741,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "rune_ancienne", "chance": 20}
+        ],
     },
 
     "libellules_d_clat": {
@@ -707,7 +755,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_trahison", "chance": 15}
+        ],
     },
 
     "loups_de_canyon": {
@@ -719,7 +769,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "plans_anciens", "chance": 20}
+        ],
     },
 
     "mammouths_des_glaces_naines": {
@@ -731,7 +783,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_trahison_luthesia", "chance": 20}
+        ],
     },
 
     "maraudeurs_et_hors_la_loi": {
@@ -779,7 +833,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_trahison_vrakthar", "chance": 20}
+        ],
     },
 
     "nu_es_de_micro_drones": {
@@ -803,7 +859,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_trahison", "chance": 15}
+        ],
     },
 
     "orc_furieux": {
@@ -854,7 +912,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "plans_anciens", "chance": 20}
+        ],
     },
 
     "salamandres_de_flamme": {
@@ -866,7 +926,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_corruption", "chance": 20}
+        ],
     },
 
     "scarab_es_de_minerai": {
@@ -890,7 +952,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "plans_anciens", "chance": 15}
+        ],
     },
 
     "sentinelles_de_brise": {
@@ -914,7 +978,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "journal_agent", "chance": 20}
+        ],
     },
 
     "sentinelles_de_quartz_noir": {
@@ -938,7 +1004,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_trahison_vrakthar", "chance": 25}
+        ],
     },
 
     "spectres_cendr_s": {
@@ -950,7 +1018,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "rune_ancienne", "chance": 25}
+        ],
     },
 
     "spectres_de_lumi_re": {
@@ -962,7 +1032,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "journal_agent", "chance": 25}
+        ],
     },
 
     "spectres_des_ruines": {
@@ -986,7 +1058,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "document_krathos", "chance": 20}
+        ],
     },
 
     "trognes_de_l_obsidienne": {
@@ -998,7 +1072,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_corruption", "chance": 20}
+        ],
     },
 
     "trolls_de_quartz": {
@@ -1010,7 +1086,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "preuve_trahison_luthesia", "chance": 25}
+        ],
     },
 
     "vautours_cr_te_d_acier": {
@@ -1022,7 +1100,9 @@ DEFINITIONS_ENNEMIS = {
         "chance_critique": 5,
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
-        "loot_table": [],
+        "loot_table": [
+            {"nom": "plans_anciens", "chance": 15}
+        ],
     },
 
     "vers_de_poussi_re": {
@@ -1112,9 +1192,9 @@ DEFINITIONS_ENNEMIS = {
         ],
     },
 
-    # Serviteurs de Zarathos (combat final)
+    # Serviteurs de Zarthos (combat final)
     "serviteur_zarathos": {
-        "nom": "Serviteur de Zarathos",
+        "nom": "Serviteur de Zarthos",
         "vie_max": 200,
         "vitesse": 20,
         "attaque": 40,

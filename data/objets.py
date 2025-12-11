@@ -112,9 +112,9 @@ DEFINITIONS_OBJETS = {
     },
 
     "document_krathos": {
-        "nom": "Document sur Krathos",
+        "nom": "Document sur l'Ancien Roi Démon",
         "type": "matériau",
-        "description": "Des documents anciens révélant l'histoire de Krathos le Sage.",
+        "description": "Des documents anciens révélant l'histoire de l'ancien Roi Démon.",
         "rarete": "épique"
     },
 
@@ -191,16 +191,16 @@ DEFINITIONS_OBJETS = {
     },
 
     "relique_krathos": {
-        "nom": "Relique de Krathos",
+        "nom": "Relique de l'Ancien Roi Démon",
         "type": "équipement",
-        "description": "L'âme de Krathos le Sage scellée dans une rune de feu ancienne.",
+        "description": "L'âme de l'ancien Roi Démon scellée dans une rune de feu ancienne.",
         "rarete": "légendaire"
     },
 
     "renforcement_sceaux": {
         "nom": "Renforcement des Sceaux",
         "type": "matériau",
-        "description": "Un artefact permettant de renforcer les sceaux de Zarathos.",
+        "description": "Un artefact permettant de renforcer les sceaux de Zarthos.",
         "rarete": "légendaire"
     },
 
@@ -243,7 +243,7 @@ DEFINITIONS_OBJETS = {
     "fragment_sagesse": {
         "nom": "Fragment de Sagesse",
         "type": "matériau",
-        "description": "Un fragment de la sagesse de Krathos le Sage.",
+        "description": "Un fragment de la sagesse de l'ancien Roi Démon.",
         "rarete": "épique"
     },
 
@@ -265,7 +265,7 @@ DEFINITIONS_OBJETS = {
     "Artefact_Legendaire": {
         "nom": "Artefact Légendaire",
         "type": "équipement",
-        "description": "Un artefact légendaire obtenu après avoir empêché la résurrection de Zarathos.",
+        "description": "Un artefact légendaire obtenu après avoir empêché la résurrection de Zarthos.",
         "rarete": "légendaire"
     },
 
@@ -273,6 +273,80 @@ DEFINITIONS_OBJETS = {
         "nom": "Recette d'Arme Légendaire",
         "type": "matériau",
         "description": "Une recette secrète pour forger une arme légendaire.",
+        "rarete": "légendaire"
+    },
+
+    # Clés de donjons
+    "cle_donjon_aerthos_1": {
+        "nom": "Clé du Sanctuaire des Murmures",
+        "type": "cle_donjon",
+        "description": "Une clé ancienne permettant d'accéder au Sanctuaire des Murmures Oubliés.",
+        "rarete": "rare"
+    },
+    "cle_donjon_aerthos_2": {
+        "nom": "Clé du Cœur Corrompu",
+        "type": "cle_donjon",
+        "description": "Une clé sombre permettant d'accéder au Cœur Corrompu de la Forêt.",
+        "rarete": "épique"
+    },
+    "cle_donjon_khazak_1": {
+        "nom": "Clé de la Redoute d'Obscurité",
+        "type": "cle_donjon",
+        "description": "Une clé runique permettant d'accéder à la Redoute d'Obscurité.",
+        "rarete": "rare"
+    },
+    "cle_donjon_khazak_2": {
+        "nom": "Clé du Caveau des Secrets",
+        "type": "cle_donjon",
+        "description": "Une clé ancienne permettant d'accéder au Caveau des Secrets du Premier Âge.",
+        "rarete": "épique"
+    },
+    "cle_donjon_luthesia_1": {
+        "nom": "Clé de l'Observatoire des Astres",
+        "type": "cle_donjon",
+        "description": "Une clé céleste permettant d'accéder à l'Observatoire des Astres.",
+        "rarete": "rare"
+    },
+    "cle_donjon_vrakthar_1": {
+        "nom": "Clé du Sanctuaire des Flammes",
+        "type": "cle_donjon",
+        "description": "Une clé de feu permettant d'accéder au Sanctuaire des Flammes Éternelles.",
+        "rarete": "rare"
+    },
+    "cle_donjon_vrakthar_2": {
+        "nom": "Clé du Cœur des Flammes",
+        "type": "cle_donjon",
+        "description": "Une clé corrompue permettant d'accéder au Cœur des Flammes Corrompues.",
+        "rarete": "épique"
+    },
+    "cle_donjon_vrakthar_3": {
+        "nom": "Clé du Mausolée des Géants",
+        "type": "cle_donjon",
+        "description": "Une clé ancienne permettant d'accéder au Mausolée des Géants Brisés.",
+        "rarete": "rare"
+    },
+    "cle_donjon_vrakthar_4": {
+        "nom": "Clé des Entrailles Mutantes",
+        "type": "cle_donjon",
+        "description": "Une clé mutante permettant d'accéder aux Entrailles Mutantes.",
+        "rarete": "rare"
+    },
+    "cle_donjon_vrakthar_5": {
+        "nom": "Clé des Archives de la Mémoire",
+        "type": "cle_donjon",
+        "description": "Une clé fragmentée permettant d'accéder aux Archives de la Mémoire Fracturée.",
+        "rarete": "épique"
+    },
+    "cle_donjon_vrakthar_6": {
+        "nom": "Clé de la Gueule de l'Oubli",
+        "type": "cle_donjon",
+        "description": "Une clé oubliée permettant d'accéder à la Gueule de l'Oubli.",
+        "rarete": "épique"
+    },
+    "cle_donjon_final": {
+        "nom": "Clé du Sanctuaire des Ombres",
+        "type": "cle_donjon",
+        "description": "Une clé légendaire permettant d'accéder au Sanctuaire des Ombres Éternelles.",
         "rarete": "légendaire"
     },
 
@@ -301,7 +375,7 @@ DEFINITIONS_OBJETS = {
     "Rune_de_Feu_Ancienne": {
         "nom": "Rune de Feu Ancienne",
         "type": "équipement",
-        "description": "Une rune de feu ancienne, fragment de la relique de Krathos.",
+        "description": "Une rune de feu ancienne, fragment de la relique de l'ancien Roi Démon.",
         "rarete": "légendaire"
     },
 }
