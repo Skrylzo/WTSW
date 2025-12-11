@@ -5,3 +5,6 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Fichiers de test
+test_*.py

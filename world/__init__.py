@@ -14,6 +14,9 @@ from .royaumes import (
 )
 from .biomes import Biome, Zone
 from .story import HistoireGlobale, HistoireRoyaume
+from .quetes import (
+    SystemeQuetes, Quete, ObjectifQuete, TypeQuete, TypeObjectif, StatutQuete
+)
 from .gameplay import SystemeGameplay, TypeGameplay, ModeProgression
 from .chapitres import Chapitre, ChoixNarratif, SystemeChapitres, TypeChapitre
 from .farming import SystemeFarming, SYSTEME_FARMING
@@ -40,6 +43,12 @@ __all__ = [
     'Zone',
     'HistoireGlobale',
     'HistoireRoyaume',
+    'SystemeQuetes',
+    'Quete',
+    'ObjectifQuete',
+    'TypeQuete',
+    'TypeObjectif',
+    'StatutQuete',
     'SystemeGameplay',
     'TypeGameplay',
     'ModeProgression',

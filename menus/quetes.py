@@ -1,30 +1,251 @@
 # menus/quetes.py
 # Menu des quêtes
 
-from typing import List
+from typing import List, Optional
 
 from world import HubFeature, HubCapital
+from world.quetes import SystemeQuetes, TypeQuete, StatutQuete
+from data.histoire_principale import QUETES_PRINCIPALES, INTRODUCTION_HISTOIRE_PRINCIPALE
+from data.quetes_royaume import TOUTES_LES_QUETES_ROYAUME
+from data.quetes_secondaires import TOUTES_LES_QUETES_SECONDAIRES
+from data.pnjs_quetes import initialiser_pnjs
+
+# Initialiser les PNJ au chargement du module
+initialiser_pnjs()
 
 
-def menu_quetes(joueur, hub: HubCapital, features_quetes: List[HubFeature]):
+def initialiser_systeme_quetes() -> SystemeQuetes:
+    """
+    Initialise le système de quêtes avec toutes les quêtes disponibles.
+    """
+    systeme = SystemeQuetes()
+
+    # Ajouter les quêtes principales
+    for quete in QUETES_PRINCIPALES.values():
+        systeme.ajouter_quete(quete)
+
+    # Ajouter les quêtes de royaume
+    for royaume, quetes in TOUTES_LES_QUETES_ROYAUME.items():
+        for quete in quetes:
+            systeme.ajouter_quete(quete)
+
+    # Ajouter les quêtes secondaires
+    for royaume, quetes in TOUTES_LES_QUETES_SECONDAIRES.items():
+        for quete in quetes:
+            systeme.ajouter_quete(quete)
+
+    return systeme
+
+
+def menu_quetes(joueur, hub: HubCapital, features_quetes: List[HubFeature], systeme_quetes: Optional[SystemeQuetes] = None):
     """
     Menu de quêtes : affichage et gestion des quêtes.
-    TODO: Intégrer le système de quêtes une fois défini.
+
+    :param joueur: Le personnage joueur
+    :param hub: Le hub de la capitale
+    :param features_quetes: Liste des features de quêtes (pour futur)
+    :param systeme_quetes: Le système de quêtes (sera initialisé si None)
     """
+    if systeme_quetes is None:
+        systeme_quetes = initialiser_systeme_quetes()
+
+    while True:
+        print(f"\n{'='*60}")
+        print("--- JOURNAL DE QUÊTES ---")
+        print(f"{'='*60}")
+
+        # Afficher la quête principale actuelle
+        quete_principale = systeme_quetes.obtenir_quete_principale_actuelle()
+        if quete_principale:
+            print(f"\n📖 QUÊTE PRINCIPALE EN COURS :")
+            quete_principale.afficher()
+        else:
+            print("\n📖 Aucune quête principale en cours.")
+
+        # Afficher les quêtes de royaume en cours
+        royaume_actuel = getattr(joueur, 'royaume_actuel', None)
+        if not royaume_actuel:
+            from world import obtenir_royaume_du_joueur
+            royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
+            royaume_actuel = royaume_joueur.nom if royaume_joueur else None
+
+        quetes_royaume_en_cours = [q for q in systeme_quetes.obtenir_quetes_en_cours()
+                                   if q.type_quete == TypeQuete.ROYAUME and q.royaume == royaume_actuel]
+        if quetes_royaume_en_cours:
+            print(f"\n🏰 QUÊTES DE ROYAUME EN COURS ({royaume_actuel}) :")
+            for quete in quetes_royaume_en_cours:
+                print(f"  - {quete.nom}")
+
+        # Afficher les quêtes secondaires en cours
+        quetes_secondaires_en_cours = [q for q in systeme_quetes.obtenir_quetes_en_cours()
+                                       if q.type_quete == TypeQuete.SECONDAIRE]
+        if quetes_secondaires_en_cours:
+            print(f"\n📜 QUÊTES SECONDAIRES EN COURS :")
+            for quete in quetes_secondaires_en_cours:
+                print(f"  - {quete.nom}")
+
+        # Menu d'actions
+        print(f"\n{'='*60}")
+        print("Options :")
+        print("1. Voir les quêtes disponibles")
+        print("2. Voir les quêtes en cours (détails)")
+        print("3. Accepter une quête")
+        print("4. Abandonner une quête")
+        print("5. Voir l'histoire principale")
+        print("6. Retour")
+
+        choix = input("\nVotre choix : ").strip()
+
+        if choix == '1':
+            afficher_quetes_disponibles(joueur, systeme_quetes)
+        elif choix == '2':
+            afficher_quetes_en_cours_details(systeme_quetes)
+        elif choix == '3':
+            accepter_quete_menu(joueur, systeme_quetes)
+        elif choix == '4':
+            abandonner_quete_menu(systeme_quetes)
+        elif choix == '5':
+            afficher_histoire_principale()
+        elif choix == '6':
+            break
+        else:
+            print("Choix invalide. Veuillez réessayer.")
+
+
+def afficher_quetes_disponibles(joueur, systeme_quetes: SystemeQuetes):
+    """Affiche les quêtes disponibles pour le joueur."""
+    disponibles = systeme_quetes.obtenir_quetes_disponibles(joueur)
+
+    if not disponibles:
+        print("\nAucune quête disponible pour le moment.")
+        input("\nAppuyez sur Entrée pour continuer...")
+        return
+
     print(f"\n{'='*60}")
-    print("--- QUÊTES ---")
+    print("QUÊTES DISPONIBLES")
     print(f"{'='*60}")
-    print("\nLe système de quêtes est en cours de développement.")
-    print("Les quêtes seront définies avec l'histoire du jeu.\n")
 
-    print("Fonctionnalités prévues :")
-    print("- Quêtes principales (histoire)")
-    print("- Quêtes secondaires")
-    print("- Quêtes journalières")
-    print("- Suivi de progression\n")
+    # Séparer par type
+    principales = [q for q in disponibles if q.type_quete == TypeQuete.PRINCIPALE]
+    royaume = [q for q in disponibles if q.type_quete == TypeQuete.ROYAUME]
+    secondaires = [q for q in disponibles if q.type_quete == TypeQuete.SECONDAIRE]
 
-    # TODO: Implémenter le système de quêtes
-    # 1. Afficher les quêtes disponibles
-    # 2. Afficher les quêtes en cours
-    # 3. Afficher les quêtes complétées
-    # 4. Accepter/Abandonner des quêtes
+    if principales:
+        print("\n📖 QUÊTES PRINCIPALES :")
+        for i, quete in enumerate(principales, 1):
+            print(f"  {i}. {quete.nom} (Niveau requis : {quete.niveau_requis})")
+
+    if royaume:
+        royaume_actuel = getattr(joueur, 'royaume_actuel', None)
+        if not royaume_actuel:
+            from world import obtenir_royaume_du_joueur
+            royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
+            royaume_actuel = royaume_joueur.nom if royaume_joueur else "Inconnu"
+        print(f"\n🏰 QUÊTES DE ROYAUME ({royaume_actuel}) :")
+        for i, quete in enumerate(royaume, 1):
+            print(f"  {i+len(principales)}. {quete.nom} (Niveau requis : {quete.niveau_requis})")
+
+    if secondaires:
+        royaume_actuel = getattr(joueur, 'royaume_actuel', None)
+        if not royaume_actuel:
+            from world import obtenir_royaume_du_joueur
+            royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
+            royaume_actuel = royaume_joueur.nom if royaume_joueur else "Inconnu"
+        print(f"\n📜 QUÊTES SECONDAIRES ({royaume_actuel}) :")
+        for i, quete in enumerate(secondaires, 1):
+            print(f"  {i+len(principales)+len(royaume)}. {quete.nom} (Niveau requis : {quete.niveau_requis})")
+
+    input("\nAppuyez sur Entrée pour continuer...")
+
+
+def afficher_quetes_en_cours_details(systeme_quetes: SystemeQuetes):
+    """Affiche les détails des quêtes en cours."""
+    quetes_en_cours = systeme_quetes.obtenir_quetes_en_cours()
+
+    if not quetes_en_cours:
+        print("\nAucune quête en cours.")
+        input("\nAppuyez sur Entrée pour continuer...")
+        return
+
+    print(f"\n{'='*60}")
+    print("QUÊTES EN COURS")
+    print(f"{'='*60}")
+
+    for i, quete in enumerate(quetes_en_cours, 1):
+        print(f"\n{i}. ", end="")
+        quete.afficher()
+
+    input("\nAppuyez sur Entrée pour continuer...")
+
+
+def accepter_quete_menu(joueur, systeme_quetes: SystemeQuetes):
+    """Menu pour accepter une quête."""
+    disponibles = systeme_quetes.obtenir_quetes_disponibles(joueur)
+
+    if not disponibles:
+        print("\nAucune quête disponible pour le moment.")
+        input("\nAppuyez sur Entrée pour continuer...")
+        return
+
+    print(f"\n{'='*60}")
+    print("ACCEPTER UNE QUÊTE")
+    print(f"{'='*60}")
+
+    for i, quete in enumerate(disponibles, 1):
+        print(f"{i}. {quete.nom} ({quete.type_quete.value})")
+
+    try:
+        choix = int(input("\nChoisissez une quête (numéro) : ").strip())
+        if 1 <= choix <= len(disponibles):
+            quete = disponibles[choix - 1]
+            succes, message = systeme_quetes.accepter_quete(quete.id_quete, joueur)
+            print(f"\n{message}")
+            if succes:
+                print(f"Quête '{quete.nom}' ajoutée à votre journal !")
+        else:
+            print("Numéro invalide.")
+    except ValueError:
+        print("Veuillez entrer un numéro valide.")
+
+    input("\nAppuyez sur Entrée pour continuer...")
+
+
+def abandonner_quete_menu(systeme_quetes: SystemeQuetes):
+    """Menu pour abandonner une quête."""
+    quetes_en_cours = systeme_quetes.obtenir_quetes_en_cours()
+
+    if not quetes_en_cours:
+        print("\nAucune quête en cours à abandonner.")
+        input("\nAppuyez sur Entrée pour continuer...")
+        return
+
+    print(f"\n{'='*60}")
+    print("ABANDONNER UNE QUÊTE")
+    print(f"{'='*60}")
+
+    for i, quete in enumerate(quetes_en_cours, 1):
+        print(f"{i}. {quete.nom}")
+
+    try:
+        choix = int(input("\nChoisissez une quête à abandonner (numéro) : ").strip())
+        if 1 <= choix <= len(quetes_en_cours):
+            quete = quetes_en_cours[choix - 1]
+            if systeme_quetes.abandonner_quete(quete.id_quete):
+                print(f"\nQuête '{quete.nom}' abandonnée.")
+            else:
+                print("\nImpossible d'abandonner cette quête.")
+        else:
+            print("Numéro invalide.")
+    except ValueError:
+        print("Veuillez entrer un numéro valide.")
+
+    input("\nAppuyez sur Entrée pour continuer...")
+
+
+def afficher_histoire_principale():
+    """Affiche l'introduction de l'histoire principale."""
+    print(f"\n{'='*60}")
+    print("HISTOIRE PRINCIPALE")
+    print(f"{'='*60}")
+    print(INTRODUCTION_HISTOIRE_PRINCIPALE)
+    input("\nAppuyez sur Entrée pour continuer...")

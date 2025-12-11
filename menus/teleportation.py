@@ -87,6 +87,11 @@ def teleporter_vers_royaume(joueur, nom_royaume: str) -> bool:
     print(f"\nVous avez été téléporté vers {hub_dest.nom}, capitale de {nom_royaume}.")
     print(f"{hub_dest.description}\n")
 
+    # Déclencher automatiquement les quêtes de royaume disponibles
+    if hasattr(joueur, 'systeme_quetes'):
+        from world.declenchement_quetes import verifier_et_declencher_quetes_royaume
+        verifier_et_declencher_quetes_royaume(joueur, nom_royaume)
+
     return True
 
 

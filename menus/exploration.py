@@ -118,13 +118,8 @@ def menu_selection_zone(joueur, royaume, systeme_chapitres: SystemeChapitres):
 
 def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapitres):
     """
-    Explore une zone : combat aléatoire ou accès au donjon.
-    TODO: Intégrer les vrais biomes et leurs mobs une fois le parser Valdoria créé.
+    Explore une zone : menu d'actions (combat, parler aux PNJ, donjon).
     """
-    print(f"\n{'='*60}")
-    print(f"--- {zone_id.upper()} ---")
-    print(f"{'='*60}\n")
-
     biome_cible = trouver_biome_par_nom(royaume, zone_id)
 
     # Afficher les informations du biome
@@ -155,6 +150,72 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
         else:
             print()
 
+    # Menu d'actions dans la zone
+    while True:
+        print(f"\n{'='*60}")
+        print(f"--- {zone_id.upper()} ---")
+        print(f"{'='*60}\n")
+
+        # Vérifier les PNJ présents dans la zone
+        from data.pnjs_zones import obtenir_pnjs_zone, zone_contient_pnj
+        pnjs_zone = obtenir_pnjs_zone(zone_id)
+        a_des_pnj = zone_contient_pnj(zone_id)
+
+        # Vérifier si la zone a un donjon
+        a_donjon = biome_cible and biome_cible.donjon_nom
+
+        # Afficher les options disponibles
+        options = []
+        option_num = 1
+
+        print("Que voulez-vous faire ?\n")
+
+        # Option 1 : Combattre
+        print(f"{option_num}. Combattre des ennemis")
+        options.append('combat')
+        option_num += 1
+
+        # Option 2 : Parler aux PNJ (si présents)
+        if a_des_pnj:
+            print(f"{option_num}. Parler aux habitants")
+            options.append('pnj')
+            option_num += 1
+
+        # Option 3 : Explorer le donjon (si disponible)
+        if a_donjon:
+            print(f"{option_num}. Explorer le donjon : {biome_cible.donjon_nom}")
+            options.append('donjon')
+            option_num += 1
+
+        # Option retour
+        print(f"{option_num}. Retour")
+        options.append('retour')
+
+        choix = input("\nVotre choix : ")
+
+        try:
+            choix_int = int(choix)
+            if 1 <= choix_int <= len(options):
+                action = options[choix_int - 1]
+
+                if action == 'combat':
+                    _lancer_combat_zone(joueur, biome_cible, zone_id, systeme_chapitres)
+                elif action == 'pnj':
+                    _parler_pnj_zone(joueur, pnjs_zone)
+                elif action == 'donjon':
+                    _explorer_donjon(joueur, biome_cible, zone_id, systeme_chapitres)
+                elif action == 'retour':
+                    break
+            else:
+                print("Choix invalide. Veuillez réessayer.")
+        except ValueError:
+            print("Veuillez entrer un nombre valide.")
+
+
+def _lancer_combat_zone(joueur, biome_cible, zone_id: str, systeme_chapitres: SystemeChapitres):
+    """
+    Lance un combat dans la zone.
+    """
     if biome_cible and biome_cible.mobs_ids:
         ennemis_a_combattre_ids = biome_cible.obtenir_mobs_aleatoires(nombre=1)
     else:
@@ -162,7 +223,6 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
         ennemis_a_combattre_ids = ["gobelin_basique"]
 
     # Lancer le combat
-    # Passer le niveau du biome pour le système de bonus de craft
     niveau_biome = biome_cible.niveau_min if biome_cible else None
     deroulement_combat(joueur, ennemis_a_combattre_ids, niveau_biome=niveau_biome)
 
@@ -172,9 +232,97 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
         chapitre = systeme_chapitres.obtenir_chapitre_actuel()
         if chapitre:
             chapitre.completer_zone(zone_id)
+
+        # Progresser les quêtes : zone explorée
+        if hasattr(joueur, 'systeme_quetes'):
+            from world.progression_quetes import progresser_quetes_explorer_zone
+            progresser_quetes_explorer_zone(joueur, zone_id)
     else:
         # Le joueur est déjà téléporté à sa capitale par deroulement_combat
-        pass
+        return
+
+    input("\nAppuyez sur Entrée pour continuer...")
+
+
+def _parler_pnj_zone(joueur, pnjs_zone: list):
+    """
+    Permet de parler aux PNJ présents dans la zone.
+    """
+    if not pnjs_zone:
+        print("\nAucun PNJ présent dans cette zone.")
+        input("\nAppuyez sur Entrée pour continuer...")
+        return
+
+    from world.pnj import obtenir_pnj
+    from menus.pnj import parler_a_pnj
+
+    while True:
+        print(f"\n{'='*60}")
+        print("--- HABITANTS DE LA ZONE ---")
+        print(f"{'='*60}\n")
+
+        options = []
+        option_num = 1
+
+        for pnj_id in pnjs_zone:
+            pnj = obtenir_pnj(pnj_id)
+            if pnj:
+                print(f"{option_num}. {pnj.nom}")
+                if pnj.description:
+                    print(f"   {pnj.description}")
+                options.append(pnj_id)
+                option_num += 1
+
+        print(f"{option_num}. Retour")
+
+        choix = input("\nVotre choix : ")
+
+        try:
+            choix_int = int(choix)
+            if 1 <= choix_int <= len(options):
+                pnj_id = options[choix_int - 1]
+                parler_a_pnj(joueur, pnj_id)
+                input("\nAppuyez sur Entrée pour continuer...")
+            elif choix_int == len(options) + 1:
+                break
+            else:
+                print("Choix invalide. Veuillez réessayer.")
+        except ValueError:
+            print("Veuillez entrer un nombre valide.")
+
+
+def _explorer_donjon(joueur, biome_cible, zone_id: str, systeme_chapitres: SystemeChapitres):
+    """
+    Explore le donjon de la zone.
+    """
+    if not biome_cible or not biome_cible.donjon_nom:
+        print("\nAucun donjon disponible dans cette zone.")
+        input("\nAppuyez sur Entrée pour continuer...")
+        return
+
+    print(f"\n{'='*60}")
+    print(f"--- {biome_cible.donjon_nom.upper()} ---")
+    print(f"{'='*60}\n")
+
+    print(f"Vous entrez dans {biome_cible.donjon_nom}...")
+    print("(Système de donjon à implémenter complètement)")
+
+    # Pour l'instant, on lance juste un combat avec le boss
+    if biome_cible.boss_id:
+        print(f"\nVous affrontez le gardien du donjon !")
+        deroulement_combat(joueur, [biome_cible.boss_id], niveau_biome=biome_cible.niveau_min)
+
+        if joueur.est_vivant:
+            print(f"\nVous avez vaincu le gardien de {biome_cible.donjon_nom} !")
+
+            # Progresser les quêtes : donjon complété
+            if hasattr(joueur, 'systeme_quetes'):
+                from world.progression_quetes import progresser_quetes_completer_donjon
+                progresser_quetes_completer_donjon(joueur, biome_cible.donjon_nom)
+        else:
+            return
+    else:
+        print("(Aucun boss défini pour ce donjon)")
 
     input("\nAppuyez sur Entrée pour continuer...")
 

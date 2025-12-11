@@ -17,6 +17,7 @@ from .affichage import (
 )
 from .loot import ajouter_ingredients_a_inventaire
 from world import teleporter_joueur_vers_capitale
+from world.progression_quetes import progresser_quetes_collecter_objet
 
 
 def calculer_or_ennemi(ennemi_data, xp_a_donner):
@@ -347,9 +348,11 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
 
                     # Chercher l'objet dans DEFINITIONS_OBJETS par nom
                     objet_data = None
+                    obj_id_trouve = None
                     for obj_id, obj_def in DEFINITIONS_OBJETS.items():
                         if obj_def["nom"] == nom_loot:
                             objet_data = obj_def
+                            obj_id_trouve = obj_id
                             break
 
                     # Créer un nouvel objet avec les données de DEFINITIONS_OBJETS si disponible
@@ -372,6 +375,10 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
 
                     # Ajouter l'objet à l'inventaire
                     joueur.ajouter_objet(nouvel_objet)
+
+                    # Faire progresser les quêtes si l'objet a un ID (objets de quête)
+                    if obj_id_trouve:
+                        progresser_quetes_collecter_objet(joueur, obj_id_trouve, quantite=1)
 
                     # Afficher l'objet obtenu
                     quantite_apres = joueur.compter_objet(nom_loot)
@@ -406,6 +413,12 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
             # Import local pour éviter la dépendance circulaire
             from menus.monnaie import ajouter_or, obtenir_or_joueur
             ajouter_or(joueur, total_or_gagne)
+
+        # Progresser les quêtes : ennemis tués
+        if hasattr(joueur, 'systeme_quetes'):
+            from world.progression_quetes import progresser_quetes_tuer_ennemi
+            for ennemi in ennemis_vaincus:
+                progresser_quetes_tuer_ennemi(joueur, ennemi.id_ennemi, 1)
 
         # Afficher le total
         print(f"\n{'='*40}")

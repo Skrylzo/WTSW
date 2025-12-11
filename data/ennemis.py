@@ -1035,5 +1035,110 @@ DEFINITIONS_ENNEMIS = {
         "xp_a_donner": 120,
         "or_a_donner": 176,  # À ajuster manuellement pour équilibrer
         "loot_table": [],
-    }
+    },
+
+    # ==================== ENNEMIS SPÉCIAUX POUR LES QUÊTES ====================
+    # Agents de l'Ordre des Ombres Éternelles
+    "agent_ordre": {
+        "nom": "Agent de l'Ordre",
+        "vie_max": 80,
+        "vitesse": 15,
+        "attaque": 25,
+        "defense": 10,
+        "chance_critique": 8,
+        "xp_a_donner": 100,
+        "or_a_donner": 150,
+        "loot_table": [
+            {"nom": "symbole_ombre", "chance": 30},
+            {"nom": "journal_agent", "chance": 15}
+        ],
+    },
+
+    # Créatures corrompues par l'Ordre
+    "creature_corrompue": {
+        "nom": "Créature Corrompue",
+        "vie_max": 120,
+        "vitesse": 12,
+        "attaque": 30,
+        "defense": 15,
+        "chance_critique": 5,
+        "xp_a_donner": 150,
+        "or_a_donner": 200,
+        "loot_table": [
+            {"nom": "symbole_ombre", "chance": 25}
+        ],
+    },
+
+    # Créatures des mines (Khazak-Dûm)
+    "creature_mine": {
+        "nom": "Créature des Mines",
+        "vie_max": 100,
+        "vitesse": 10,
+        "attaque": 20,
+        "defense": 12,
+        "chance_critique": 4,
+        "xp_a_donner": 80,
+        "or_a_donner": 120,
+        "loot_table": [],
+    },
+
+    # Brigands organisés (Luthesia)
+    "brigand": {
+        "nom": "Brigand Organisé",
+        "vie_max": 70,
+        "vitesse": 18,
+        "attaque": 22,
+        "defense": 8,
+        "chance_critique": 10,
+        "xp_a_donner": 90,
+        "or_a_donner": 130,
+        "loot_table": [
+            {"nom": "document_brigand", "chance": 20}
+        ],
+    },
+
+    # Serviteurs corrompus (Vrak'thar)
+    "serviteur_corrompu": {
+        "nom": "Serviteur Corrompu",
+        "vie_max": 110,
+        "vitesse": 14,
+        "attaque": 28,
+        "defense": 12,
+        "chance_critique": 6,
+        "xp_a_donner": 140,
+        "or_a_donner": 180,
+        "loot_table": [
+            {"nom": "rune_ancienne", "chance": 30}
+        ],
+    },
+
+    # Serviteurs de Zarathos (combat final)
+    "serviteur_zarathos": {
+        "nom": "Serviteur de Zarathos",
+        "vie_max": 200,
+        "vitesse": 20,
+        "attaque": 40,
+        "defense": 20,
+        "chance_critique": 12,
+        "xp_a_donner": 300,
+        "or_a_donner": 500,
+        "loot_table": [
+            {"nom": "renforcement_sceaux", "chance": 10}
+        ],
+    },
+
+    # Chef de l'Ordre (boss final)
+    "chef_ordre": {
+        "nom": "Le Chef de l'Ordre",
+        "vie_max": 500,
+        "vitesse": 25,
+        "attaque": 60,
+        "defense": 30,
+        "chance_critique": 15,
+        "xp_a_donner": 1000,
+        "or_a_donner": 2000,
+        "loot_table": [
+            {"nom": "Artefact_Legendaire", "chance": 100}
+        ],
+    },
 }

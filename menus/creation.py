@@ -107,6 +107,10 @@ def creer_personnage():
     # Appliquer les bonus de debug si nécessaire
     appliquer_bonus_debug(joueur, nom)
 
+    # Initialiser le système de quêtes et déclencher les quêtes disponibles
+    from world.declenchement_quetes import initialiser_quetes_joueur
+    initialiser_quetes_joueur(joueur)
+
     print(f"\n{joueur.nom}, un {joueur.race} {joueur.specialisation.nom}, a été créé !")
     joueur.afficher_stats()
 

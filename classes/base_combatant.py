@@ -414,6 +414,11 @@ class Personnage(BaseCombatant):
 
         self.mettre_a_jour_stats_apres_attributs()
 
+        # Progresser les quêtes : niveau atteint
+        if hasattr(self, 'systeme_quetes'):
+            from world.progression_quetes import progresser_quetes_atteindre_niveau
+            progresser_quetes_atteindre_niveau(self, self.niveau)
+
     def apprendre_capacite(self, capacite_id):
         # Vérification de l'ID de capacité
         if not capacite_id or not isinstance(capacite_id, str):
@@ -776,7 +781,10 @@ class Personnage(BaseCombatant):
             "effets_actifs": [effet.__dict__ for effet in self.effets_actifs],
             "inventaire": [objet.to_dict() for objet in self.inventaire.values()],
             "or_": getattr(self, 'or_', 100),  # Sauvegarder l'or (100 par défaut si absent)
-            "bonus_formation_achetes": getattr(self, 'bonus_formation_achetes', [])  # Sauvegarder les bonus de formation
+            "bonus_formation_achetes": getattr(self, 'bonus_formation_achetes', []),  # Sauvegarder les bonus de formation
+            "systeme_quetes": getattr(self, 'systeme_quetes', None).to_dict() if hasattr(self, 'systeme_quetes') and self.systeme_quetes else None,  # Sauvegarder le système de quêtes
+            "royaume_actuel": getattr(self, 'royaume_actuel', None),  # Sauvegarder le royaume actuel
+            "temps_jeu_secondes": getattr(self, 'temps_jeu_secondes', 0)  # Sauvegarder le temps de jeu
         }
         return data
 
@@ -865,6 +873,27 @@ class Personnage(BaseCombatant):
 
         # Charger les bonus de formation achetés
         perso.bonus_formation_achetes = data.get("bonus_formation_achetes", [])
+
+        # Charger le royaume actuel
+        perso.royaume_actuel = data.get("royaume_actuel", None)
+
+        # Charger le temps de jeu
+        perso.temps_jeu_secondes = data.get("temps_jeu_secondes", 0)
+
+        # Charger le système de quêtes
+        systeme_quetes_data = data.get("systeme_quetes")
+        if systeme_quetes_data:
+            from world.quetes import SystemeQuetes
+            perso.systeme_quetes = SystemeQuetes.from_dict(systeme_quetes_data)
+        else:
+            # Initialiser un nouveau système de quêtes si aucune sauvegarde
+            from menus.quetes import initialiser_systeme_quetes
+            perso.systeme_quetes = initialiser_systeme_quetes()
+            # Accepter automatiquement la première quête principale si elle n'est pas déjà complétée
+            premiere_quete_id = "decouverte_ordre"
+            if premiere_quete_id in perso.systeme_quetes.quetes:
+                if premiere_quete_id not in perso.systeme_quetes.quetes_completees:
+                    perso.systeme_quetes.accepter_quete(premiere_quete_id, perso)
 
         # Appliquer les bonus de formation aux attributs
         # Note: Les bonus sont appliqués lors du chargement, mais les stats seront recalculées après

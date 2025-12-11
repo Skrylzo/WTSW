@@ -14,6 +14,7 @@ from .commerce import menu_commerce
 from .quetes import menu_quetes
 from .teleportation import menu_teleportation
 from .formation import menu_formation
+from .pnj import menu_pnj_capitale
 
 
 def royaume_est_complete(joueur) -> bool:
@@ -63,6 +64,17 @@ def menu_capitale(joueur):
     from .sauvegarde import sauvegarder_automatique
     sauvegarder_automatique(joueur)
 
+    # Déclencher les quêtes de royaume disponibles si le système de quêtes existe
+    if hasattr(joueur, 'systeme_quetes'):
+        from world.declenchement_quetes import verifier_et_declencher_quetes_royaume
+        # Utiliser royaume_actuel si disponible, sinon le royaume de la race
+        royaume_actuel = getattr(joueur, 'royaume_actuel', None)
+        if not royaume_actuel:
+            royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
+            royaume_actuel = royaume_joueur.nom if royaume_joueur else None
+        if royaume_actuel:
+            verifier_et_declencher_quetes_royaume(joueur, royaume_actuel)
+
     while True:
         print(f"\n{'='*60}")
         print(f"--- {hub.nom.upper()} ---")
@@ -108,6 +120,11 @@ def menu_capitale(joueur):
             options.append(('formation', FeatureType.FORMATION))
             option_num += 1
 
+        # Parler aux PNJ (toujours disponible dans la capitale)
+        options_display.append(f"{option_num}. Parler aux habitants")
+        options.append(('pnj', None))
+        option_num += 1
+
         # Note : "Services disponibles" retiré car redondant avec les options ci-dessus
         # Tous les services sont déjà listés directement dans le menu
 
@@ -130,11 +147,17 @@ def menu_capitale(joueur):
                 elif option_type == 'craft':
                     menu_craft(joueur, hub, services[FeatureType.CRAFT.value])
                 elif option_type == 'quetes':
-                    menu_quetes(joueur, hub, services[FeatureType.QUETE.value])
+                    # Initialiser le système de quêtes si nécessaire
+                    if not hasattr(joueur, 'systeme_quetes'):
+                        from .quetes import initialiser_systeme_quetes
+                        joueur.systeme_quetes = initialiser_systeme_quetes()
+                    menu_quetes(joueur, hub, services[FeatureType.QUETE.value], joueur.systeme_quetes)
                 elif option_type == 'teleportation':
                     menu_teleportation(joueur, hub)
                 elif option_type == 'formation':
                     menu_formation(joueur, hub, services[FeatureType.FORMATION.value])
+                elif option_type == 'pnj':
+                    menu_pnj_capitale(joueur)
                 elif option_type == 'retour':
                     break
             else:
