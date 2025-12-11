@@ -54,59 +54,22 @@ def menu_quetes(joueur, hub: HubCapital, features_quetes: List[HubFeature], syst
         print("--- JOURNAL DE QUÊTES ---")
         print(f"{'='*60}")
 
-        # Afficher la quête principale actuelle
-        quete_principale = systeme_quetes.obtenir_quete_principale_actuelle()
-        if quete_principale:
-            print(f"\n📖 QUÊTE PRINCIPALE EN COURS :")
-            quete_principale.afficher()
-        else:
-            print("\n📖 Aucune quête principale en cours.")
-
-        # Afficher les quêtes de royaume en cours
-        royaume_actuel = getattr(joueur, 'royaume_actuel', None)
-        if not royaume_actuel:
-            from world import obtenir_royaume_du_joueur
-            royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
-            royaume_actuel = royaume_joueur.nom if royaume_joueur else None
-
-        quetes_royaume_en_cours = [q for q in systeme_quetes.obtenir_quetes_en_cours()
-                                   if q.type_quete == TypeQuete.ROYAUME and q.royaume == royaume_actuel]
-        if quetes_royaume_en_cours:
-            print(f"\n🏰 QUÊTES DE ROYAUME EN COURS ({royaume_actuel}) :")
-            for quete in quetes_royaume_en_cours:
-                print(f"  - {quete.nom}")
-
-        # Afficher les quêtes secondaires en cours
-        quetes_secondaires_en_cours = [q for q in systeme_quetes.obtenir_quetes_en_cours()
-                                       if q.type_quete == TypeQuete.SECONDAIRE]
-        if quetes_secondaires_en_cours:
-            print(f"\n📜 QUÊTES SECONDAIRES EN COURS :")
-            for quete in quetes_secondaires_en_cours:
-                print(f"  - {quete.nom}")
-
         # Menu d'actions
-        print(f"\n{'='*60}")
-        print("Options :")
-        print("1. Voir les quêtes disponibles")
-        print("2. Voir les quêtes en cours (détails)")
-        print("3. Accepter une quête")
-        print("4. Abandonner une quête")
-        print("5. Voir l'histoire principale")
-        print("6. Retour")
+        print("\nOptions :")
+        print("1. Voir les quêtes en cours")
+        print("2. Voir les quêtes complétées")
+        print("3. Voir l'histoire principale")
+        print("4. Retour")
 
         choix = input("\nVotre choix : ").strip()
 
         if choix == '1':
-            afficher_quetes_disponibles(joueur, systeme_quetes)
+            afficher_quetes_en_cours_details(systeme_quetes, joueur)
         elif choix == '2':
-            afficher_quetes_en_cours_details(systeme_quetes)
+            afficher_quetes_completees(systeme_quetes, joueur)
         elif choix == '3':
-            accepter_quete_menu(joueur, systeme_quetes)
-        elif choix == '4':
-            abandonner_quete_menu(systeme_quetes)
-        elif choix == '5':
             afficher_histoire_principale()
-        elif choix == '6':
+        elif choix == '4':
             break
         else:
             print("Choix invalide. Veuillez réessayer.")
@@ -158,7 +121,7 @@ def afficher_quetes_disponibles(joueur, systeme_quetes: SystemeQuetes):
     input("\nAppuyez sur Entrée pour continuer...")
 
 
-def afficher_quetes_en_cours_details(systeme_quetes: SystemeQuetes):
+def afficher_quetes_en_cours_details(systeme_quetes: SystemeQuetes, joueur):
     """Affiche les détails des quêtes en cours."""
     quetes_en_cours = systeme_quetes.obtenir_quetes_en_cours()
 
@@ -171,9 +134,33 @@ def afficher_quetes_en_cours_details(systeme_quetes: SystemeQuetes):
     print("QUÊTES EN COURS")
     print(f"{'='*60}")
 
-    for i, quete in enumerate(quetes_en_cours, 1):
-        print(f"\n{i}. ", end="")
-        quete.afficher()
+    # Afficher la quête principale en cours
+    quete_principale = systeme_quetes.obtenir_quete_principale_actuelle()
+    if quete_principale:
+        print(f"\n📖 QUÊTE PRINCIPALE EN COURS :")
+        quete_principale.afficher()
+
+    # Afficher les quêtes de royaume en cours
+    royaume_actuel = getattr(joueur, 'royaume_actuel', None)
+    if not royaume_actuel:
+        from world import obtenir_royaume_du_joueur
+        royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
+        royaume_actuel = royaume_joueur.nom if royaume_joueur else None
+
+    quetes_royaume_en_cours = [q for q in quetes_en_cours
+                               if q.type_quete == TypeQuete.ROYAUME and q.royaume == royaume_actuel]
+    if quetes_royaume_en_cours:
+        print(f"\n🏰 QUÊTES DE ROYAUME EN COURS ({royaume_actuel}) :")
+        for quete in quetes_royaume_en_cours:
+            quete.afficher()
+
+    # Afficher les quêtes secondaires en cours
+    quetes_secondaires_en_cours = [q for q in quetes_en_cours
+                                   if q.type_quete == TypeQuete.SECONDAIRE]
+    if quetes_secondaires_en_cours:
+        print(f"\n📜 QUÊTES SECONDAIRES EN COURS :")
+        for quete in quetes_secondaires_en_cours:
+            quete.afficher()
 
     input("\nAppuyez sur Entrée pour continuer...")
 
@@ -238,6 +225,87 @@ def abandonner_quete_menu(systeme_quetes: SystemeQuetes):
             print("Numéro invalide.")
     except ValueError:
         print("Veuillez entrer un numéro valide.")
+
+    input("\nAppuyez sur Entrée pour continuer...")
+
+
+def afficher_quetes_completees(systeme_quetes: SystemeQuetes, joueur):
+    """Affiche les quêtes complétées."""
+    quetes_completees = systeme_quetes.obtenir_quetes_completees()
+
+    if not quetes_completees:
+        print("\nAucune quête complétée pour le moment.")
+        input("\nAppuyez sur Entrée pour continuer...")
+        return
+
+    print(f"\n{'='*60}")
+    print("QUÊTES COMPLÉTÉES")
+    print(f"{'='*60}")
+
+    # Afficher les quêtes principales complétées
+    principales_completees = [q for q in quetes_completees if q.type_quete == TypeQuete.PRINCIPALE]
+    if principales_completees:
+        print(f"\n📖 QUÊTES PRINCIPALES COMPLÉTÉES :")
+        for quete in principales_completees:
+            print(f"\n  ✓ {quete.nom}")
+            if quete.recompenses:
+                print("    Récompenses obtenues :")
+                if "xp" in quete.recompenses:
+                    print(f"      - {quete.recompenses['xp']} XP")
+                if "or" in quete.recompenses:
+                    print(f"      - {quete.recompenses['or']} pièces d'or")
+                if "objets" in quete.recompenses:
+                    from data.objets import DEFINITIONS_OBJETS
+                    for objet_id in quete.recompenses["objets"]:
+                        objet_data = DEFINITIONS_OBJETS.get(objet_id)
+                        nom_objet = objet_data.get("nom", objet_id) if objet_data else objet_id
+                        print(f"      - {nom_objet}")
+
+    # Afficher les quêtes de royaume complétées
+    royaume_actuel = getattr(joueur, 'royaume_actuel', None)
+    if not royaume_actuel:
+        from world import obtenir_royaume_du_joueur
+        royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
+        royaume_actuel = royaume_joueur.nom if royaume_joueur else None
+
+    quetes_royaume_completees = [q for q in quetes_completees
+                                if q.type_quete == TypeQuete.ROYAUME and q.royaume == royaume_actuel]
+    if quetes_royaume_completees:
+        print(f"\n🏰 QUÊTES DE ROYAUME COMPLÉTÉES ({royaume_actuel}) :")
+        for quete in quetes_royaume_completees:
+            print(f"\n  ✓ {quete.nom}")
+            if quete.recompenses:
+                print("    Récompenses obtenues :")
+                if "xp" in quete.recompenses:
+                    print(f"      - {quete.recompenses['xp']} XP")
+                if "or" in quete.recompenses:
+                    print(f"      - {quete.recompenses['or']} pièces d'or")
+                if "objets" in quete.recompenses:
+                    from data.objets import DEFINITIONS_OBJETS
+                    for objet_id in quete.recompenses["objets"]:
+                        objet_data = DEFINITIONS_OBJETS.get(objet_id)
+                        nom_objet = objet_data.get("nom", objet_id) if objet_data else objet_id
+                        print(f"      - {nom_objet}")
+
+    # Afficher les quêtes secondaires complétées
+    quetes_secondaires_completees = [q for q in quetes_completees
+                                    if q.type_quete == TypeQuete.SECONDAIRE]
+    if quetes_secondaires_completees:
+        print(f"\n📜 QUÊTES SECONDAIRES COMPLÉTÉES :")
+        for quete in quetes_secondaires_completees:
+            print(f"\n  ✓ {quete.nom}")
+            if quete.recompenses:
+                print("    Récompenses obtenues :")
+                if "xp" in quete.recompenses:
+                    print(f"      - {quete.recompenses['xp']} XP")
+                if "or" in quete.recompenses:
+                    print(f"      - {quete.recompenses['or']} pièces d'or")
+                if "objets" in quete.recompenses:
+                    from data.objets import DEFINITIONS_OBJETS
+                    for objet_id in quete.recompenses["objets"]:
+                        objet_data = DEFINITIONS_OBJETS.get(objet_id)
+                        nom_objet = objet_data.get("nom", objet_id) if objet_data else objet_id
+                        print(f"      - {nom_objet}")
 
     input("\nAppuyez sur Entrée pour continuer...")
 

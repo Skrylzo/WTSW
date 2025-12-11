@@ -210,6 +210,11 @@ class SystemeQuetes:
         return [self.quetes[qid] for qid in self.quetes_acceptees
                 if qid in self.quetes and self.quetes[qid].statut == StatutQuete.EN_COURS]
 
+    def obtenir_quetes_completees(self) -> List[Quete]:
+        """Retourne les quêtes complétées."""
+        return [self.quetes[qid] for qid in self.quetes_completees
+                if qid in self.quetes]
+
     def accepter_quete(self, id_quete: str, joueur) -> tuple[bool, str]:
         """
         Accepte une quête.
@@ -254,9 +259,8 @@ class SystemeQuetes:
                 for objectif in quete.objectifs:
                     if objectif.type_objectif == type_objectif and objectif.cible == cible:
                         objectif.progresser(quantite)
-                        # Vérifier si la quête est complétée
-                        if quete.est_complete():
-                            self.completer_quete(quete_id)
+                        # Ne pas appeler completer_quete ici - laisser _verifier_et_completer_quetes s'en charger
+                        # pour afficher le message et appliquer les récompenses correctement
 
     def completer_quete(self, id_quete: str) -> tuple[bool, Dict[str, Any]]:
         """
@@ -268,6 +272,10 @@ class SystemeQuetes:
             return False, {}
 
         quete.completer()
+
+        # Retirer de quetes_acceptees et ajouter à quetes_completees
+        if id_quete in self.quetes_acceptees:
+            self.quetes_acceptees.remove(id_quete)
         if id_quete not in self.quetes_completees:
             self.quetes_completees.append(id_quete)
 
