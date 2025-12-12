@@ -224,6 +224,23 @@ def resoudre_effets_fin_tour(combatants):
     for combatant in combatants:
         combatant.retirer_effets_expires()
 
+def _ajuster_stats_ennemi_pour_biome(ennemi: Ennemi, niveau_biome: int):
+    """
+    Nerf simple : -30% sur toutes les stats des ennemis/boss pour les biomes 1 à 3.
+    Aucun changement au-delà du biome 3.
+    """
+    if not niveau_biome or niveau_biome <= 0 or niveau_biome > 3:
+        return
+
+    factor = 0.70  # -30% sur toutes les stats clés
+
+    ennemi.vie_max = max(1, int(ennemi.vie_max * factor))
+    ennemi.vie = ennemi.vie_max
+    ennemi.base_attaque = ennemi.base_attaque * factor
+    ennemi.base_defense = ennemi.base_defense * factor
+    ennemi.base_vitesse = ennemi.base_vitesse * factor
+
+
 def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False, reinitialiser_ressources=False, niveau_biome=None):
     """
     Déroule un combat entre le joueur et une liste d'ennemis.
@@ -240,6 +257,7 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
     for ennemi_id in ennemis_a_combattre_ids:
         ennemi = Ennemi.from_data(ennemi_id)
         if ennemi: # S'assurer que l'ennemi a été créé avec succès
+            _ajuster_stats_ennemi_pour_biome(ennemi, niveau_biome)
             ennemis_actuels.append(ennemi)
 
     if not ennemis_actuels:
