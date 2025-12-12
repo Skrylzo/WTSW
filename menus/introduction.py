@@ -90,36 +90,43 @@ def donner_premiere_quete(joueur):
         from menus.quetes import initialiser_systeme_quetes
         joueur.systeme_quetes = initialiser_systeme_quetes()
 
-    # Accepter automatiquement la première quête principale
+    # Accepter automatiquement la première quête principale (ou afficher son briefing si déjà acceptée)
     premiere_quete_id = "decouverte_ordre"
     premiere_quete = joueur.systeme_quetes.obtenir_quete(premiere_quete_id)
 
-    if premiere_quete and premiere_quete.statut.value == "disponible":
-        success, message = joueur.systeme_quetes.accepter_quete(premiere_quete_id, joueur)
-        if success:
-            print("\n" + "="*70)
-            print("📖 VOTRE PREMIÈRE MISSION")
-            print("="*70)
-            print(f"\n{premiere_quete.nom}")
-            print(f"\n{premiere_quete.description}")
-            print("\n" + "="*70)
+    quete_a_presenter = None
+    if premiere_quete:
+        if premiere_quete.statut.value == "disponible":
+            success, message = joueur.systeme_quetes.accepter_quete(premiere_quete_id, joueur)
+            if success:
+                quete_a_presenter = joueur.systeme_quetes.obtenir_quete(premiere_quete_id)
+        elif premiere_quete.statut.value == "en_cours":
+            quete_a_presenter = premiere_quete
 
-            # Informer le joueur qu'il doit aller voir son mentor pour la première quête de royaume
-            from world import obtenir_royaume_du_joueur
-            from data.mentors_quetes import obtenir_premiere_quete_royaume
-            from world.pnj import obtenir_pnj
+    if quete_a_presenter:
+        print("\n" + "="*70)
+        print("📖 VOTRE PREMIÈRE MISSION")
+        print("="*70)
+        print(f"\n{quete_a_presenter.nom}")
+        print(f"\n{quete_a_presenter.description}")
+        print("\n" + "="*70)
 
-            royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
-            if royaume_joueur:
-                mentor_id, premiere_quete_royaume_id = obtenir_premiere_quete_royaume(royaume_joueur.nom)
-                if mentor_id:
-                    mentor = obtenir_pnj(mentor_id)
-                    if mentor:
-                        print(f"\n💡 Pour commencer votre aventure dans {royaume_joueur.nom}, allez voir")
-                        print(f"   {mentor.nom} dans la capitale. Il vous confiera votre première mission.")
+        # Informer le joueur qu'il doit aller voir son mentor pour la première quête de royaume
+        from world import obtenir_royaume_du_joueur
+        from data.mentors_quetes import obtenir_premiere_quete_royaume
+        from world.pnj import obtenir_pnj
 
-            print("\nAppuyez sur Entrée pour continuer...")
-            input()
+        royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
+        if royaume_joueur:
+            mentor_id, premiere_quete_royaume_id = obtenir_premiere_quete_royaume(royaume_joueur.nom)
+            if mentor_id:
+                mentor = obtenir_pnj(mentor_id)
+                if mentor:
+                    print(f"\n💡 Pour commencer votre aventure dans {royaume_joueur.nom}, allez voir")
+                    print(f"   {mentor.nom} dans la capitale. Il vous confiera votre première mission.")
+
+        print("\nAppuyez sur Entrée pour continuer...")
+        input()
 
 
 def afficher_introduction_complete(joueur):

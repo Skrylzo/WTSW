@@ -18,6 +18,9 @@ def menu_principal():
         if choix == '1':
             joueur = creer_personnage()
             if joueur:
+                # Afficher l'introduction complète (histoire + royaume + première quête)
+                from .introduction import afficher_introduction_complete
+                afficher_introduction_complete(joueur)
                 return joueur
         elif choix == '2':
             nom_a_charger = input("Entrez le nom du personnage à charger : ")
@@ -39,7 +42,7 @@ def menu_personnage(joueur):
         print("3. Dépenser Points d'Attribut")
         print("4. Sauvegarder Partie")
         print("5. Afficher Capacités")
-        print("6. Quitter la partie")
+        print("6. Retour ")
 
         choix = input("Votre choix : ")
 

@@ -1,23 +1,23 @@
 {
     "nom": "SKR",
     "race": "Démon",
-    "specialisation_nom": "Dévoreur d'Âme",
-    "force": 8,
-    "agilite": 3,
-    "vitalite": 7,
-    "intelligence": 2,
+    "specialisation_nom": "Corrupteur",
+    "force": 2,
+    "agilite": 7,
+    "vitalite": 3,
+    "intelligence": 8,
     "niveau": 20,
     "xp": 0,
     "xp_requise": 221683,
     "points_attribut": 57,
-    "vie": 180,
-    "mana": 0.0,
-    "energie": 217,
+    "vie": 160,
+    "mana": 111,
+    "energie": 0.0,
     "rage": 0.0,
     "arme": "Épée Longue",
     "capacites_apprises": [
         {
-            "id": "frappe_sanglante",
+            "id": "malediction_affaiblissement",
             "niveau_amelioration": 1
         }
     ],
@@ -88,6 +88,22 @@
             "niveau_biome": 20
         },
         {
+            "nom": "Casque Épique du Guerrier [TEST]",
+            "type": "équipement",
+            "quantite": 1,
+            "description": "+50 Défense, +10 Force, +10 Vitalité",
+            "rarete": "épique",
+            "niveau_biome": 15
+        },
+        {
+            "nom": "Bottes de Course Rapide [TEST]",
+            "type": "équipement",
+            "quantite": 1,
+            "description": "+30 Défense, +15 Agilité",
+            "rarete": "rare",
+            "niveau_biome": 10
+        },
+        {
             "nom": "Fragment d'Os Spectral [TEST]",
             "type": "matériau",
             "quantite": 5,
@@ -106,14 +122,35 @@
     ],
     "or_": 100000,
     "bonus_formation_achetes": [],
+    "systeme_quetes": {
+        "quetes_acceptees": [
+            "decouverte_ordre"
+        ],
+        "quetes_completees": [],
+        "ordre_completion_royaumes": [],
+        "progression_objectifs": {
+            "decouverte_ordre": {
+                "0": {
+                    "quantite_actuelle": 0,
+                    "quantite_requise": 2
+                },
+                "1": {
+                    "quantite_actuelle": 0,
+                    "quantite_requise": 1
+                }
+            }
+        }
+    },
+    "royaume_actuel": null,
+    "temps_jeu_secondes": 0,
     "metadonnees": {
-        "date_sauvegarde": "2025-12-10T16:47:23.918514",
+        "date_sauvegarde": "2025-12-12T20:29:09.854434",
         "niveau": 20,
         "race": "Démon",
-        "specialisation": "Dévoreur d'Âme",
+        "specialisation": "Corrupteur",
         "royaume_actuel": "Vrak'thar",
         "capitale_actuelle": "Erebus",
-        "temps_jeu_secondes": 21.016298,
+        "temps_jeu_secondes": 90.107657,
         "or": 100000,
         "xp": 0,
         "xp_requise": 221683
