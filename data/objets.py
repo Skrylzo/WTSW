@@ -226,6 +226,14 @@ DEFINITIONS_OBJETS = {
         "rarete": "rare"
     },
 
+    # Ingrédient spécifique pour les créatures des mines (Khazak-Dûm)
+    "creature_mine": {
+        "nom": "Fragment de Créature des Mines",
+        "type": "matériau",
+        "description": "Un fragment cristallisé arraché à une créature des mines. Utilisé comme preuve et ingrédient rare.",
+        "rarete": "rare"
+    },
+
     "rune_ancienne": {
         "nom": "Rune Ancienne",
         "type": "matériau",
@@ -289,6 +297,24 @@ DEFINITIONS_OBJETS = {
         "description": "Une clé sombre permettant d'accéder au Cœur Corrompu de la Forêt.",
         "rarete": "épique"
     },
+    "cle_donjon_aerthos_3": {
+        "nom": "Clé des Profondeurs Célestes",
+        "type": "cle_donjon",
+        "description": "Une clé cristalline permettant d'accéder aux Profondeurs Célestes.",
+        "rarete": "rare"
+    },
+    "cle_donjon_aerthos_4": {
+        "nom": "Clé du Sanctuaire du Songe Lunaire",
+        "type": "cle_donjon",
+        "description": "Une clé onirique permettant d'accéder au Sanctuaire du Songe Lunaire.",
+        "rarete": "épique"
+    },
+    "cle_donjon_aerthos_5": {
+        "nom": "Clé du Bastion des Vents Anciens",
+        "type": "cle_donjon",
+        "description": "Une clé éthérée permettant d'accéder au Bastion des Vents Anciens.",
+        "rarete": "épique"
+    },
     "cle_donjon_khazak_1": {
         "nom": "Clé de la Redoute d'Obscurité",
         "type": "cle_donjon",
@@ -301,11 +327,41 @@ DEFINITIONS_OBJETS = {
         "description": "Une clé ancienne permettant d'accéder au Caveau des Secrets du Premier Âge.",
         "rarete": "épique"
     },
+    "cle_donjon_khazak_3": {
+        "nom": "Clé du Puits Oublié des Forgerons",
+        "type": "cle_donjon",
+        "description": "Une clé forgée permettant d'accéder au Puits Oublié des Forgerons.",
+        "rarete": "rare"
+    },
+    "cle_donjon_khazak_4": {
+        "nom": "Clé des Forges Interdites",
+        "type": "cle_donjon",
+        "description": "Une clé ardente permettant d'accéder aux Forges Interdites.",
+        "rarete": "épique"
+    },
     "cle_donjon_luthesia_1": {
         "nom": "Clé de l'Observatoire des Astres",
         "type": "cle_donjon",
         "description": "Une clé céleste permettant d'accéder à l'Observatoire des Astres.",
         "rarete": "rare"
+    },
+    "cle_donjon_luthesia_2": {
+        "nom": "Clé des Ruines du Vieux Bastion",
+        "type": "cle_donjon",
+        "description": "Une clé ancienne permettant d'accéder aux Ruines du Vieux Bastion.",
+        "rarete": "rare"
+    },
+    "cle_donjon_luthesia_3": {
+        "nom": "Clé de la Gueule du Mécène",
+        "type": "cle_donjon",
+        "description": "Une clé mystérieuse permettant d'accéder à la Gueule du Mécène.",
+        "rarete": "épique"
+    },
+    "cle_donjon_luthesia_4": {
+        "nom": "Clé de la Prison des Âmes Dépravées",
+        "type": "cle_donjon",
+        "description": "Une clé maudite permettant d'accéder à la Prison des Âmes Dépravées.",
+        "rarete": "épique"
     },
     "cle_donjon_vrakthar_1": {
         "nom": "Clé du Sanctuaire des Flammes",

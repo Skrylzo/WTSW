@@ -7,9 +7,10 @@ from world import (
     obtenir_capitale_joueur, obtenir_royaume_du_joueur,
     FeatureType, HubFeature, HubCapital
 )
+from utils.affichage import effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS
 from .craft import menu_craft
 from .exploration import creer_systeme_chapitres_base
-from .monnaie import afficher_or
+from .monnaie import afficher_or, retirer_or
 from .commerce import menu_commerce
 from .quetes import menu_quetes
 from .teleportation import menu_teleportation
@@ -68,11 +69,11 @@ def menu_capitale(joueur):
     # Elles seront données par les mentors quand le joueur leur parle
 
     while True:
-        print(f"\n{'='*60}")
-        print(f"--- {hub.nom.upper()} ---")
-        print(f"Capitale de {hub.royaume_nom}")
-        print(f"{'='*60}")
-        print(f"{hub.description}\n")
+        effacer_console()
+        afficher_titre_menu_avec_emoji(f"{hub.nom.upper()}", "capitale")
+        print(f"{COULEURS['CYAN']}Capitale de {hub.royaume_nom}{COULEURS['RESET']}")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+        print(f"\n{hub.description}\n")
 
         # Obtenir les services disponibles
         services = hub.lister_services()
@@ -84,37 +85,42 @@ def menu_capitale(joueur):
         # Commerce
         # services est un dict avec des clés string, utiliser .value pour obtenir la clé
         if FeatureType.COMMERCE.value in services and services[FeatureType.COMMERCE.value]:
-            options_display.append(f"{option_num}. Commerce")
+            options_display.append(f"{option_num}. 💰 Commerce")
             options.append(('commerce', FeatureType.COMMERCE))
             option_num += 1
 
         # Craft
         if FeatureType.CRAFT.value in services and services[FeatureType.CRAFT.value]:
-            options_display.append(f"{option_num}. Atelier de Craft")
+            options_display.append(f"{option_num}. 🔨 Atelier de Craft")
             options.append(('craft', FeatureType.CRAFT))
             option_num += 1
 
         # Quêtes
         if FeatureType.QUETE.value in services and services[FeatureType.QUETE.value]:
-            options_display.append(f"{option_num}. Quêtes")
+            options_display.append(f"{option_num}. 📜 Quêtes")
             options.append(('quetes', FeatureType.QUETE))
             option_num += 1
 
         # Téléportation (uniquement si le royaume est complété)
         if hub.teleportations and royaume_est_complete(joueur):
-            options_display.append(f"{option_num}. Téléportation")
+            options_display.append(f"{option_num}. 🌀 Téléportation")
             options.append(('teleportation', None))
             option_num += 1
 
         # Formation (si disponible)
         if FeatureType.FORMATION.value in services and services[FeatureType.FORMATION.value]:
-            options_display.append(f"{option_num}. Formation")
+            options_display.append(f"{option_num}. 📚 Formation")
             options.append(('formation', FeatureType.FORMATION))
             option_num += 1
 
         # Parler aux PNJ (toujours disponible dans la capitale)
-        options_display.append(f"{option_num}. Parler aux habitants")
+        options_display.append(f"{option_num}. 👥 Parler aux habitants")
         options.append(('pnj', None))
+        option_num += 1
+
+        # Soin pour 100 or (toujours disponible)
+        options_display.append(f"{option_num}. 💊 Se soigner (100 or)")
+        options.append(('soin', None))
         option_num += 1
 
         # Note : "Services disponibles" retiré car redondant avec les options ci-dessus
@@ -127,7 +133,7 @@ def menu_capitale(joueur):
         for option_text in options_display:
             print(option_text)
 
-        choix = input("\nVotre choix : ")
+        choix = input(f"\n{COULEURS['MAGENTA']}Votre choix : {COULEURS['RESET']}")
 
         try:
             choix_int = int(choix)
@@ -150,6 +156,22 @@ def menu_capitale(joueur):
                     menu_formation(joueur, hub, services[FeatureType.FORMATION.value])
                 elif option_type == 'pnj':
                     menu_pnj_capitale(joueur)
+                elif option_type == 'soin':
+                    cout = 100
+                    if getattr(joueur, "or_", 0) < cout:
+                        print(f"\nVous n'avez pas assez d'or. Il vous manque {cout - joueur.or_} pièces.")
+                    else:
+                        retirer_or(joueur, cout)
+                        joueur.vie = joueur.vie_max
+                        # Si le joueur a du mana/énergie/rage, on peut aussi les réinitialiser
+                        if hasattr(joueur, 'mana_max'):
+                            joueur.mana = getattr(joueur, 'mana_max', joueur.mana)
+                        if hasattr(joueur, 'energie_max'):
+                            joueur.energie = getattr(joueur, 'energie_max', joueur.energie)
+                        if hasattr(joueur, 'rage_max'):
+                            joueur.rage = 0
+                        print(f"\nVous êtes entièrement soigné pour {cout} or.")
+                    input("\nAppuyez sur Entrée pour continuer...")
                 elif option_type == 'retour':
                     break
             else:

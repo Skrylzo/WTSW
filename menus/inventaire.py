@@ -5,6 +5,7 @@ from typing import List, Tuple, Optional, Dict
 from classes.objet import Objet
 from .utiliser_objets import utiliser_potion as utiliser_potion_objet
 from .commerce import calculer_prix_vente
+from utils.affichage import afficher_titre_menu, afficher_separateur, afficher_message_confirmation, formater_nombre, COULEURS, effacer_console
 
 # Ordre des raretés pour le tri
 ORDRE_RARETE = {
@@ -32,14 +33,14 @@ OBJETS_PAR_PAGE = 15
 def menu_inventaire(joueur):
     """Menu de gestion de l'inventaire du joueur avec options améliorées"""
     while True:
-        print(f"\n{'='*60}")
-        print(f"--- INVENTAIRE DE {joueur.nom.upper()} ---")
-        print(f"{'='*60}")
+        effacer_console()
+        afficher_titre_menu(f"INVENTAIRE DE {joueur.nom.upper()}", couleur=COULEURS["CYAN"])
 
         # Afficher les statistiques rapides
         _afficher_stats_rapides(joueur)
 
-        print("\nOptions :")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+        print("\nOptions disponibles :")
         print("1. Afficher l'inventaire (avec tri/filtre)")
         print("2. Rechercher un objet")
         print("3. Consulter un objet spécifique")
@@ -530,13 +531,14 @@ def utiliser_potion(joueur):
             potions_disponibles.append((nom_objet, objet))
 
     if not potions_disponibles:
-        print("\n❌ Vous n'avez aucune potion dans votre inventaire.")
+        afficher_message_confirmation("Vous n'avez aucune potion dans votre inventaire.", "erreur")
         input("\nAppuyez sur Entrée pour continuer...")
         return
 
-    print(f"\n{'='*60}")
-    print("--- UTILISER UNE POTION ---")
-    print(f"{'='*60}\n")
+    effacer_console()
+    afficher_titre_menu("UTILISER UNE POTION", couleur=COULEURS["VERT"])
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+    print("\nPotions disponibles :")
     print("Potions disponibles :")
 
     # Trier les potions par nom
@@ -567,13 +569,14 @@ def utiliser_potion(joueur):
 def jeter_objet(joueur):
     """Permet de jeter un objet de l'inventaire avec affichage amélioré"""
     if not joueur.inventaire:
-        print("\nVotre inventaire est vide.")
+        afficher_message_confirmation("Votre inventaire est vide.", "info")
         input("\nAppuyez sur Entrée pour continuer...")
         return
 
-    print(f"\n{'='*60}")
-    print("--- JETER UN OBJET ---")
-    print(f"{'='*60}\n")
+    effacer_console()
+    afficher_titre_menu("JETER UN OBJET", couleur=COULEURS["ROUGE"])
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+    print()
 
     # Afficher la liste des objets disponibles (triés)
     objets_liste = list(joueur.inventaire.items())
@@ -594,7 +597,7 @@ def jeter_objet(joueur):
                     quantite = int(quantite_a_jeter)
                     if 1 <= quantite <= objet.quantite:
                         joueur.retirer_objet(nom_objet, quantite)
-                        print(f"✓ Vous avez jeté {quantite} {objet.nom}.")
+                        afficher_message_confirmation(f"Vous avez jeté {quantite} {objet.nom}.", "succes")
                         if joueur.avoir_objet(nom_objet):
                             print(f"Il vous reste {joueur.compter_objet(nom_objet)} {objet.nom}.")
                         else:

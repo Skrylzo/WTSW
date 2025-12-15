@@ -279,7 +279,49 @@ def charger_biomes_valdoria() -> Dict[str, List[Biome]]:
 
         biomes_par_royaume.setdefault(royaume_nom, []).extend(biomes_instances)
 
+    # Ajouter les mobs de quêtes aux biomes appropriés
+    _ajouter_mobs_quetes_aux_biomes(biomes_par_royaume)
+
     return biomes_par_royaume
+
+
+def _ajouter_mobs_quetes_aux_biomes(biomes_par_royaume: Dict[str, List[Biome]]) -> None:
+    """
+    Ajoute les mobs de quêtes aux biomes appropriés.
+    Cette fonction est appelée après la génération des biomes pour s'assurer
+    que les mobs nécessaires aux quêtes apparaissent dans les bons biomes.
+    """
+    # Mapping : (royaume, index_biome_0_based) -> [liste_des_mobs_quest]
+    mobs_quetes_par_biome = {
+        # Khazak-Dûm
+        # Biome 1 : une seule entrée pour que la probabilité soit équivalente aux autres mobs
+        ("Khazak-Dûm", 0): ["creature_mine"],
+        ("Khazak-Dûm", 2): ["agent_ordre"],  # Biome 3
+
+        # Aerthos
+        ("Aerthos", 1): ["agent_ordre"],  # Biome 2
+        ("Aerthos", 2): ["creature_corrompue"],  # Biome 3
+
+        # Luthesia
+        ("Luthesia", 0): ["brigand"],  # Biome 1
+        ("Luthesia", 2): ["creature_corrompue"],  # Biome 3
+
+        # Vrak'thar
+        ("Vrak'thar", 1): ["serviteur_corrompu"],  # Biome 2
+    }
+
+    for royaume_nom, biomes in biomes_par_royaume.items():
+        for idx, biome in enumerate(biomes):
+            key = (royaume_nom, idx)
+            if key in mobs_quetes_par_biome:
+                mobs_a_ajouter = mobs_quetes_par_biome[key]
+                for mob_id in mobs_a_ajouter:
+                    # Vérifier que le mob existe dans DEFINITIONS_ENNEMIS
+                    if mob_id in DEFINITIONS_ENNEMIS:
+                        # Ajouter le mob (même plusieurs fois pour augmenter la probabilité d'apparition)
+                        biome.mobs_ids.append(mob_id)
+                    else:
+                        print(f"⚠️  Avertissement : Le mob de quête '{mob_id}' n'existe pas dans DEFINITIONS_ENNEMIS")
 
 
 def normaliser_nom_royaume(nom: str) -> str:
@@ -531,6 +573,7 @@ def attacher_biomes_depuis_valdoria(force: bool = False, sauvegarder_ennemis_dan
     # Essayer de charger depuis les .txt si disponibles
     if VALDORIA_DIR.exists():
         biomes_par_royaume = charger_biomes_valdoria()
+        # Les mobs de quêtes sont déjà ajoutés dans charger_biomes_valdoria()
         # Générer le fichier pré-généré pour les joueurs sans .txt
         generer_fichier_biomes(biomes_par_royaume)
         # Sauvegarder les ennemis générés dans data/ennemis.py si demandé
@@ -539,6 +582,8 @@ def attacher_biomes_depuis_valdoria(force: bool = False, sauvegarder_ennemis_dan
     else:
         # Charger depuis le fichier pré-généré
         biomes_par_royaume = charger_biomes_pre_generes()
+        # Ajouter les mobs de quêtes même si on charge depuis le fichier pré-généré
+        _ajouter_mobs_quetes_aux_biomes(biomes_par_royaume)
 
     for royaume_nom, biomes in biomes_par_royaume.items():
         royaume = TOUS_LES_ROYAUMES.get(royaume_nom)

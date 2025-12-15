@@ -30,7 +30,15 @@ def appliquer_bonus_debug(joueur, nom_personnage: str):
         # Niveau 1 à 20 = 19 niveaux * 3 points = 57 points
         joueur.points_attribut = 57
 
-        # Recalculer les stats avec le nouveau niveau
+        # Allouer automatiquement les points d'attribut : 40 en force, le reste en agilité
+        points_force = 40
+        points_agilite = 57 - points_force  # 17 points restants
+
+        joueur.force += points_force
+        joueur.agilite += points_agilite
+        joueur.points_attribut = 0  # Tous les points sont alloués
+
+        # Recalculer les stats avec le nouveau niveau et les attributs alloués
         joueur.mettre_a_jour_stats_apres_attributs()
 
         # Remettre la vie au maximum
@@ -49,7 +57,8 @@ def appliquer_bonus_debug(joueur, nom_personnage: str):
 
         print(f"   ✅ Niveau : {joueur.niveau}")
         print(f"   ✅ Or : {joueur.or_:,} pièces")
-        print(f"   ✅ Points d'attribut : {joueur.points_attribut}")
+        print(f"   ✅ Attributs alloués : {points_force} Force, {points_agilite} Agilité")
+        print(f"   ✅ Force totale : {joueur.force}, Agilité totale : {joueur.agilite}")
         print(f"   ✅ Royaume complété : Oui (téléportation débloquée)")
 
         # Ajouter des objets de test pour tester le système de vente

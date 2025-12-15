@@ -8,6 +8,7 @@ from world import (
     Chapitre,
     TypeChapitre,
 )
+from utils.affichage import effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS
 from world.data_loader import attacher_biomes_depuis_valdoria
 from combat import deroulement_combat
 
@@ -28,15 +29,15 @@ def menu_exploration_valdoria(joueur):
     systeme_chapitres = creer_systeme_chapitres_base(joueur, royaume_joueur)
 
     while True:
+        effacer_console()
         chapitre_actuel = systeme_chapitres.obtenir_chapitre_actuel()
 
         if not chapitre_actuel:
             print("\nErreur : Aucun chapitre actuel disponible.")
             break
 
-        print(f"\n{'='*60}")
-        print("--- EXPLORATION DE VALDORIA ---")
-        print(f"{'='*60}")
+        afficher_titre_menu_avec_emoji("EXPLORATION DE VALDORIA", "exploration")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
 
         # Afficher les informations du chapitre actuel
         chapitre_actuel.afficher_info()
@@ -46,10 +47,10 @@ def menu_exploration_valdoria(joueur):
         afficher_or(joueur)
 
         # Afficher les options
-        print("\nQue voulez-vous faire ?")
-        print("1. Explorer une zone")
-        print("2. Informations sur les royaumes")
-        print("3. Retour au menu principal")
+        print(f"\n{COULEURS['BLEU']}Que voulez-vous faire ?{COULEURS['RESET']}")
+        print("1. 🌍 Explorer une zone")
+        print("2. 📚 Informations sur les royaumes")
+        print("3. ⬅️  Retour au menu principal")
 
         choix = input("\nVotre choix : ")
 
@@ -79,9 +80,8 @@ def menu_selection_zone(joueur, royaume, systeme_chapitres: SystemeChapitres):
         print("Complétez les objectifs pour débloquer de nouvelles zones.")
         return
 
-    print(f"\n{'='*60}")
-    print("--- SÉLECTION DE ZONE ---")
-    print(f"{'='*60}")
+    afficher_titre_menu_avec_emoji("SÉLECTION DE ZONE", "zone")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
     print(f"\nChapitre actuel : {chapitre_actuel.numero} - {chapitre_actuel.titre}")
     print(f"Zones disponibles ({len(zones_accessibles)}) :\n")
 
@@ -100,10 +100,10 @@ def menu_selection_zone(joueur, royaume, systeme_chapitres: SystemeChapitres):
         print(f"{i}. {zone_id}{niveau_info} [{statut}]")
         zones_liste.append(zone_id)
 
-    print(f"{len(zones_liste) + 1}. Retour")
+    print(f"{len(zones_liste) + 1}. ⬅️  Retour")
 
     try:
-        choix = int(input("\nVotre choix : "))
+        choix = int(input(f"\n{COULEURS['BLEU']}Votre choix : {COULEURS['RESET']}"))
 
         if 1 <= choix <= len(zones_liste):
             zone_choisie = zones_liste[choix - 1]
@@ -120,6 +120,7 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
     """
     Explore une zone : menu d'actions (combat, parler aux PNJ, donjon).
     """
+    effacer_console()
     try:
         biome_cible = trouver_biome_par_nom(royaume, zone_id)
     except Exception as e:
@@ -169,9 +170,8 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
             zone_id_upper = zone_id.upper()
         except Exception:
             zone_id_upper = zone_id
-        print(f"\n{'='*60}")
-        print(f"--- {zone_id_upper} ---")
-        print(f"{'='*60}\n")
+        afficher_titre_menu_avec_emoji(zone_id_upper, "zone")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
 
         # Vérifier les PNJ présents dans la zone
         from data.pnjs_zones import obtenir_pnjs_zone, zone_contient_pnj
@@ -185,18 +185,12 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
         options = []
         option_num = 1
 
-        print("Que voulez-vous faire ?\n")
+        print(f"\n{COULEURS['BLEU']}Que voulez-vous faire ?{COULEURS['RESET']}\n")
 
         # Option 1 : Combattre
-        print(f"{option_num}. Combattre des ennemis")
+        print(f"{option_num}. ⚔️  Combattre des ennemis")
         options.append('combat')
         option_num += 1
-
-        # Option 2 : Parler aux PNJ (si présents)
-        if a_des_pnj:
-            print(f"{option_num}. Parler aux habitants")
-            options.append('pnj')
-            option_num += 1
 
         # Option 3 : Explorer le donjon (si disponible)
         if a_donjon:
@@ -209,7 +203,7 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
                 possede_cle = joueur_possede_cle_donjon(joueur, biome_cible.donjon_nom)
 
                 if possede_cle:
-                    print(f"{option_num}. Explorer le donjon : {biome_cible.donjon_nom}")
+                    print(f"{option_num}. 🏰 Explorer le donjon : {biome_cible.donjon_nom}")
                     options.append('donjon')
                     option_num += 1
                 else:
@@ -220,20 +214,20 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
                         cle_data = DEFINITIONS_OBJETS.get(cle_id)
                         if cle_data:
                             nom_cle = cle_data.get("nom", "clé")
-                    print(f"{option_num}. Explorer le donjon : {biome_cible.donjon_nom} 🔒 (Clé requise : {nom_cle})")
+                    print(f"{option_num}. 🏰 Explorer le donjon : {biome_cible.donjon_nom} {COULEURS['ROUGE']}🔒{COULEURS['RESET']} (Clé requise : {nom_cle})")
                     options.append('donjon_verrouille')
                     option_num += 1
             else:
                 # Ce donjon ne nécessite pas de clé (donjon non listé dans CLES_DONJONS)
-                print(f"{option_num}. Explorer le donjon : {biome_cible.donjon_nom}")
+                print(f"{option_num}. 🏰 Explorer le donjon : {biome_cible.donjon_nom}")
                 options.append('donjon')
                 option_num += 1
 
         # Option retour
-        print(f"{option_num}. Retour")
+        print(f"{option_num}. ⬅️  Retour")
         options.append('retour')
 
-        choix = input("\nVotre choix : ")
+        choix = input(f"\n{COULEURS['BLEU']}Votre choix : {COULEURS['RESET']}")
 
         try:
             choix_int = int(choix)
@@ -378,15 +372,15 @@ def _explorer_donjon(joueur, biome_cible, zone_id: str, systeme_chapitres: Syste
     except Exception:
         # En cas d'erreur avec upper() (caractères spéciaux), utiliser le nom tel quel
         donjon_nom_upper = biome_cible.donjon_nom
-    print(f"--- {donjon_nom_upper} ---")
-    print(f"{'='*60}\n")
+    afficher_titre_menu_avec_emoji(donjon_nom_upper, "donjon")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
 
     if biome_cible.description:
-        print(f"{biome_cible.description}\n")
+        print(f"\n{biome_cible.description}\n")
 
-    print("⚠️  Attention : Entrer dans ce donjon vous mènera à travers une série de combats")
-    print("   contre les créatures qui y résident, puis vous affronterez le gardien final.")
-    print("   Assurez-vous d'être prêt avant de continuer.\n")
+    print(f"{COULEURS['JAUNE']}⚠️  Attention : Entrer dans ce donjon vous mènera à travers une série de combats{COULEURS['RESET']}")
+    print(f"{COULEURS['JAUNE']}   contre les créatures qui y résident, puis vous affronterez le gardien final.{COULEURS['RESET']}")
+    print(f"{COULEURS['JAUNE']}   Assurez-vous d'être prêt avant de continuer.{COULEURS['RESET']}\n")
 
     while True:
         reponse = input("Voulez-vous entrer dans le donjon ? (o/n): ").strip().lower()
@@ -414,9 +408,9 @@ def _explorer_donjon(joueur, biome_cible, zone_id: str, systeme_chapitres: Syste
         input("Appuyez sur Entrée pour commencer...")
 
         for combat_num in range(1, nombre_combats_mobs + 1):
-            print(f"\n{'='*60}")
-            print(f"--- COMBAT {combat_num}/{nombre_combats_mobs} ---")
-            print(f"{'='*60}\n")
+            afficher_titre_menu_avec_emoji(f"COMBAT {combat_num}/{nombre_combats_mobs}", "combat")
+            afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+            print()
 
             # Obtenir des mobs aléatoires du biome (1-2 mobs par combat selon la difficulté)
             nombre_mobs = 1 if biome_cible.difficulte <= 2 else 2
@@ -454,9 +448,9 @@ def _explorer_donjon(joueur, biome_cible, zone_id: str, systeme_chapitres: Syste
 
     # Combat final contre le boss
     if biome_cible.boss_id:
-        print(f"\n{'='*60}")
-        print(f"--- AFFRONTEMENT FINAL ---")
-        print(f"{'='*60}\n")
+        afficher_titre_menu_avec_emoji("AFFRONTEMENT FINAL", "combat")
+        afficher_separateur(style="simple", couleur=COULEURS["ROUGE"])
+        print()
         print(f"Le gardien de {biome_cible.donjon_nom} se dresse devant vous !")
         print("C'est maintenant ou jamais...\n")
 

@@ -1,23 +1,23 @@
 {
     "nom": "SKR",
     "race": "Démon",
-    "specialisation_nom": "Corrupteur",
-    "force": 2,
-    "agilite": 7,
+    "specialisation_nom": "Cendrelame",
+    "force": 47,
+    "agilite": 25,
     "vitalite": 3,
-    "intelligence": 8,
+    "intelligence": 2,
     "niveau": 20,
     "xp": 0,
     "xp_requise": 221683,
-    "points_attribut": 57,
+    "points_attribut": 0,
     "vie": 160,
-    "mana": 111,
-    "energie": 0.0,
+    "mana": 0.0,
+    "energie": 339,
     "rage": 0.0,
     "arme": "Épée Longue",
     "capacites_apprises": [
         {
-            "id": "malediction_affaiblissement",
+            "id": "lame_incandescente",
             "niveau_amelioration": 1
         }
     ],
@@ -144,13 +144,13 @@
     "royaume_actuel": null,
     "temps_jeu_secondes": 0,
     "metadonnees": {
-        "date_sauvegarde": "2025-12-12T20:29:09.854434",
+        "date_sauvegarde": "2025-12-15T18:55:09.966875",
         "niveau": 20,
         "race": "Démon",
-        "specialisation": "Corrupteur",
+        "specialisation": "Cendrelame",
         "royaume_actuel": "Vrak'thar",
         "capitale_actuelle": "Erebus",
-        "temps_jeu_secondes": 90.107657,
+        "temps_jeu_secondes": 10.884744,
         "or": 100000,
         "xp": 0,
         "xp_requise": 221683

@@ -255,6 +255,7 @@ def _equiper_arme_depuis_liste(joueur, armes_disponibles):
 
                 joueur.retirer_objet(nom_objet, 1)
                 joueur.equiper_arme(arme)
+                afficher_message_confirmation(f"Vous avez équipé {arme.nom}.", "succes")
                 input("\nAppuyez sur Entrée pour continuer...")
                 return True
             else:
@@ -330,6 +331,7 @@ def _equiper_armure_depuis_liste(joueur, armures_disponibles, type_nom):
 
                 joueur.retirer_objet(nom_objet, 1)
                 joueur.equiper_armure(armure)
+                afficher_message_confirmation(f"Vous avez équipé {armure.nom}.", "succes")
                 input("\nAppuyez sur Entrée pour continuer...")
                 return True
             else:
@@ -351,9 +353,10 @@ def _equiper_armure_depuis_liste(joueur, armures_disponibles, type_nom):
 def menu_equiper_equipement(joueur):
     """Menu unifié pour équiper tous les types d'équipements"""
     while True:
-        print(f"\n{'='*60}")
-        print("--- ÉQUIPER UN ÉQUIPEMENT ---")
-        print(f"{'='*60}\n")
+        effacer_console()
+        afficher_titre_menu("ÉQUIPER UN ÉQUIPEMENT", couleur=COULEURS["CYAN"])
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+        print()
 
         # Afficher les équipements actuellement équipés
         print("Équipements actuellement équipés :")

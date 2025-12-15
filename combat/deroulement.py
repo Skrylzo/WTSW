@@ -46,20 +46,23 @@ def calculer_or_ennemi(ennemi_data, xp_a_donner):
     return max(1, or_par_defaut)  # Minimum 1 pièce d'or
 
 def debut_combat(joueur, ennemis):
-    print("\n--- DÉBUT DU COMBAT ---")
+    from utils.affichage import COULEURS
+    print(f"\n{COULEURS['MAGENTA']}{'='*60}{COULEURS['RESET']}")
+    print(f"{COULEURS['MAGENTA']}--- DÉBUT DU COMBAT ---{COULEURS['RESET']}")
+    print(f"{COULEURS['MAGENTA']}{'='*60}{COULEURS['RESET']}")
     # Appliquer les effets avec condition "debut"
     joueur.appliquer_effets(phase='debut')
     for ennemi in ennemis:
         ennemi.appliquer_effets(phase='debut')
 
     barre_vie_joueur = creer_barre_vie(joueur.vie, joueur.vie_max)
-    print(f"{joueur.nom} - Vie: {barre_vie_joueur} {joueur.vie:.1f}/{joueur.vie_max:.1f}")
-    print(f"\n{joueur.nom} affronte :")
+    print(f"\n{COULEURS['CYAN']}[JOUEUR] {joueur.nom}{COULEURS['RESET']} - Vie: {barre_vie_joueur} {int(joueur.vie)}/{int(joueur.vie_max)}")
+    print(f"\n{COULEURS['ROUGE']}VS{COULEURS['RESET']}\n")
     for ennemi in ennemis:
         barre_vie_ennemi = creer_barre_vie(ennemi.vie, ennemi.vie_max)
-        print(f"{ennemi.nom} - Vie: {barre_vie_ennemi} {ennemi.vie:.1f}/{ennemi.vie_max:.1f}")
-        print(f"  Attaque: {ennemi.attaque:.1f} | Défense: {ennemi.defense:.1f} | Vitesse: {ennemi.vitesse:.1f}")
-    print("-" * 30)
+        print(f"{COULEURS['ROUGE']}[ENNEMI] {ennemi.nom}{COULEURS['RESET']} - Vie: {barre_vie_ennemi} {int(ennemi.vie)}/{int(ennemi.vie_max)}")
+        print(f"  Attaque: {int(ennemi.attaque)} | Défense: {int(ennemi.defense)} | Vitesse: {int(ennemi.vitesse)}")
+    print(f"{COULEURS['MAGENTA']}{'-'*60}{COULEURS['RESET']}")
 
 def tour_joueur(joueur, ennemis):
     """
@@ -336,10 +339,11 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
             or_ennemi = calculer_or_ennemi(ennemi_data, xp_ennemi)
             total_or_gagne += or_ennemi
 
-            # Afficher les récompenses de cet ennemi
-            print(f"\n{ennemi.nom}:")
-            print(f"  ✓ +{xp_ennemi} XP")
-            print(f"  ✓ +{or_ennemi} pièces d'or")
+            # Afficher les récompenses de cet ennemi avec couleurs
+            from utils.affichage import COULEURS, formater_nombre
+            print(f"\n{COULEURS['CYAN']}{ennemi.nom}:{COULEURS['RESET']}")
+            print(f"  {COULEURS['VERT']}✓ +{formater_nombre(xp_ennemi)} XP{COULEURS['RESET']}")
+            print(f"  {COULEURS['JAUNE']}✓ +{formater_nombre(or_ennemi)} pièces d'or{COULEURS['RESET']}")
 
             # Gérer le loot de cet ennemi
             if ennemi.loot_table:
@@ -409,12 +413,16 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
                     if obj_id_trouve:
                         progresser_quetes_collecter_objet(joueur, obj_id_trouve, quantite=1)
 
-                    # Afficher l'objet obtenu (utiliser le nom d'affichage)
+                    # Afficher l'objet obtenu avec couleur selon la rareté
+                    from utils.affichage import COULEURS
+                    from menus.inventaire import COULEURS_RARETE, RESET_COULEUR
                     quantite_apres = joueur.compter_objet(nom_affichage)
+                    rarete_objet = objet_data.get("rarete", "commun") if objet_data else "commun"
+                    couleur_rarete = COULEURS_RARETE.get(rarete_objet.lower(), COULEURS['RESET'])
                     if quantite_avant == 0:
-                        print(f"  ✓ {nom_affichage} ajouté à l'inventaire")
+                        print(f"  {COULEURS['VERT']}✓ {couleur_rarete}{nom_affichage}{RESET_COULEUR} ajouté à l'inventaire{COULEURS['RESET']}")
                     else:
-                        print(f"  ✓ {nom_affichage} (quantité: {quantite_avant} → {quantite_apres})")
+                        print(f"  {COULEURS['VERT']}✓ {couleur_rarete}{nom_affichage}{RESET_COULEUR} (quantité: {quantite_avant} → {quantite_apres}){COULEURS['RESET']}")
 
                     objets_ennemi.append(nom_loot)
                     objets_obtenus.append(nom_loot)
@@ -422,26 +430,31 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
             # Gérer le loot d'ingrédients pour cet ennemi (1 ingrédient aléatoire parmi les 3 possibles)
             ingredients_obtenus = ajouter_ingredients_a_inventaire(joueur, ennemi.nom, niveau_biome)
             if ingredients_obtenus:
+                from utils.affichage import COULEURS, formater_nombre
                 ingredient = ingredients_obtenus[0]  # Un seul ingrédient est obtenu
                 quantite = joueur.compter_objet(ingredient.nom)
                 if quantite == 1:
-                    print(f"  ✓ Ingrédient obtenu : {ingredient.nom}")
+                    print(f"  {COULEURS['VERT']}✓ Ingrédient obtenu : {ingredient.nom}{COULEURS['RESET']}")
                 else:
-                    print(f"  ✓ Ingrédient obtenu : {ingredient.nom} (quantité: {quantite})")
+                    print(f"  {COULEURS['VERT']}✓ Ingrédient obtenu : {ingredient.nom} (quantité: {formater_nombre(quantite)}){COULEURS['RESET']}")
                 objets_obtenus.append(ingredient.nom)
 
             # Afficher "Aucun objet obtenu" seulement si vraiment aucun objet n'a été obtenu
             if not objets_obtenus:
                 print("  (Aucun objet obtenu)")
 
-        # Distribuer XP et Or au joueur
+        # Distribuer XP et Or au joueur avec formatage
         if total_xp_gagnee > 0:
+            from utils.affichage import COULEURS, formater_nombre
             joueur.gagner_xp(total_xp_gagnee)
+            print(f"\n{COULEURS['VERT']}Total gagné : +{formater_nombre(total_xp_gagnee)} XP{COULEURS['RESET']}")
 
         if total_or_gagne > 0:
             # Import local pour éviter la dépendance circulaire
             from menus.monnaie import ajouter_or, obtenir_or_joueur
+            from utils.affichage import COULEURS, formater_nombre
             ajouter_or(joueur, total_or_gagne)
+            print(f"{COULEURS['JAUNE']}Total gagné : +{formater_nombre(total_or_gagne)} pièces d'or{COULEURS['RESET']}")
 
         # Progresser les quêtes : ennemis tués
         if hasattr(joueur, 'systeme_quetes'):

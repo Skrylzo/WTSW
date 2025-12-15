@@ -36,7 +36,7 @@ dans les profondeurs de la forêt. Vous devez découvrir ce qu'ils convoitent.""
             ObjectifQuete(TypeObjectif.TUER_ENNEMI, "Éliminer les agents de l'Ordre", "agent_ordre", 3),
             ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Récupérer le journal d'un agent", "journal_agent", 1)
         ],
-        recompenses={"xp": 1000, "or": 400},
+        recompenses={"xp": 1000, "or": 400, "objets": ["cle_donjon_aerthos_3"]},
         prerequis=["aerthos_1_disparitions"],
         niveau_requis=3
     ),
@@ -54,7 +54,7 @@ qui c'est avant qu'il ne soit trop tard.""",
             ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Trouver la preuve de la trahison", "preuve_trahison", 1),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Confronter le traître", "traître_aerthos", 1)
         ],
-        recompenses={"xp": 1500, "or": 600},
+        recompenses={"xp": 1500, "or": 600, "objets": ["cle_donjon_aerthos_4"]},
         prerequis=["aerthos_2_rituel_interrompu"],
         niveau_requis=5
     ),
@@ -74,7 +74,7 @@ la forêt, mais la relique est déjà perdue.""",
             ObjectifQuete(TypeObjectif.COMPLETER_DONJON, "Arrêter le rituel de corruption", "rituel_corruption", 1),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Informer le Roi Aerion de la perte de la relique", "roi_aerion", 1)
         ],
-        recompenses={"xp": 2000, "or": 1000},
+        recompenses={"xp": 2000, "or": 1000, "objets": ["cle_donjon_aerthos_5"]},
         prerequis=["aerthos_3_traison_revelee"],
         niveau_requis=8
     )
@@ -113,7 +113,7 @@ cherche à comprendre comment briser les sceaux.""",
             ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Récupérer les plans volés", "plans_anciens", 1),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Parler à Zamir Oural", "Zamir", 1)
         ],
-        recompenses={"xp": 1000, "or": 400},
+        recompenses={"xp": 1000, "or": 400, "objets": ["cle_donjon_khazak_1"]},
         prerequis=["khazak_1_sabotage_mines"],
         niveau_requis=3
     ),
@@ -131,7 +131,7 @@ l'emplacement de la relique de Durin le Fondateur.""",
             ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Trouver la preuve de la corruption", "preuve_corruption", 1),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Confronter le traître", "traître_khazak", 1)
         ],
-        recompenses={"xp": 1500, "or": 600},
+        recompenses={"xp": 1500, "or": 600, "objets": ["cle_donjon_khazak_4"]},
         prerequis=["khazak_2_secrets_voles"],
         niveau_requis=5
     ),
@@ -151,7 +151,7 @@ le mécanisme destructeur, mais la relique est déjà perdue.""",
             ObjectifQuete(TypeObjectif.TUER_ENNEMI, "Éliminer les agents de l'Ordre", "agent_ordre", 5),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Informer les dirigeants de la perte de la relique", "dirigeant_khazak", 1)
         ],
-        recompenses={"xp": 2000, "or": 1000},
+        recompenses={"xp": 2000, "or": 1000, "objets": ["cle_donjon_khazak_2"]},
         prerequis=["khazak_3_traison_clan"],
         niveau_requis=8
     )
@@ -190,7 +190,7 @@ les secrets de la relique d'Hélios le Premier.""",
             ObjectifQuete(TypeObjectif.COMPLETER_DONJON, "Nettoyer l'Observatoire des Astres", "Observatoire_Astres", 1),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Parler à Dame Seraphina Veritas", "Seraphina", 1)
         ],
-        recompenses={"xp": 1000, "or": 400},
+        recompenses={"xp": 1000, "or": 400, "objets": ["cle_donjon_luthesia_1"]},
         prerequis=["luthesia_1_brigands_organises"],
         niveau_requis=3
     ),
@@ -208,7 +208,7 @@ qui avant qu'il ne révèle l'emplacement de la relique d'Hélios.""",
             ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Trouver la preuve de la trahison", "preuve_trahison_luthesia", 1),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Confronter le traître", "traître_luthesia", 1)
         ],
-        recompenses={"xp": 1500, "or": 600},
+        recompenses={"xp": 1500, "or": 600, "objets": ["cle_donjon_luthesia_3"]},
         prerequis=["luthesia_2_magie_corrompue"],
         niveau_requis=5
     ),
@@ -228,7 +228,7 @@ mais la relique est déjà perdue.""",
             ObjectifQuete(TypeObjectif.COMPLETER_DONJON, "Purifier l'Observatoire", "purification", 1),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Informer le Roi Magnus de la perte de la relique", "roi_magnus", 1)
         ],
-        recompenses={"xp": 2000, "or": 1000},
+        recompenses={"xp": 2000, "or": 1000, "objets": ["cle_donjon_luthesia_4"]},
         prerequis=["luthesia_3_traison_cour"],
         niveau_requis=8
     )
@@ -267,7 +267,7 @@ comprendre comment briser le sceau du Roi Démon. Vous devez découvrir où se t
             ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Trouver des documents sur l'ancien Roi Démon", "document_krathos", 1),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Parler à un gardien ancien", "gardien_ancien", 1)
         ],
-        recompenses={"xp": 1000, "or": 400},
+        recompenses={"xp": 1000, "or": 400, "objets": ["cle_donjon_vrakthar_4"]},
         prerequis=["vrakthar_1_rituels_sombres"],
         niveau_requis=3
     ),
@@ -285,7 +285,7 @@ qui est le traître avant qu'il ne révèle l'emplacement de la relique de l'anc
             ObjectifQuete(TypeObjectif.COLLECTER_OBJET, "Trouver la preuve de la trahison", "preuve_trahison_vrakthar", 1),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Confronter le traître", "traître_vrakthar", 1)
         ],
-        recompenses={"xp": 1500, "or": 600},
+        recompenses={"xp": 1500, "or": 600, "objets": ["cle_donjon_vrakthar_5"]},
         prerequis=["vrakthar_2_secret_krathos"],
         niveau_requis=5
     ),
@@ -305,7 +305,7 @@ la relique est déjà perdue.""",
             ObjectifQuete(TypeObjectif.COMPLETER_DONJON, "Arrêter le rituel de corruption", "rituel_corruption_vrakthar", 1),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Informer les dirigeants démoniaques de la perte de la relique", "dirigeant_vrakthar", 1)
         ],
-        recompenses={"xp": 2000, "or": 1000},
+        recompenses={"xp": 2000, "or": 1000, "objets": ["cle_donjon_vrakthar_6"]},
         prerequis=["vrakthar_3_traison_demons"],
         niveau_requis=8
     )

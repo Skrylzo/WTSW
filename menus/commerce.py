@@ -8,6 +8,7 @@ from classes.objet import Objet
 from data.objets import DEFINITIONS_OBJETS
 from data.categories_ingredients import INGREDIENTS_SPECIAUX
 from .monnaie import obtenir_or_joueur, ajouter_or, retirer_or, afficher_or
+from utils.affichage import effacer_console, afficher_titre_menu, afficher_separateur, afficher_message_confirmation, formater_nombre, COULEURS
 
 
 def calculer_prix_vente(objet: Objet) -> tuple[int, dict]:
@@ -121,10 +122,11 @@ def menu_commerce(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
     Menu de commerce : achat et vente d'objets.
     """
     while True:
-        print(f"\n{'='*60}")
-        print("--- COMMERCE ---")
+        effacer_console()
+        afficher_titre_menu("COMMERCE", couleur=COULEURS["CYAN"])
         afficher_or(joueur)
-        print(f"{'='*60}")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+        print("\nOptions disponibles :")
         print("1. Acheter des objets")
         print("2. Vendre des objets")
         print("3. Retour")
@@ -146,10 +148,10 @@ def menu_achat(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
     Menu d'achat d'objets.
     TODO: Intégrer les objets disponibles dans les features de commerce.
     """
-    print(f"\n{'='*60}")
-    print("--- ACHAT ---")
+    effacer_console()
+    afficher_titre_menu("ACHAT", couleur=COULEURS["VERT"])
     afficher_or(joueur)
-    print(f"{'='*60}")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
 
     # Liste d'objets de base disponibles à l'achat
     objets_disponibles = {
@@ -204,8 +206,9 @@ def menu_achat(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
                     )
                     joueur.ajouter_objet(nouvel_objet)
                     retirer_or(joueur, prix_total)
-                    print(f"\n✓ Vous avez acheté {quantite}x {nom_objet} pour {prix_total} pièces.")
-                    print(f"Or restant : {obtenir_or_joueur(joueur)} pièces")
+                    afficher_message_confirmation(f"Vous avez acheté {quantite}x {nom_objet} pour {formater_nombre(prix_total)} pièces.", "succes")
+                    print(f"Or restant : {formater_nombre(obtenir_or_joueur(joueur))} pièces")
+                    input("\nAppuyez sur Entrée pour continuer...")
                 elif obj_id and obj_id in DEFINITIONS_OBJETS:
                     obj_def = DEFINITIONS_OBJETS[obj_id]
                     nouvel_objet = Objet(
@@ -222,7 +225,8 @@ def menu_achat(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
                 else:
                     print("Erreur : Objet introuvable dans les définitions.")
             else:
-                print(f"\n✗ Vous n'avez pas assez d'or. Prix : {prix_total}, Or actuel : {or_actuel}")
+                afficher_message_confirmation(f"Vous n'avez pas assez d'or. Prix : {formater_nombre(prix_total)}, Or actuel : {formater_nombre(or_actuel)}", "erreur")
+                input("\nAppuyez sur Entrée pour continuer...")
         elif choix == len(objets_disponibles) + 1:
             return
         else:
@@ -235,10 +239,10 @@ def menu_vente(joueur):
     """
     Menu de vente d'objets avec affichage détaillé des prix.
     """
-    print(f"\n{'='*60}")
-    print("--- VENTE ---")
+    effacer_console()
+    afficher_titre_menu("VENTE", couleur=COULEURS["JAUNE"])
     afficher_or(joueur)
-    print(f"{'='*60}")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
 
     if not joueur.inventaire:
         print("\nVotre inventaire est vide.")
@@ -298,12 +302,12 @@ def menu_vente(joueur):
             prix_total = prix_unitaire * quantite
 
             # Afficher un résumé détaillé avant confirmation
-            print(f"\n{'='*60}")
-            print(f"Résumé de la vente :")
-            print(f"{'='*60}")
+            afficher_separateur(couleur=COULEURS["CYAN"])
+            print(f"\n{COULEURS['CYAN']}Résumé de la vente :{COULEURS['RESET']}")
+            afficher_separateur(style="simple", couleur=COULEURS["CYAN"])
             print(f"Objet : {nom_objet}")
             print(f"Quantité : {quantite}")
-            print(f"Prix unitaire : {prix_unitaire} pièces")
+            print(f"Prix unitaire : {formater_nombre(prix_unitaire)} pièces")
             if details["bonus_stats"] > 0 or details["bonus_niveau"] > 0:
                 print(f"\nDétail du prix unitaire :")
                 print(f"  • Prix de base ({objet.rarete or 'sans rareté'}) : {details['prix_base']} pièces")
@@ -312,12 +316,13 @@ def menu_vente(joueur):
                 if details["bonus_niveau"] > 0:
                     print(f"  • Bonus niveau biome ({objet.niveau_biome}) : +{details['bonus_niveau']} pièces")
                 print(f"  • Multiplicateur type ({objet.type}) : x{details['multiplicateur_type']}")
-            print(f"\nPrix total : {prix_total} pièces")
-            print(f"{'='*60}")
+            print(f"\n{COULEURS['VERT']}Prix total : {formater_nombre(prix_total)} pièces{COULEURS['RESET']}")
+            afficher_separateur(couleur=COULEURS["CYAN"])
 
-            confirmation = input("\nConfirmer la vente ? (o/n) : ").strip().lower()
+            confirmation = input(f"\n{COULEURS['JAUNE']}Confirmer la vente ? (o/n) : {COULEURS['RESET']}").strip().lower()
             if confirmation not in ('o', 'oui', 'y', 'yes'):
-                print("Vente annulée.")
+                afficher_message_confirmation("Vente annulée.", "info")
+                input("\nAppuyez sur Entrée pour continuer...")
                 return
 
             # Retirer l'objet
@@ -326,8 +331,8 @@ def menu_vente(joueur):
             # Ajouter l'or
             ajouter_or(joueur, prix_total)
 
-            print(f"\n✓ Vous avez vendu {quantite}x {nom_objet} pour {prix_total} pièces.")
-            print(f"Or actuel : {obtenir_or_joueur(joueur)} pièces")
+            afficher_message_confirmation(f"Vous avez vendu {quantite}x {nom_objet} pour {formater_nombre(prix_total)} pièces.", "succes")
+            print(f"Or actuel : {formater_nombre(obtenir_or_joueur(joueur))} pièces")
             input("\nAppuyez sur Entrée pour continuer...")
         elif choix == len(objets_liste) + 1:
             return

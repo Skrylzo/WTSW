@@ -9,6 +9,7 @@ from data.histoire_principale import QUETES_PRINCIPALES, INTRODUCTION_HISTOIRE_P
 from data.quetes_royaume import TOUTES_LES_QUETES_ROYAUME
 from data.quetes_secondaires import TOUTES_LES_QUETES_SECONDAIRES
 from data.pnjs_quetes import initialiser_pnjs
+from utils.affichage import effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS
 
 # Initialiser les PNJ au chargement du module
 initialiser_pnjs()
@@ -50,18 +51,18 @@ def menu_quetes(joueur, hub: HubCapital, features_quetes: List[HubFeature], syst
         systeme_quetes = initialiser_systeme_quetes()
 
     while True:
-        print(f"\n{'='*60}")
-        print("--- JOURNAL DE QUÊTES ---")
-        print(f"{'='*60}")
+        effacer_console()
+        afficher_titre_menu_avec_emoji("JOURNAL DE QUÊTES", "quetes")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
 
         # Menu d'actions
-        print("\nOptions :")
-        print("1. Voir les quêtes en cours")
-        print("2. Voir les quêtes complétées")
-        print("3. Voir l'histoire principale")
-        print("4. Retour")
+        print(f"\n{COULEURS['VERT']}Options disponibles :{COULEURS['RESET']}")
+        print("1. 📋 Voir les quêtes en cours")
+        print("2. ✅ Voir les quêtes complétées")
+        print("3. 📖 Voir l'histoire principale")
+        print("4. ⬅️  Retour")
 
-        choix = input("\nVotre choix : ").strip()
+        choix = input(f"\n{COULEURS['VERT']}Votre choix : {COULEURS['RESET']}").strip()
 
         if choix == '1':
             afficher_quetes_en_cours_details(systeme_quetes, joueur)

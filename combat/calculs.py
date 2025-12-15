@@ -67,14 +67,31 @@ def esquive(vitesse_attaquant, vitesse_defenseur):
 
 def creer_barre_vie(vie_actuelle, vie_max, longueur=20):
     """
-    Crée une barre de vie visuelle.
+    Crée une barre de vie visuelle avec couleurs selon le pourcentage.
     :param vie_actuelle: Vie actuelle
     :param vie_max: Vie maximale
     :param longueur: Longueur de la barre en caractères
-    :return: String représentant la barre de vie
+    :return: String représentant la barre de vie avec codes couleur
     """
+    from utils.affichage import COULEUR_VIE_HAUTE, COULEUR_VIE_MOYENNE, COULEUR_VIE_BASSE, COULEURS
+
     if vie_max <= 0:
         return "[" + "-" * longueur + "]"
+
+    # Calculer le pourcentage de vie
+    pourcentage_vie = (vie_actuelle / vie_max) * 100
+
+    # Choisir la couleur selon le pourcentage
+    if pourcentage_vie > 60:
+        couleur = COULEUR_VIE_HAUTE
+    elif pourcentage_vie > 30:
+        couleur = COULEUR_VIE_MOYENNE
+    else:
+        couleur = COULEUR_VIE_BASSE
+
     vie_pct = int((vie_actuelle / vie_max) * longueur)
-    barre = "[" + "#" * vie_pct + "-" * (longueur - vie_pct) + "]"
+    barre_pleine = "█" * vie_pct
+    barre_vide = "░" * (longueur - vie_pct)
+    barre = f"{couleur}[{barre_pleine}{barre_vide}]{COULEURS['RESET']}"
+
     return barre

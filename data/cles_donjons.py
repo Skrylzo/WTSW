@@ -30,6 +30,13 @@ def _normaliser_nom_donjon(nom: str) -> str:
         'M�c�ne': 'Mécène',
         '�mes': 'Âmes',
         'D�prav�es': 'Dépravées',
+        'Obscurit�': 'Obscurité',
+        'Oubli�': 'Oublié',
+        'Oubli�s': 'Oubliés',
+        'Cr�tes': 'Crêtes',
+        'Balay�es': 'Balayées',
+        'Ing�nierie': 'Ingénierie',
+        '�ge': 'Âge',
     }
 
     for old, new in replacements.items():

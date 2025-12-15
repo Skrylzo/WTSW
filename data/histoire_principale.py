@@ -36,7 +36,7 @@ Des disparitions, des objets volés, des rituels suspects. Quelque chose ne tour
 mais vous n'avez pas encore de preuves concrètes. Explorez votre royaume et découvrez ce qui se cache derrière ces mystères.""",
         type_quete=TypeQuete.PRINCIPALE,
         objectifs=[
-            ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Explorer 2 zones de votre royaume", "zone", 2),
+            ObjectifQuete(TypeObjectif.EXPLORER_ZONE, "Compléter 2 zones de votre royaume", "zone", 2),
             ObjectifQuete(TypeObjectif.PARLER_PNJ, "Parler à votre mentor dans la capitale", "mentor", 1)
         ],
         recompenses={"xp": 500, "or": 200},

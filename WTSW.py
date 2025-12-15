@@ -12,15 +12,18 @@ from menus import (
 )
 from combat import deroulement_combat
 from world import teleporter_joueur_vers_capitale
+from utils.affichage import effacer_console
 
 if __name__ == "__main__":
     joueur_principal = None
     joueur_principal = menu_principal() # menu_principal retourne le joueur créé/chargé ou None si on quitte
 
     if joueur_principal: # S'assurer qu'un joueur a bien été créé ou chargé
+        effacer_console()
         print("\n--- DÉBUT DE L'AVENTURE ---")
 
         while joueur_principal.est_vivant:
+            effacer_console()
             print("\n" + "="*60)
             print("--- MENU PRINCIPAL ---")
             print("="*60)

@@ -99,7 +99,9 @@ def verifier_deblocage_quetes_apres_completion(joueur, quete_completee_id: str):
                     from world.pnj import obtenir_pnj
                     mentor = obtenir_pnj(mentor_id) if mentor_id else None
                     if mentor:
-                        print(f"\n💡 {mentor.nom} a une nouvelle mission pour vous. Parlez-lui pour en savoir plus.")
+                        VERT = "\033[92m"
+                        RESET = "\033[0m"
+                        print(f"\n{VERT}💡 {mentor.nom} a une nouvelle mission pour vous. Retournez lui parler dans la capitale pour la recevoir.{RESET}")
 
     # Pour les quêtes principales : débloquer et accepter automatiquement
     elif quete_completee.type_quete == TypeQuete.PRINCIPALE:

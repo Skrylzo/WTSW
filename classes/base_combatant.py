@@ -48,7 +48,9 @@ class BaseCombatant:
         self.vie = min(self.vie, self.vie_max) # Ne pas dépasser la vie max
         vie_recuperee = self.vie - vie_avant
         if afficher_message and vie_recuperee > 0:
-            print(f"{self.nom} récupère {vie_recuperee:.1f} points de vie. Vie actuelle : {self.vie:.1f}/{self.vie_max:.1f}")
+            from utils.affichage import COULEURS, formater_nombre
+            vie_recuperee_int = int(vie_recuperee)
+            print(f"{COULEURS['VERT']}💚 {self.nom} récupère {formater_nombre(vie_recuperee_int)} points de vie. Vie actuelle : {int(self.vie)}/{int(self.vie_max)}{COULEURS['RESET']}")
         return vie_recuperee
 
     def attaquer(self, cible):

@@ -55,11 +55,17 @@ def progresser_quetes_explorer_zone(joueur, zone_id: str, types_quetes=None):
             'Phon�tique': 'Phonétique',
             'sugg�r�e': 'suggérée',
             'Phon�tique sugg�r�e': 'Phonétique suggérée',
+            'For�t': 'Forêt',
+            'Lumi�re': 'Lumière',
+            'Argent�e': 'Argentée',
+            'For�t de Lumi�re Argent�e': 'Forêt de Lumière Argentée',
         }
         for old, new in replacements.items():
             nom = nom.replace(old, new)
         # Normaliser les caractères Unicode (NFD -> NFC)
         nom = unicodedata.normalize('NFC', nom)
+        # Convertir en minuscules pour la comparaison (insensible à la casse)
+        nom = nom.lower()
         return nom.strip()
 
     zone_id_normalise = normaliser_zone(zone_id)
@@ -255,7 +261,8 @@ def _verifier_et_completer_quetes(joueur, systeme_quetes: SystemeQuetes):
 
     for quete_id in quetes_a_verifier:
         quete = systeme_quetes.obtenir_quete(quete_id)
-        if quete and quete.statut.value == "en_cours" and quete.est_complete():
+        from world.quetes import StatutQuete
+        if quete and quete.statut == StatutQuete.EN_COURS and quete.est_complete():
             # Compléter la quête et obtenir les récompenses
             succes, recompenses = systeme_quetes.completer_quete(quete_id)
 
@@ -278,23 +285,28 @@ def _appliquer_recompenses(joueur, quete, recompenses: dict):
     :param quete: La quête complétée
     :param recompenses: Dictionnaire des récompenses
     """
-    print(f"\n{'='*60}")
-    print(f"🎉 QUÊTE COMPLÉTÉE : {quete.nom}")
-    print(f"{'='*60}")
-    print("Récompenses obtenues :")
+    from utils.affichage import COULEURS, formater_nombre
+
+    VERT = COULEURS["VERT"]
+    RESET = COULEURS["RESET"]
+
+    print(f"\n{VERT}{'='*60}{RESET}")
+    print(f"{VERT}🎉 QUÊTE COMPLÉTÉE : {quete.nom}{RESET}")
+    print(f"{VERT}{'='*60}{RESET}")
+    print(f"{VERT}Récompenses obtenues :{RESET}")
 
     # XP
     if "xp" in recompenses and recompenses["xp"] > 0:
         xp_gagnee = recompenses["xp"]
         joueur.gagner_xp(xp_gagnee)
-        print(f"  ✓ +{xp_gagnee} XP")
+        print(f"  {VERT}✓ +{formater_nombre(xp_gagnee)} XP{RESET}")
 
     # Or
     if "or" in recompenses and recompenses["or"] > 0:
         or_gagne = recompenses["or"]
         from menus.monnaie import ajouter_or
         ajouter_or(joueur, or_gagne)
-        print(f"  ✓ +{or_gagne} pièces d'or")
+        print(f"  {VERT}✓ +{formater_nombre(or_gagne)} pièces d'or{RESET}")
 
     # Objets
     if "objets" in recompenses and recompenses["objets"]:
@@ -322,15 +334,22 @@ def _appliquer_recompenses(joueur, quete, recompenses: dict):
                 # Ajouter à l'inventaire
                 joueur.ajouter_objet(objet)
                 objets_obtenus.append(nom_objet)
-                print(f"  ✓ {nom_objet}")
+                # Afficher avec couleur selon la rareté
+                from menus.inventaire import COULEURS_RARETE, RESET_COULEUR
+                couleur_rarete = COULEURS_RARETE.get(rarete.lower() if rarete else "commun", RESET_COULEUR)
+                print(f"  {VERT}✓ {couleur_rarete}{nom_objet}{RESET_COULEUR}{RESET}")
             else:
                 # Fallback : créer un objet par défaut si non trouvé
                 objet = Objet(nom=objet_id, type_objet="matériau", quantite=1)
                 joueur.ajouter_objet(objet)
                 objets_obtenus.append(objet_id)
-                print(f"  ✓ {objet_id}")
+                print(f"  {VERT}✓ {objet_id}{RESET}")
 
         if objets_obtenus:
             print(f"\n{len(objets_obtenus)} objet(s) ajouté(s) à votre inventaire.")
 
-    print(f"{'='*60}\n")
+        # Message générique pour guider le joueur vers la suite
+        VERT = "\033[92m"
+        RESET = "\033[0m"
+        print(f"\n{VERT}Retournez parler au donneur de quête pour découvrir la suite de l'histoire.{RESET}")
+        print(f"{VERT}{'='*60}{RESET}\n")

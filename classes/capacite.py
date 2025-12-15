@@ -98,12 +98,16 @@ class Capacite:
                     if t and t.est_vivant:
                         vie_recuperee = t.soigner(self.soin_fixe, afficher_message=False)
                         if vie_recuperee > 0:
-                            print(f"  {t.nom} récupère {vie_recuperee:.1f} points de vie grâce à {self.nom}. Vie actuelle : {t.vie:.1f}/{t.vie_max:.1f}")
+                            from utils.affichage import COULEURS, formater_nombre
+                            vie_recuperee_int = int(vie_recuperee)
+                            print(f"  {COULEURS['VERT']}💚 {t.nom} récupère {formater_nombre(vie_recuperee_int)} points de vie grâce à {self.nom}. Vie actuelle : {int(t.vie)}/{int(t.vie_max)}{COULEURS['RESET']}")
             else:
                 # Pour les capacités offensives avec drain de vie, soigner le lanceur
                 vie_recuperee = lanceur.soigner(self.soin_fixe, afficher_message=False)
                 if vie_recuperee > 0:
-                    print(f"  {lanceur.nom} récupère {vie_recuperee:.1f} points de vie grâce à {self.nom}. Vie actuelle : {lanceur.vie:.1f}/{lanceur.vie_max:.1f}")
+                    from utils.affichage import COULEURS, formater_nombre
+                    vie_recuperee_int = int(vie_recuperee)
+                    print(f"  {COULEURS['VERT']}💚 {lanceur.nom} récupère {formater_nombre(vie_recuperee_int)} points de vie grâce à {self.nom}. Vie actuelle : {int(lanceur.vie)}/{int(lanceur.vie_max)}{COULEURS['RESET']}")
 
         return True
 
