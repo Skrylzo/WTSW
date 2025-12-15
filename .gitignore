@@ -8,3 +8,6 @@ __pycache__/
 
 # Fichiers de test
 test_*.py
+
+# Fichiers de sauvegarde
+saves/
