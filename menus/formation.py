@@ -587,10 +587,13 @@ def menu_formation_specialisee(joueur):
             if bonus_details:
                 print(f"   Bonus : {', '.join(bonus_details)}")
 
-        print(f"{len(bonus_disponibles) + 1}. Retour")
+        print(f"{len(bonus_disponibles) + 1}. ⬅️  Retour (r)")
 
         try:
-            choix = int(input("\nVotre choix : "))
+            choix_input = input(f"\nVotre choix : ").strip().lower()
+            if choix_input == 'r':
+                return
+            choix = int(choix_input)
 
             if 1 <= choix <= len(bonus_disponibles):
                 bonus_choisi = bonus_disponibles[choix - 1]
@@ -668,10 +671,10 @@ def menu_formation(joueur, hub: HubCapital, features_formation: List[HubFeature]
         print("1. Apprendre une nouvelle capacité")
         print("2. Améliorer une capacité existante")
         print("3. Formation spécialisée par classe")
-        print("4. Retour")
+        print("4. ⬅️  Retour (r)")
 
         try:
-            choix_menu = input("\nVotre choix : ").strip()
+            choix_menu = input(f"\nVotre choix : ").strip().lower()
 
             if choix_menu == '1':
                 # Menu d'apprentissage de nouvelles capacités
@@ -743,25 +746,28 @@ def menu_formation(joueur, hub: HubCapital, features_formation: List[HubFeature]
                     if cap_info['bonus_soin'] > 0:
                         print(f"   Soin actuel : {cap.soin_fixe} (prochaine amélioration : +{int(cap._soin_base * 0.20)})")
 
-                print(f"{len(capacites_ameliorables) + 1}. Retour")
+                print(f"{len(capacites_ameliorables) + 1}. ⬅️  Retour (r)")
 
                 try:
-                    choix = int(input("\nVotre choix : "))
+                    choix_input = input(f"\nVotre choix : ").strip().lower()
+                    if choix_input == 'r':
+                        continue
+                    choix = int(choix_input)
                     if 1 <= choix <= len(capacites_ameliorables):
                         cap_info = capacites_ameliorables[choix - 1]
                         cap = cap_info['capacite']
 
-                        print(f"\nAméliorer '{cap.obtenir_nom_avec_niveau()}' pour {cap_info['prix']} or ?")
+                        print(f"\nAmeliorer '{cap.obtenir_nom_avec_niveau()}' pour {cap_info['prix']} or ?")
                         confirmation = input("Confirmer (o/n) : ").strip().lower()
 
                         if confirmation == 'o':
                             if ameliorer_capacite(joueur, cap):
-                                input("\nAppuyez sur Entrée pour continuer...")
+                                input("\nAppuyez sur Entree pour continuer...")
                                 continue
                             else:
-                                input("\nAppuyez sur Entrée pour continuer...")
+                                input("\nAppuyez sur Entree pour continuer...")
                         else:
-                            print("Amélioration annulée.")
+                            print("Amelioration annulee.")
                     elif choix == len(capacites_ameliorables) + 1:
                         continue
                     else:
@@ -773,7 +779,7 @@ def menu_formation(joueur, hub: HubCapital, features_formation: List[HubFeature]
                 # Menu de formation spécialisée par classe
                 menu_formation_specialisee(joueur)
 
-            elif choix_menu == '4':
+            elif choix_menu == '4' or choix_menu == 'r':
                 return
             else:
                 print("Choix invalide.")

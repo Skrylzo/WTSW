@@ -47,9 +47,9 @@ def menu_inventaire(joueur):
         print("4. Utiliser une potion")
         print("5. Équiper un équipement")
         print("6. Jeter un objet")
-        print("7. Retour au menu personnage")
+        print("7. ⬅️  Retour au menu personnage (r)")
 
-        choix = input("\nVotre choix : ").strip()
+        choix = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
         if choix == '1':
             afficher_inventaire_ameliore(joueur)
@@ -64,7 +64,7 @@ def menu_inventaire(joueur):
             menu_equiper_equipement(joueur)
         elif choix == '6':
             jeter_objet(joueur)
-        elif choix == '7':
+        elif choix == '7' or choix == 'r':
             break
         else:
             print("Choix invalide. Veuillez réessayer.")
@@ -206,9 +206,9 @@ def afficher_inventaire_ameliore(joueur, objets_a_afficher: Optional[List[Tuple[
         print("3. Filtrer par rareté")
         print("4. Réinitialiser les filtres")
         print("5. Afficher l'inventaire")
-        print("6. Retour")
+        print("6. ⬅️  Retour (r)")
 
-        choix = input("\nVotre choix : ").strip()
+        choix = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
         if choix == '1':
             critere_tri, ordre_tri = _choisir_tri()
@@ -219,7 +219,7 @@ def afficher_inventaire_ameliore(joueur, objets_a_afficher: Optional[List[Tuple[
         elif choix == '4':
             filtre_type = None
             filtre_rarete = None
-            print("✓ Filtres réinitialisés.")
+            print("✓ Filtres reinitialises.")
         elif choix == '5':
             # Appliquer les filtres
             objets_filtres = filtrer_objets(objets_liste, filtre_type, filtre_rarete, None)
@@ -234,7 +234,7 @@ def afficher_inventaire_ameliore(joueur, objets_a_afficher: Optional[List[Tuple[
 
             # Afficher avec pagination
             _afficher_inventaire_pagine(joueur, objets_tries)
-        elif choix == '6':
+        elif choix == '6' or choix == 'r':
             return
         else:
             print("Choix invalide.")
@@ -549,10 +549,13 @@ def utiliser_potion(joueur):
         if objet.description:
             print(f"   {objet.description}")
 
-    print(f"{len(potions_triees) + 1}. Retour")
+    print(f"{len(potions_triees) + 1}. ⬅️  Retour (r)")
 
     try:
-        choix = int(input("\nVotre choix : "))
+        choix_input = input(f"\n{COULEURS['VERT']}Votre choix : {COULEURS['RESET']}").strip().lower()
+        if choix_input == 'r':
+            return
+        choix = int(choix_input)
         if 1 <= choix <= len(potions_triees):
             nom_objet, objet = potions_triees[choix - 1]
             utiliser_potion_objet(joueur, objet)

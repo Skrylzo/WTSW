@@ -126,16 +126,18 @@ def menu_capitale(joueur):
         # Note : "Services disponibles" retiré car redondant avec les options ci-dessus
         # Tous les services sont déjà listés directement dans le menu
 
-        options_display.append(f"{option_num}. Retour")
+        options_display.append(f"{option_num}. ⬅️  Retour (r)")
         options.append(('retour', None))
 
         # Afficher les options
         for option_text in options_display:
             print(option_text)
 
-        choix = input(f"\n{COULEURS['MAGENTA']}Votre choix : {COULEURS['RESET']}")
+        choix = input(f"\n{COULEURS['MAGENTA']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
         try:
+            if choix == 'r':
+                break
             choix_int = int(choix)
             if 1 <= choix_int <= len(options):
                 option_type, feature_type = options[choix_int - 1]
@@ -145,7 +147,7 @@ def menu_capitale(joueur):
                 elif option_type == 'craft':
                     menu_craft(joueur, hub, services[FeatureType.CRAFT.value])
                 elif option_type == 'quetes':
-                    # Initialiser le système de quêtes si nécessaire
+                    # Initialiser le systeme de quetes si necessaire
                     if not hasattr(joueur, 'systeme_quetes'):
                         from .quetes import initialiser_systeme_quetes
                         joueur.systeme_quetes = initialiser_systeme_quetes()
@@ -159,23 +161,23 @@ def menu_capitale(joueur):
                 elif option_type == 'soin':
                     cout = 100
                     if getattr(joueur, "or_", 0) < cout:
-                        print(f"\nVous n'avez pas assez d'or. Il vous manque {cout - joueur.or_} pièces.")
+                        print(f"\nVous n'avez pas assez d'or. Il vous manque {cout - joueur.or_} pieces.")
                     else:
                         retirer_or(joueur, cout)
                         joueur.vie = joueur.vie_max
-                        # Si le joueur a du mana/énergie/rage, on peut aussi les réinitialiser
+                        # Si le joueur a du mana/energie/rage, on peut aussi les reinitialiser
                         if hasattr(joueur, 'mana_max'):
                             joueur.mana = getattr(joueur, 'mana_max', joueur.mana)
                         if hasattr(joueur, 'energie_max'):
                             joueur.energie = getattr(joueur, 'energie_max', joueur.energie)
                         if hasattr(joueur, 'rage_max'):
                             joueur.rage = 0
-                        print(f"\nVous êtes entièrement soigné pour {cout} or.")
-                    input("\nAppuyez sur Entrée pour continuer...")
+                        print(f"\nVous etes entierement soigne pour {cout} or.")
+                    input("\nAppuyez sur Entree pour continuer...")
                 elif option_type == 'retour':
                     break
             else:
-                print("Choix invalide. Veuillez réessayer.")
+                print("Choix invalide. Veuillez reessayer.")
         except ValueError:
             print("Veuillez entrer un nombre valide.")
 

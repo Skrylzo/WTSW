@@ -31,6 +31,37 @@ def formater_nombre(nombre: int) -> str:
     return f"{nombre:,}"
 
 
+def remplacer_accents(texte: str) -> str:
+    """
+    Remplace les caractères accentués par leurs équivalents ASCII pour éviter les problèmes d'affichage.
+    Utilise unicodedata pour une normalisation robuste, similaire à world/data_loader.py.
+
+    :param texte: Texte avec accents
+    :return: Texte sans accents
+    """
+    import unicodedata
+    if not texte:
+        return ""
+    # Normaliser en NFKD (décompose les caractères accentués)
+    texte_normalise = unicodedata.normalize('NFKD', texte)
+    # Supprimer les caractères combinants (accents)
+    texte_sans_accent = ''.join(c for c in texte_normalise if not unicodedata.combining(c))
+    return texte_sans_accent
+
+
+def print_sans_accent(*args, **kwargs):
+    """
+    Version de print qui remplace automatiquement les accents.
+    Utilisez cette fonction au lieu de print() pour éviter les problèmes d'affichage.
+    """
+    if args:
+        args_list = list(args)
+        args_list[0] = remplacer_accents(str(args_list[0]))
+        print(*args_list, **kwargs)
+    else:
+        print(**kwargs)
+
+
 def effacer_console():
     """
     Efface la console pour garder l'écran lisible.

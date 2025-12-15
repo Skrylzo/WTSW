@@ -46,9 +46,10 @@ def calculer_or_ennemi(ennemi_data, xp_a_donner):
     return max(1, or_par_defaut)  # Minimum 1 pièce d'or
 
 def debut_combat(joueur, ennemis):
-    from utils.affichage import COULEURS
+    from utils.affichage import COULEURS, effacer_console
+    effacer_console()
     print(f"\n{COULEURS['MAGENTA']}{'='*60}{COULEURS['RESET']}")
-    print(f"{COULEURS['MAGENTA']}--- DÉBUT DU COMBAT ---{COULEURS['RESET']}")
+    print(f"{COULEURS['MAGENTA']}--- DEBUT DU COMBAT ---{COULEURS['RESET']}")
     print(f"{COULEURS['MAGENTA']}{'='*60}{COULEURS['RESET']}")
     # Appliquer les effets avec condition "debut"
     joueur.appliquer_effets(phase='debut')
@@ -293,6 +294,8 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
     ennemis_actuels = [e for e in ennemis_actuels if e.est_vivant]
 
     while joueur.est_vivant and ennemis_actuels:
+        from utils.affichage import effacer_console
+        effacer_console()
         print(f"\n===== TOUR {tour_numero} =====")
 
         # Tour du joueur

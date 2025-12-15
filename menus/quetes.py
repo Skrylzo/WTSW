@@ -60,9 +60,9 @@ def menu_quetes(joueur, hub: HubCapital, features_quetes: List[HubFeature], syst
         print("1. 📋 Voir les quêtes en cours")
         print("2. ✅ Voir les quêtes complétées")
         print("3. 📖 Voir l'histoire principale")
-        print("4. ⬅️  Retour")
+        print("4. ⬅️  Retour (r)")
 
-        choix = input(f"\n{COULEURS['VERT']}Votre choix : {COULEURS['RESET']}").strip()
+        choix = input(f"\n{COULEURS['VERT']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
         if choix == '1':
             afficher_quetes_en_cours_details(systeme_quetes, joueur)
@@ -70,7 +70,7 @@ def menu_quetes(joueur, hub: HubCapital, features_quetes: List[HubFeature], syst
             afficher_quetes_completees(systeme_quetes, joueur)
         elif choix == '3':
             afficher_histoire_principale()
-        elif choix == '4':
+        elif choix == '4' or choix == 'r':
             break
         else:
             print("Choix invalide. Veuillez réessayer.")

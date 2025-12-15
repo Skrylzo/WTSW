@@ -52,16 +52,18 @@ def menu_parler_pnj(joueur):
                 options.append(pnj_id)
                 option_num += 1
 
-        print(f"{option_num}. Retour")
+        print(f"{option_num}. ⬅️  Retour (r)")
 
-        choix = input("\nVotre choix : ")
+        choix = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
         try:
+            if choix == 'r':
+                return
             choix_int = int(choix)
             if 1 <= choix_int <= len(options):
                 pnj_id = options[choix_int - 1]
                 parler_a_pnj(joueur, pnj_id)
-                input("\nAppuyez sur Entrée pour continuer...")
+                input("\nAppuyez sur Entree pour continuer...")
             elif choix_int == len(options) + 1:
                 break
             else:

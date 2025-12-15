@@ -220,10 +220,13 @@ def _equiper_arme_depuis_liste(joueur, armes_disponibles):
     for i, (nom_objet, objet) in enumerate(armes_disponibles, 1):
         _afficher_objet_equipement(objet, i)
 
-    print(f"{len(armes_disponibles) + 1}. Retour")
+    print(f"{len(armes_disponibles) + 1}. ⬅️  Retour (r)")
 
     try:
-        choix = int(input("\nVotre choix : "))
+        choix_input = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
+        if choix_input == 'r':
+            return False
+        choix = int(choix_input)
         if 1 <= choix <= len(armes_disponibles):
             nom_objet, objet = armes_disponibles[choix - 1]
 
@@ -284,10 +287,13 @@ def _equiper_armure_depuis_liste(joueur, armures_disponibles, type_nom):
     for i, (nom_objet, objet) in enumerate(armures_disponibles, 1):
         _afficher_objet_equipement(objet, i, avec_sous_type=True)
 
-    print(f"{len(armures_disponibles) + 1}. Retour")
+    print(f"{len(armures_disponibles) + 1}. ⬅️  Retour (r)")
 
     try:
-        choix = int(input("\nVotre choix : "))
+        choix_input = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
+        if choix_input == 'r':
+            return False
+        choix = int(choix_input)
         if 1 <= choix <= len(armures_disponibles):
             nom_objet, objet = armures_disponibles[choix - 1]
 
@@ -406,9 +412,9 @@ def menu_equiper_equipement(joueur):
         print("2. 🛡️  Armures (Torse)")
         print("3. 🪖 Casques")
         print("4. 👢 Bottes")
-        print("5. Retour au menu inventaire")
+        print("5. ⬅️  Retour au menu inventaire (r)")
 
-        choix = input("\nVotre choix : ").strip()
+        choix = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
         if choix == '1':
             armes = _filtrer_armes(joueur)
@@ -422,11 +428,11 @@ def menu_equiper_equipement(joueur):
         elif choix == '4':
             bottes = _filtrer_armures_par_type(joueur, 'bottes')
             _equiper_armure_depuis_liste(joueur, bottes, "bottes")
-        elif choix == '5':
+        elif choix == '5' or choix == 'r':
             break
         else:
-            print("Choix invalide. Veuillez réessayer.")
-            input("\nAppuyez sur Entrée pour continuer...")
+            print("Choix invalide. Veuillez reessayer.")
+            input("\nAppuyez sur Entree pour continuer...")
 
 
 # Fonctions de compatibilité (dépréciées mais conservées pour compatibilité)

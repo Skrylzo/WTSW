@@ -55,9 +55,9 @@ def menu_craft(joueur, hub, features_craft: List):
         print("1. Potions")
         print("2. Armes")
         print("3. Armures")
-        print("4. Retour")
+        print("4. ⬅️  Retour (r)")
 
-        choix = input("\nVotre choix : ").strip()
+        choix = input(f"\nVotre choix : ").strip().lower()
 
         if choix == '1':
             menu_craft_potions(joueur, royaume_nom, niveau_craft)
@@ -65,10 +65,10 @@ def menu_craft(joueur, hub, features_craft: List):
             menu_craft_armes(joueur, royaume_nom, niveau_craft)
         elif choix == '3':
             menu_craft_armures(joueur, royaume_nom, niveau_craft)
-        elif choix == '4':
+        elif choix == '4' or choix == 'r':
             break
         else:
-            print("Choix invalide. Veuillez réessayer.")
+            print("Choix invalide. Veuillez reessayer.")
 
 
 def menu_craft_potions(joueur, royaume_nom: str, niveau_craft: int):
@@ -115,11 +115,13 @@ def menu_craft_potions(joueur, royaume_nom: str, niveau_craft: int):
             options.append(sous_type)
             option_num += 1
 
-        print(f"{option_num}. Retour")
+        print(f"{option_num}. ⬅️  Retour (r)")
 
-        choix = input("\nVotre choix : ").strip()
+        choix = input(f"\nVotre choix : ").strip().lower()
 
         try:
+            if choix == 'r':
+                return
             choix_int = int(choix)
             if 1 <= choix_int <= len(options):
                 sous_type_choisi = options[choix_int - 1]
@@ -193,11 +195,13 @@ def afficher_recettes_potions(joueur, royaume_nom: str, recettes: List[Dict]):
             options.append(rec)
             option_num += 1
 
-        print(f"{option_num}. Retour")
+        print(f"{option_num}. ⬅️  Retour (r)")
 
-        choix = input("\nVotre choix : ").strip()
+        choix = input(f"\nVotre choix : ").strip().lower()
 
         try:
+            if choix == 'r':
+                return
             choix_int = int(choix)
             if 1 <= choix_int <= len(options):
                 recette_choisie = options[choix_int - 1]
@@ -329,11 +333,13 @@ def afficher_recettes_armes(joueur, royaume_nom: str, recettes: List[Dict]):
             options.append(rec)
             option_num += 1
 
-        print(f"{option_num}. Retour")
+        print(f"{option_num}. ⬅️  Retour (r)")
 
-        choix = input("\nVotre choix : ").strip()
+        choix = input(f"\nVotre choix : ").strip().lower()
 
         try:
+            if choix == 'r':
+                return
             choix_int = int(choix)
             if 1 <= choix_int <= len(options):
                 recette_choisie = options[choix_int - 1]
@@ -464,11 +470,13 @@ def afficher_recettes_armures(joueur, royaume_nom: str, recettes: List[Dict]):
             options.append(rec)
             option_num += 1
 
-        print(f"{option_num}. Retour")
+        print(f"{option_num}. ⬅️  Retour (r)")
 
-        choix = input("\nVotre choix : ").strip()
+        choix = input(f"\nVotre choix : ").strip().lower()
 
         try:
+            if choix == 'r':
+                return
             choix_int = int(choix)
             if 1 <= choix_int <= len(options):
                 recette_choisie = options[choix_int - 1]

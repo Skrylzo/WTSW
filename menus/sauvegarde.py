@@ -330,23 +330,23 @@ def menu_gestion_sauvegardes(nom_personnage: str) -> Optional[Personnage]:
         print("Options :")
         print("1-3. Charger depuis le slot 1, 2 ou 3")
         print("4-6. Supprimer le slot 1, 2 ou 3")
-        print("7. Retour")
+        print("7. ⬅️  Retour (r)")
 
-        choix = input("\nVotre choix : ").strip()
+        choix = input(f"\nVotre choix : ").strip().lower()
 
         if choix in ['1', '2', '3']:
             slot = int(choix)
             joueur = charger_jeu(nom_personnage, slot)
             if joueur:
                 return joueur
-            input("\nAppuyez sur Entrée pour continuer...")
+            input("\nAppuyez sur Entree pour continuer...")
 
         elif choix in ['4', '5', '6']:
             slot = int(choix) - 3  # 4->1, 5->2, 6->3
             sauvegarde = next((s for s in sauvegardes if s["slot"] == slot), None)
 
             if sauvegarde:
-                confirmation = input(f"Êtes-vous sûr de vouloir supprimer la sauvegarde du slot {slot} ? (o/n) : ").strip().lower()
+                confirmation = input(f"Etes-vous sur de vouloir supprimer la sauvegarde du slot {slot} ? (o/n) : ").strip().lower()
                 if confirmation in ('o', 'oui', 'y', 'yes'):
                     supprimer_sauvegarde(nom_personnage, slot)
                 else:
@@ -355,12 +355,12 @@ def menu_gestion_sauvegardes(nom_personnage: str) -> Optional[Personnage]:
                 print(f"Aucune sauvegarde dans le slot {slot}.")
             input("\nAppuyez sur Entrée pour continuer...")
 
-        elif choix == '7':
+        elif choix == '7' or choix == 'r':
             return None
 
         else:
-            print("Choix invalide. Veuillez réessayer.")
-            input("\nAppuyez sur Entrée pour continuer...")
+            print("Choix invalide. Veuillez reessayer.")
+            input("\nAppuyez sur Entree pour continuer...")
 
 
 def sauvegarder_automatique(joueur) -> bool:

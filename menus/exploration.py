@@ -50,15 +50,15 @@ def menu_exploration_valdoria(joueur):
         print(f"\n{COULEURS['BLEU']}Que voulez-vous faire ?{COULEURS['RESET']}")
         print("1. 🌍 Explorer une zone")
         print("2. 📚 Informations sur les royaumes")
-        print("3. ⬅️  Retour au menu principal")
+        print("3. ⬅️  Retour au menu principal (r)")
 
-        choix = input("\nVotre choix : ")
+        choix = input(f"\n{COULEURS['BLEU']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
         if choix == '1':
             menu_selection_zone(joueur, royaume_joueur, systeme_chapitres)
         elif choix == '2':
             afficher_infos_royaumes(joueur)
-        elif choix == '3':
+        elif choix == '3' or choix == 'r':
             break
         else:
             print("Choix invalide. Veuillez réessayer.")
@@ -100,10 +100,13 @@ def menu_selection_zone(joueur, royaume, systeme_chapitres: SystemeChapitres):
         print(f"{i}. {zone_id}{niveau_info} [{statut}]")
         zones_liste.append(zone_id)
 
-    print(f"{len(zones_liste) + 1}. ⬅️  Retour")
+    print(f"{len(zones_liste) + 1}. ⬅️  Retour (r)")
 
     try:
-        choix = int(input(f"\n{COULEURS['BLEU']}Votre choix : {COULEURS['RESET']}"))
+        choix_input = input(f"\n{COULEURS['BLEU']}Votre choix : {COULEURS['RESET']}").strip().lower()
+        if choix_input == 'r':
+            return
+        choix = int(choix_input)
 
         if 1 <= choix <= len(zones_liste):
             zone_choisie = zones_liste[choix - 1]
@@ -224,12 +227,14 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
                 option_num += 1
 
         # Option retour
-        print(f"{option_num}. ⬅️  Retour")
+        print(f"{option_num}. ⬅️  Retour (r)")
         options.append('retour')
 
-        choix = input(f"\n{COULEURS['BLEU']}Votre choix : {COULEURS['RESET']}")
+        choix = input(f"\n{COULEURS['BLEU']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
         try:
+            if choix == 'r':
+                return
             choix_int = int(choix)
             if 1 <= choix_int <= len(options):
                 action = options[choix_int - 1]
@@ -244,17 +249,17 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
                     from data.cles_donjons import obtenir_cle_donjon
                     from data.objets import DEFINITIONS_OBJETS
                     cle_id = obtenir_cle_donjon(biome_cible.donjon_nom)
-                    nom_cle = "clé"
+                    nom_cle = "cle"
                     if cle_id:
                         cle_data = DEFINITIONS_OBJETS.get(cle_id)
                         if cle_data:
-                            nom_cle = cle_data.get("nom", "clé")
-                    print(f"\n🔒 Ce donjon est verrouillé !")
-                    print(f"Vous avez besoin de la {nom_cle} pour y accéder.")
-                    print(f"Complétez les quêtes de royaume pour obtenir cette clé.")
-                    input("\nAppuyez sur Entrée pour continuer...")
+                            nom_cle = cle_data.get("nom", "cle")
+                    print(f"\n🔒 Ce donjon est verrouille !")
+                    print(f"Vous avez besoin de la {nom_cle} pour y acceder.")
+                    print(f"Completez les quetes de royaume pour obtenir cette cle.")
+                    input("\nAppuyez sur Entree pour continuer...")
                 elif action == 'retour':
-                    break
+                    return
             else:
                 print("Choix invalide. Veuillez réessayer.")
         except ValueError:
@@ -316,11 +321,13 @@ def _parler_pnj_zone(joueur, pnjs_zone: list):
                 options.append(pnj_id)
                 option_num += 1
 
-        print(f"{option_num}. Retour")
+        print(f"{option_num}. ⬅️  Retour (r)")
 
-        choix = input("\nVotre choix : ")
+        choix = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
         try:
+            if choix == 'r':
+                return
             choix_int = int(choix)
             if 1 <= choix_int <= len(options):
                 pnj_id = options[choix_int - 1]

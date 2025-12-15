@@ -146,10 +146,13 @@ def menu_teleportation(joueur, hub: HubCapital):
         input("\nAppuyez sur Entrée pour continuer...")
         return
 
-    print(f"{len(royaumes_affiches) + 1}. Retour")
+    print(f"{len(royaumes_affiches) + 1}. ⬅️  Retour (r)")
 
     try:
-        choix = int(input("\nVotre choix : "))
+        choix_input = input(f"\nVotre choix : ").strip().lower()
+        if choix_input == 'r':
+            return
+        choix = int(choix_input)
         if 1 <= choix <= len(royaumes_affiches):
             royaume_choisi = royaumes_affiches[choix - 1]
 

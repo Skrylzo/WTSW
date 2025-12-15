@@ -129,15 +129,15 @@ def menu_commerce(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
         print("\nOptions disponibles :")
         print("1. Acheter des objets")
         print("2. Vendre des objets")
-        print("3. Retour")
+        print("3. ⬅️  Retour (r)")
 
-        choix = input("\nVotre choix : ")
+        choix = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
         if choix == '1':
             menu_achat(joueur, hub, features_commerce)
         elif choix == '2':
             menu_vente(joueur)
-        elif choix == '3':
+        elif choix == '3' or choix == 'r':
             break
         else:
             print("Choix invalide. Veuillez réessayer.")
@@ -173,10 +173,13 @@ def menu_achat(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
     for i, (nom, data) in enumerate(objets_disponibles.items(), 1):
         print(f"{i}. {nom} - {data['prix']} pièces")
 
-    print(f"{len(objets_disponibles) + 1}. Retour")
+    print(f"{len(objets_disponibles) + 1}. ⬅️  Retour (r)")
 
     try:
-        choix = int(input("\nVotre choix : "))
+        choix_input = input(f"\n{COULEURS['VERT']}Votre choix : {COULEURS['RESET']}").strip().lower()
+        if choix_input == 'r':
+            return
+        choix = int(choix_input)
         if 1 <= choix <= len(objets_disponibles):
             nom_objet = list(objets_disponibles.keys())[choix - 1]
             objet_data = objets_disponibles[nom_objet]
@@ -284,10 +287,13 @@ def menu_vente(joueur):
         else:
             print()
 
-    print(f"{len(objets_liste) + 1}. Retour")
+    print(f"{len(objets_liste) + 1}. ⬅️  Retour (r)")
 
     try:
-        choix = int(input("\nVotre choix : "))
+        choix_input = input(f"\n{COULEURS['JAUNE']}Votre choix : {COULEURS['RESET']}").strip().lower()
+        if choix_input == 'r':
+            return
+        choix = int(choix_input)
         if 1 <= choix <= len(objets_liste):
             nom_objet, objet = objets_liste[choix - 1]
 

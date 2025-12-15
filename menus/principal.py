@@ -49,13 +49,13 @@ def menu_personnage(joueur):
         print("3. ⚡ Dépenser Points d'Attribut")
         print("4. 💾 Sauvegarder Partie")
         print("5. ✨ Afficher Capacités")
-        print("6. ⬅️  Retour")
+        print("6. ⬅️  Retour (r)")
 
-        choix = input(f"\n{COULEURS['BLEU']}Votre choix : {COULEURS['RESET']}")
+        choix = input(f"\n{COULEURS['BLEU']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
         if choix == '1':
             joueur.afficher_stats()
-            input("\nAppuyez sur Entrée pour continuer...")
+            input("\nAppuyez sur Entree pour continuer...")
         elif choix == '2':
             menu_inventaire(joueur)
         elif choix == '3':
@@ -65,12 +65,12 @@ def menu_personnage(joueur):
             menu_sauvegarde_manuelle(joueur)
         elif choix == '5':
             joueur.afficher_capacites()
-            input("\nAppuyez sur Entrée pour continuer...")
-        elif choix == '6':
+            input("\nAppuyez sur Entree pour continuer...")
+        elif choix == '6' or choix == 'r':
             break
         else:
-            print("Choix invalide. Veuillez réessayer.")
-            input("\nAppuyez sur Entrée pour continuer...")
+            print("Choix invalide. Veuillez reessayer.")
+            input("\nAppuyez sur Entree pour continuer...")
 
 def allouer_points_attributs(joueur):
     if joueur.points_attribut <= 0:

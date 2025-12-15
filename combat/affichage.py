@@ -16,13 +16,16 @@ def afficher_tour_joueur(joueur: Personnage, ennemis: List[Ennemi]) -> None:
     :param joueur: Le joueur
     :param ennemis: Liste des ennemis
     """
+    from utils.affichage import effacer_console
+    effacer_console()
+
     resource_display = ""
     couleur_ressource = COULEURS["CYAN"]
     if joueur.specialisation.type_ressource == "Mana":
         resource_display = f"Mana: {int(joueur.mana)}/{int(joueur.mana_max)}"
         couleur_ressource = COULEURS["BLEU"]
     elif joueur.specialisation.type_ressource == "Energie":
-        resource_display = f"Énergie: {int(joueur.energie)}/{int(joueur.energie_max)}"
+        resource_display = f"Energie: {int(joueur.energie)}/{int(joueur.energie_max)}"
         couleur_ressource = COULEURS["JAUNE"]
     elif joueur.specialisation.type_ressource == "Rage":
         resource_display = f"Rage: {int(joueur.rage)}/{int(joueur.rage_max)}"
@@ -124,11 +127,11 @@ def afficher_fin_combat(joueur: Personnage, victoire: bool) -> None:
     :param joueur: Le joueur
     :param victoire: True si le joueur a gagné
     """
-    print("-" * 30)
-    print(f"\n{COULEURS['BLEU']}{'='*60}{COULEURS['RESET']}")
-    print(f"{COULEURS['BLEU']}--- FIN DU COMBAT ---{COULEURS['RESET']}")
     if victoire:
+        print("-" * 30)
+        print(f"\n{COULEURS['BLEU']}{'='*60}{COULEURS['RESET']}")
+        print(f"{COULEURS['BLEU']}--- FIN DU COMBAT ---{COULEURS['RESET']}")
         print(f"{COULEURS['VERT']}🎉 {joueur.nom} est victorieux !{COULEURS['RESET']}")
+        print(f"{COULEURS['BLEU']}{'='*60}{COULEURS['RESET']}")
     else:
-        print(f"{COULEURS['ROUGE']}💀 {joueur.nom} a été vaincu...{COULEURS['RESET']}")
-    print(f"{COULEURS['BLEU']}{'='*60}{COULEURS['RESET']}")
+        print(f"\n{COULEURS['ROUGE']}💀 {joueur.nom} a été vaincu...{COULEURS['RESET']}")
