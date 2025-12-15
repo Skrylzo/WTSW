@@ -7,6 +7,7 @@ from classes.arme import Arme
 from classes.armure import Armure
 from data.craft_bonus import calculer_effet_avec_bonus
 from data.recettes import obtenir_recette
+from utils.affichage import afficher_message_confirmation, effacer_console, afficher_titre_menu, afficher_separateur, COULEURS
 
 # Codes couleur ANSI pour les raretés
 COULEURS_RARETE = {
@@ -17,6 +18,73 @@ COULEURS_RARETE = {
     "légendaire": "\033[93m"        # Jaune/Doré
 }
 RESET_COULEUR = "\033[0m"
+
+
+def choisir_objet_combat(joueur) -> bool:
+    """
+    Permet au joueur de choisir et utiliser un objet (potion) en combat.
+
+    :param joueur: Le personnage joueur
+    :return: True si un objet a été utilisé, False sinon
+    """
+    from utils.affichage import COULEURS
+
+    # Filtrer les objets utilisables (potions)
+    objets_utilisables = []
+    for nom_objet, objet in joueur.inventaire.items():
+        if objet.type == "potion":
+            objets_utilisables.append((nom_objet, objet))
+
+    if not objets_utilisables:
+        print(f"\n{COULEURS['ROUGE']}❌ Vous n'avez aucune potion dans votre inventaire.{COULEURS['RESET']}")
+        input("\nAppuyez sur Entrée pour continuer...")
+        return False
+
+    print(f"\n{COULEURS['VERT']}🧪 Potions disponibles :{COULEURS['RESET']}")
+    for i, (nom_objet, objet) in enumerate(objets_utilisables, 1):
+        # Afficher les effets de la potion
+        effets_desc = []
+        if hasattr(objet, 'effets') and objet.effets:
+            effets = objet.effets
+            if effets.get('vie'):
+                effets_desc.append(f"+{effets['vie']:.0f} PV")
+            if effets.get('mana'):
+                effets_desc.append(f"+{effets['mana']:.0f} Mana")
+            if effets.get('energie'):
+                effets_desc.append(f"+{effets['energie']:.0f} Énergie")
+            if effets.get('duree_tours', 0) > 0:
+                boosts = []
+                if effets.get('boost_attaque'):
+                    boosts.append(f"+{effets['boost_attaque']} Att")
+                if effets.get('boost_defense'):
+                    boosts.append(f"+{effets['boost_defense']} Déf")
+                if boosts:
+                    effets_desc.append(f"{', '.join(boosts)} ({effets['duree_tours']} tours)")
+
+        effets_str = f" - {', '.join(effets_desc)}" if effets_desc else ""
+        quantite = f" (x{objet.quantite})" if objet.quantite > 1 else ""
+        print(f"{COULEURS['CYAN']}{i}. {nom_objet}{quantite}{effets_str}{COULEURS['RESET']}")
+
+    print(f"{COULEURS['GRIS']}{len(objets_utilisables) + 1}. Annuler (a){COULEURS['RESET']}")
+
+    while True:
+        try:
+            choix_input = input(f"\n{COULEURS['VERT']}Votre choix : {COULEURS['RESET']}").strip().lower()
+            if choix_input == 'a':
+                return False
+
+            choix = int(choix_input)
+            if 1 <= choix <= len(objets_utilisables):
+                nom_objet, objet = objets_utilisables[choix - 1]
+                if utiliser_potion(joueur, objet):
+                    return True
+                else:
+                    input("\nAppuyez sur Entrée pour continuer...")
+                    return False
+            else:
+                print(f"{COULEURS['ROUGE']}Choix invalide. Veuillez réessayer.{COULEURS['RESET']}")
+        except ValueError:
+            print(f"{COULEURS['ROUGE']}Entrée invalide. Veuillez entrer un numéro.{COULEURS['RESET']}")
 
 
 def utiliser_potion(joueur, objet: Objet) -> bool:

@@ -13,72 +13,99 @@ from menus import (
 from combat import deroulement_combat
 from world import teleporter_joueur_vers_capitale
 from utils.affichage import effacer_console
+import signal
+import sys
+
+def signal_handler(sig, frame):
+    """Gère les signaux d'interruption (CTRL+C, CTRL+D)"""
+    print("\n\nInterruption détectée. Fermeture propre du jeu...")
+    sys.exit(0)
+
+# Enregistrer les gestionnaires de signaux
+signal.signal(signal.SIGINT, signal_handler)  # CTRL+C
+signal.signal(signal.SIGTERM, signal_handler)  # Terminaison
 
 if __name__ == "__main__":
     joueur_principal = None
-    joueur_principal = menu_principal() # menu_principal retourne le joueur créé/chargé ou None si on quitte
+    try:
+        joueur_principal = menu_principal() # menu_principal retourne le joueur créé/chargé ou None si on quitte
 
-    if joueur_principal: # S'assurer qu'un joueur a bien été créé ou chargé
-        effacer_console()
-        print("\n--- DÉBUT DE L'AVENTURE ---")
-
-        while joueur_principal.est_vivant:
+        if joueur_principal: # S'assurer qu'un joueur a bien été créé ou chargé
             effacer_console()
-            print("\n" + "="*60)
-            print("--- MENU PRINCIPAL ---")
-            print("="*60)
-            print("\nQue voulez-vous faire ?")
-            print("1. Explorer Valdoria")  # Nouveau : exploration avec chapitres
-            print("2. Accéder à votre Capitale")  # Nouveau : menu de la capitale
-            print("3. Accéder au Menu Personnage")
-            print("4. Sauvegarder la partie")
-            print("5. Quitter le jeu")
+            print("\n--- DÉBUT DE L'AVENTURE ---")
 
-            choix_aventure = input("\nVotre choix : ")
+            while joueur_principal.est_vivant:
+                try:
+                    effacer_console()
+                    print("\n" + "="*60)
+                    print("--- MENU PRINCIPAL ---")
+                    print("="*60)
+                    print("\nQue voulez-vous faire ?")
+                    print("1. Explorer Valdoria")  # Nouveau : exploration avec chapitres
+                    print("2. Accéder à votre Capitale")  # Nouveau : menu de la capitale
+                    print("3. Accéder au Menu Personnage")
+                    print("4. Sauvegarder la partie")
+                    print("5. Quitter le jeu")
 
-            if choix_aventure == '1':
-                # Nouveau système d'exploration avec chapitres
-                menu_exploration_valdoria(joueur_principal)
+                    choix_aventure = input("\nVotre choix : ")
 
-                # Si le joueur est mort après l'exploration, la téléportation a déjà été gérée
-                if not joueur_principal.est_vivant:
-                    # S'assurer que la téléportation a bien eu lieu
-                    if not teleporter_joueur_vers_capitale(joueur_principal):
-                        print("Erreur : Impossible de vous téléporter vers votre capitale.")
-                        print("Game Over. Votre aventure se termine ici.")
+                    if choix_aventure == '1':
+                        # Nouveau système d'exploration avec chapitres
+                        menu_exploration_valdoria(joueur_principal)
+
+                        # Si le joueur est mort après l'exploration, la téléportation a déjà été gérée
+                        if not joueur_principal.est_vivant:
+                            # S'assurer que la téléportation a bien eu lieu
+                            if not teleporter_joueur_vers_capitale(joueur_principal):
+                                print("Erreur : Impossible de vous téléporter vers votre capitale.")
+                                print("Game Over. Votre aventure se termine ici.")
+                                break
+                            # Le joueur est maintenant soigné et peut continuer à jouer
+                            continue
+
+                    elif choix_aventure == '2':
+                        # Nouveau menu de capitale (commerce, craft, quêtes, téléportation)
+                        menu_capitale(joueur_principal)
+
+                        # Si le joueur est mort (peu probable dans un menu, mais possible)
+                        if not joueur_principal.est_vivant:
+                            if not teleporter_joueur_vers_capitale(joueur_principal):
+                                print("Erreur : Impossible de vous téléporter vers votre capitale.")
+                                print("Game Over. Votre aventure se termine ici.")
+                                break
+                            continue
+
+                    elif choix_aventure == '3':
+                        menu_personnage(joueur_principal)
+                        # Si le joueur est mort dans le menu personnage
+                        if not joueur_principal.est_vivant:
+                            if not teleporter_joueur_vers_capitale(joueur_principal):
+                                print("Erreur : Impossible de vous téléporter vers votre capitale.")
+                                print("Game Over. Votre aventure se termine ici.")
+                                break
+                            continue
+
+                    elif choix_aventure == '4':
+                        menu_sauvegarde_manuelle(joueur_principal)
+
+                    elif choix_aventure == '5':
+                        print("Quitter l'aventure. Votre progression actuelle n'est pas sauvegardée si vous n'avez pas sauvegardé manuellement.")
                         break
-                    # Le joueur est maintenant soigné et peut continuer à jouer
-                    continue
-
-            elif choix_aventure == '2':
-                # Nouveau menu de capitale (commerce, craft, quêtes, téléportation)
-                menu_capitale(joueur_principal)
-
-                # Si le joueur est mort (peu probable dans un menu, mais possible)
-                if not joueur_principal.est_vivant:
-                    if not teleporter_joueur_vers_capitale(joueur_principal):
-                        print("Erreur : Impossible de vous téléporter vers votre capitale.")
-                        print("Game Over. Votre aventure se termine ici.")
-                        break
-                    continue
-
-            elif choix_aventure == '3':
-                menu_personnage(joueur_principal)
-                # Si le joueur est mort dans le menu personnage
-                if not joueur_principal.est_vivant:
-                    if not teleporter_joueur_vers_capitale(joueur_principal):
-                        print("Erreur : Impossible de vous téléporter vers votre capitale.")
-                        print("Game Over. Votre aventure se termine ici.")
-                        break
-                    continue
-
-            elif choix_aventure == '4':
-                menu_sauvegarde_manuelle(joueur_principal)
-
-            elif choix_aventure == '5':
-                print("Quitter l'aventure. Votre progression actuelle n'est pas sauvegardée si vous n'avez pas sauvegardé manuellement.")
-                break
-            else:
-                print("Choix invalide. Veuillez réessayer.")
-
-    print("\nFin du programme.")
+                    else:
+                        print("Choix invalide. Veuillez réessayer.")
+                except KeyboardInterrupt:
+                    # CTRL+C
+                    print("\n\nInterruption détectée. Fermeture propre du jeu...")
+                    break
+                except EOFError:
+                    # CTRL+D
+                    print("\n\nFin de l'entrée détectée. Fermeture propre du jeu...")
+                    break
+    except KeyboardInterrupt:
+        # CTRL+C au niveau principal
+        print("\n\nInterruption détectée. Fermeture propre du jeu...")
+    except EOFError:
+        # CTRL+D au niveau principal
+        print("\n\nFin de l'entrée détectée. Fermeture propre du jeu...")
+    finally:
+        print("\nFin du programme.")

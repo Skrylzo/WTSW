@@ -149,8 +149,15 @@ def tour_joueur(joueur, ennemis):
                 afficher_resultat_capacite(resultat_capacite)
 
         elif choix == '3':
-            joueur.afficher_stats()
+            # Utiliser un objet (potions)
+            from menus.utiliser_objets import choisir_objet_combat
+            objet_utilise = choisir_objet_combat(joueur)
+            if objet_utilise:
+                action_choisie = True
+
         elif choix == '4':
+            joueur.afficher_stats()
+        elif choix == '5':
             joueur.afficher_capacites()
         else:
             afficher_message_erreur("Action invalide. Veuillez réessayer.")

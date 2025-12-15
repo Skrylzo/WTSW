@@ -47,10 +47,11 @@ def afficher_tour_joueur(joueur: Personnage, ennemis: List[Ennemi]) -> None:
 def afficher_menu_actions() -> None:
     """Affiche le menu des actions disponibles."""
     print("\nChoisissez votre action :")
-    print("1. Attaquer")
-    print("2. Utiliser une Capacité")
-    print("3. Afficher les Stats")
-    print("4. Afficher les Capacités")
+    print(f"{COULEURS['CYAN']}1. ⚔️  Attaquer{COULEURS['RESET']}")
+    print(f"{COULEURS['MAGENTA']}2. ✨ Utiliser une Capacité{COULEURS['RESET']}")
+    print(f"{COULEURS['VERT']}3. 🧪 Utiliser un Objet{COULEURS['RESET']}")
+    print(f"{COULEURS['BLEU']}4. 📊 Afficher les Stats{COULEURS['RESET']}")
+    print(f"{COULEURS['MAGENTA']}5. ✨ Afficher les Capacités{COULEURS['RESET']}")
 
 
 def afficher_resultat_attaque(resultat: Dict[str, Any]) -> None:

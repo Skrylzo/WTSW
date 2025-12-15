@@ -43,13 +43,14 @@ def menu_craft(joueur, hub, features_craft: List):
         print(f"{'='*60}\n")
 
         # Obtenir le royaume du joueur pour le mapping des catégories
-        royaume = obtenir_royaume_du_joueur(joueur)
+        royaume = obtenir_royaume_du_joueur(joueur.race)
         royaume_nom = royaume.nom if royaume else "Vrak'thar"  # Fallback
 
         # Afficher le niveau de craft du joueur (pour l'instant = niveau du joueur)
         niveau_craft = joueur.niveau
-        print(f"Niveau de craft : {niveau_craft}")
-        print(f"Royaume : {royaume_nom}\n")
+        from utils.affichage import COULEURS
+        print(f"{COULEURS['CYAN']}Niveau de craft : {COULEURS['JAUNE']}{niveau_craft}{COULEURS['RESET']}")
+        print(f"{COULEURS['CYAN']}Royaume : {COULEURS['MAGENTA']}{royaume_nom}{COULEURS['RESET']}\n")
 
         print("Que souhaitez-vous craft ?")
         print("1. Potions")
@@ -192,6 +193,8 @@ def afficher_recettes_potions(joueur, royaume_nom: str, recettes: List[Dict]):
             if not peut_crafter and ingredients_manquants:
                 print(f"   ⚠️  Ingrédients manquants : {', '.join(ingredients_manquants[:3])}")
 
+            print()  # Espacement entre les recettes
+
             options.append(rec)
             option_num += 1
 
@@ -330,6 +333,8 @@ def afficher_recettes_armes(joueur, royaume_nom: str, recettes: List[Dict]):
             if not peut_crafter and ingredients_manquants:
                 print(f"   ⚠️  Ingrédients manquants : {', '.join(ingredients_manquants[:3])}")
 
+            print()  # Espacement entre les recettes
+
             options.append(rec)
             option_num += 1
 
@@ -467,6 +472,8 @@ def afficher_recettes_armures(joueur, royaume_nom: str, recettes: List[Dict]):
             if not peut_crafter and ingredients_manquants:
                 print(f"   ⚠️  Ingrédients manquants : {', '.join(ingredients_manquants[:3])}")
 
+            print()  # Espacement entre les recettes
+
             options.append(rec)
             option_num += 1
 
@@ -567,7 +574,18 @@ def executer_craft(joueur, recette: Dict, royaume_nom: str) -> bool:
     print("Ingrédients nécessaires :")
     ingredients_requis = recette.get('ingredients', {})
     for ing_nom, quantite in ingredients_requis.items():
-        print(f"  • {ing_nom} : {quantite}")
+        # Adapter le nom de l'ingrédient selon le royaume
+        from data.categories_ingredients import est_categorie_generique, obtenir_ingredients_par_categorie
+        if est_categorie_generique(ing_nom):
+            # Pour les catégories génériques, afficher les ingrédients réels du royaume
+            ingredients_reels = obtenir_ingredients_par_categorie(ing_nom, royaume_nom)
+            if ingredients_reels:
+                ing_nom_affiche = f"{ing_nom} ({', '.join(ingredients_reels[:2])}{'...' if len(ingredients_reels) > 2 else ''})"
+            else:
+                ing_nom_affiche = ing_nom
+        else:
+            ing_nom_affiche = ing_nom
+        print(f"  • {ing_nom_affiche} : {quantite}")
 
     confirmation = input("\nConfirmer le craft ? (o/n) : ").strip().lower()
 

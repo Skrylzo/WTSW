@@ -498,26 +498,28 @@ def afficher_infos_royaumes(joueur):
     """
     Affiche des informations sur les royaumes.
     """
+    from utils.affichage import COULEURS, afficher_titre_menu_avec_emoji, afficher_separateur
     royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
     hub_joueur = obtenir_hub_du_joueur(joueur.race)
 
-    print(f"\n{'='*60}")
-    print("--- INFORMATIONS SUR LES ROYAUMES ---")
-    print(f"{'='*60}")
+    effacer_console()
+    afficher_titre_menu_avec_emoji("INFORMATIONS SUR LES ROYAUMES", "zone")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
 
     if royaume_joueur:
-        print(f"\nVotre royaume : {royaume_joueur.nom}")
-        print(f"Race associée : {royaume_joueur.race_associee}")
-        print(f"Capitale : {royaume_joueur.capitale}")
+        print(f"\n{COULEURS['MAGENTA']}🏛️  Votre royaume :{COULEURS['RESET']} {COULEURS['CYAN']}{royaume_joueur.nom}{COULEURS['RESET']}")
+        print(f"{COULEURS['BLEU']}👤 Race associée :{COULEURS['RESET']} {COULEURS['JAUNE']}{royaume_joueur.race_associee}{COULEURS['RESET']}")
+        print(f"{COULEURS['VERT']}🏰 Capitale :{COULEURS['RESET']} {COULEURS['CYAN']}{royaume_joueur.capitale}{COULEURS['RESET']}")
         if royaume_joueur.description:
-            print(f"Description : {royaume_joueur.description}")
+            print(f"\n{COULEURS['GRIS']}{royaume_joueur.description}{COULEURS['RESET']}")
 
         if hub_joueur:
-            print(f"\nCapitale actuelle : {hub_joueur.nom}")
-            print(f"Description : {hub_joueur.description}")
+            print(f"\n{COULEURS['MAGENTA']}📍 Capitale actuelle :{COULEURS['RESET']} {COULEURS['CYAN']}{hub_joueur.nom}{COULEURS['RESET']}")
+            print(f"{COULEURS['GRIS']}{hub_joueur.description}{COULEURS['RESET']}")
 
-    print(f"\n{'='*60}\n")
-    input("Appuyez sur Entrée pour continuer...")
+    print(f"\n")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+    input(f"\n{COULEURS['CYAN']}Appuyez sur Entrée pour continuer...{COULEURS['RESET']}")
 
 
 def creer_systeme_chapitres_base(joueur, royaume_joueur):

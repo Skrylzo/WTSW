@@ -14,9 +14,9 @@ def menu_principal():
         afficher_titre_menu_avec_emoji("MENU PRINCIPAL", "principal")
         afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
         print("\nOptions disponibles :")
-        print("1. 🎮 Nouvelle Partie")
-        print("2. 📂 Charger Partie")
-        print("3. 🚪 Quitter le jeu")
+        print(f"1. {COULEURS['VERT']}🎮 Nouvelle Partie{COULEURS['RESET']}")
+        print(f"2. {COULEURS['BLEU']}📂 Charger Partie{COULEURS['RESET']}")
+        print(f"3. {COULEURS['ROUGE']}🚪 Quitter le jeu{COULEURS['RESET']}")
         choix = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}")
 
         if choix == '1':
@@ -44,12 +44,12 @@ def menu_personnage(joueur):
         afficher_titre_menu_avec_emoji(f"MENU DE {joueur.nom.upper()}", "personnage")
         afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
         print("\nOptions disponibles :")
-        print("1. 📊 Afficher Statistiques")
-        print("2. 🎒 Gérer Inventaire")
-        print("3. ⚡ Dépenser Points d'Attribut")
-        print("4. 💾 Sauvegarder Partie")
-        print("5. ✨ Afficher Capacités")
-        print("6. ⬅️  Retour (r)")
+        print(f"1. {COULEURS['BLEU']}📊 Afficher Statistiques{COULEURS['RESET']}")
+        print(f"2. {COULEURS['CYAN']}🎒 Gérer Inventaire{COULEURS['RESET']}")
+        print(f"3. {COULEURS['JAUNE']}⚡ Dépenser Points d'Attribut{COULEURS['RESET']}")
+        print(f"4. {COULEURS['GRIS']}💾 Sauvegarder Partie{COULEURS['RESET']}")
+        print(f"5. {COULEURS['MAGENTA']}✨ Afficher Capacités{COULEURS['RESET']}")
+        print(f"6. {COULEURS['GRIS']}⬅️  Retour (r){COULEURS['RESET']}")
 
         choix = input(f"\n{COULEURS['BLEU']}Votre choix : {COULEURS['RESET']}").strip().lower()
 

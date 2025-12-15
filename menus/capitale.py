@@ -107,11 +107,10 @@ def menu_capitale(joueur):
             options.append(('teleportation', None))
             option_num += 1
 
-        # Formation (si disponible)
-        if FeatureType.FORMATION.value in services and services[FeatureType.FORMATION.value]:
-            options_display.append(f"{option_num}. 📚 Formation")
-            options.append(('formation', FeatureType.FORMATION))
-            option_num += 1
+        # Formation (toujours disponible dans toutes les capitales)
+        options_display.append(f"{option_num}. 📚 Formation")
+        options.append(('formation', FeatureType.FORMATION))
+        option_num += 1
 
         # Parler aux PNJ (toujours disponible dans la capitale)
         options_display.append(f"{option_num}. 👥 Parler aux habitants")
@@ -155,13 +154,15 @@ def menu_capitale(joueur):
                 elif option_type == 'teleportation':
                     menu_teleportation(joueur, hub)
                 elif option_type == 'formation':
-                    menu_formation(joueur, hub, services[FeatureType.FORMATION.value])
+                    # Formation toujours disponible, utiliser une liste vide si pas dans les services
+                    features_formation = services.get(FeatureType.FORMATION.value, [])
+                    menu_formation(joueur, hub, features_formation)
                 elif option_type == 'pnj':
                     menu_pnj_capitale(joueur)
                 elif option_type == 'soin':
                     cout = 100
                     if getattr(joueur, "or_", 0) < cout:
-                        print(f"\nVous n'avez pas assez d'or. Il vous manque {cout - joueur.or_} pieces.")
+                        print(f"\n{COULEURS['ROUGE']}❌ Vous n'avez pas assez d'or. Il vous manque {cout - joueur.or_} pièces.{COULEURS['RESET']}")
                     else:
                         retirer_or(joueur, cout)
                         joueur.vie = joueur.vie_max
@@ -172,8 +173,8 @@ def menu_capitale(joueur):
                             joueur.energie = getattr(joueur, 'energie_max', joueur.energie)
                         if hasattr(joueur, 'rage_max'):
                             joueur.rage = 0
-                        print(f"\nVous etes entierement soigne pour {cout} or.")
-                    input("\nAppuyez sur Entree pour continuer...")
+                        print(f"\n{COULEURS['VERT']}💚 Vous êtes entièrement soigné pour {cout} or.{COULEURS['RESET']}")
+                    input("\nAppuyez sur Entrée pour continuer...")
                 elif option_type == 'retour':
                     break
             else:

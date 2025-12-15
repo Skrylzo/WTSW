@@ -127,9 +127,9 @@ def menu_commerce(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
         afficher_or(joueur)
         afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
         print("\nOptions disponibles :")
-        print("1. Acheter des objets")
-        print("2. Vendre des objets")
-        print("3. ⬅️  Retour (r)")
+        print(f"1. {COULEURS['VERT']}🛒 Acheter des objets{COULEURS['RESET']}")
+        print(f"2. {COULEURS['JAUNE']}💵 Vendre des objets{COULEURS['RESET']}")
+        print(f"3. {COULEURS['GRIS']}⬅️  Retour (r){COULEURS['RESET']}")
 
         choix = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
@@ -169,11 +169,12 @@ def menu_achat(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
                 "type": "ingredient_special"
             }
 
-    print("\nObjets disponibles :")
+    print(f"\n{COULEURS['VERT']}🛒 Objets disponibles :{COULEURS['RESET']}")
     for i, (nom, data) in enumerate(objets_disponibles.items(), 1):
-        print(f"{i}. {nom} - {data['prix']} pièces")
+        emoji_objet = "🧪" if "potion" in nom.lower() else "💎" if "ingredient" in nom.lower() or "eau" in nom.lower() else "📦"
+        print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {emoji_objet} {COULEURS['BLEU']}{nom}{COULEURS['RESET']} - {COULEURS['JAUNE']}{data['prix']} pièces{COULEURS['RESET']}")
 
-    print(f"{len(objets_disponibles) + 1}. ⬅️  Retour (r)")
+    print(f"\n{COULEURS['GRIS']}{len(objets_disponibles) + 1}. ⬅️  Retour (r){COULEURS['RESET']}")
 
     try:
         choix_input = input(f"\n{COULEURS['VERT']}Votre choix : {COULEURS['RESET']}").strip().lower()
@@ -251,24 +252,29 @@ def menu_vente(joueur):
         print("\nVotre inventaire est vide.")
         return
 
-    print("\nObjets à vendre :")
+    print(f"\n{COULEURS['JAUNE']}💵 Objets à vendre :{COULEURS['RESET']}")
     objets_liste = list(joueur.inventaire.items())
     for i, (nom, objet) in enumerate(objets_liste, 1):
         prix_vente, details = calculer_prix_vente(objet)
 
-        # Afficher l'objet avec son prix
-        affichage_objet = f"{i}. {objet}"
+        # Emoji selon le type d'objet
+        emoji_objet = "🧪" if objet.type == "potion" else "⚔️" if objet.type == "arme" else "🛡️" if objet.type == "armure" or objet.type == "équipement" else "💎"
 
-        # Ajouter des indicateurs visuels pour les objets de valeur
+        # Couleur selon la valeur
+        couleur_prix = COULEURS["JAUNE"]
+        emoji_valeur = ""
         if prix_vente >= 500:
-            affichage_objet += " 💎"
+            couleur_prix = COULEURS["MAGENTA"]
+            emoji_valeur = " 💎"
         elif prix_vente >= 200:
-            affichage_objet += " ⭐"
+            couleur_prix = COULEURS["BLEU"]
+            emoji_valeur = " ⭐"
         elif prix_vente >= 100:
-            affichage_objet += " ✨"
+            couleur_prix = COULEURS["VERT"]
+            emoji_valeur = " ✨"
 
-        print(f"{affichage_objet}")
-        print(f"   Prix : {prix_vente} pièces", end="")
+        print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {emoji_objet} {COULEURS['BLEU']}{objet}{COULEURS['RESET']}{emoji_valeur}")
+        print(f"   {COULEURS['GRIS']}Prix :{COULEURS['RESET']} {couleur_prix}{prix_vente} pièces{COULEURS['RESET']}", end="")
 
         # Afficher les détails du calcul si l'objet a des stats/effets ou un niveau_biome
         if details["bonus_stats"] > 0 or details["bonus_niveau"] > 0:
