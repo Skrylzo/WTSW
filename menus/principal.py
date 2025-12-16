@@ -11,6 +11,8 @@ def menu_principal():
     joueur = None
     while True:
         effacer_console()
+        # Centrer le menu principal
+        print()
         afficher_titre_menu_avec_emoji("MENU PRINCIPAL", "principal")
         afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
         print("\nOptions disponibles :")
@@ -26,6 +28,7 @@ def menu_principal():
                 from .introduction import afficher_introduction_complete
                 afficher_introduction_complete(joueur)
                 return joueur
+            # Si creer_personnage retourne None, continuer la boucle (retour au menu)
         elif choix == '2':
             nom_a_charger = input("Entrez le nom du personnage à charger : ")
             from .sauvegarde import menu_gestion_sauvegardes

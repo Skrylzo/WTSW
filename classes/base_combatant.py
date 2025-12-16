@@ -41,6 +41,7 @@ class BaseCombatant:
             self.vie = 0
             self.est_vivant = False # Mise à jour de l'attribut est_vivant
         print(f"{self.nom} subit {degats:.1f} dégâts. Vie restante : {self.vie:.1f}/{self.vie_max:.1f}")
+        print()
 
     def soigner(self, montant, afficher_message=True):
         vie_avant = self.vie
@@ -55,6 +56,7 @@ class BaseCombatant:
 
     def attaquer(self, cible):
         print(f"{self.nom} attaque {cible.nom}!")
+        print()
         return self.calculer_attaque_totale()
 
 
@@ -467,54 +469,107 @@ class Personnage(BaseCombatant):
             return False
 
     def afficher_capacites(self):
+        from utils.affichage import effacer_console, COULEURS
+        effacer_console()
+
         if not self.capacites_apprises:
             print(f"{self.nom} n'a pas encore appris de capacités.")
             return
 
-        print(f"\n--- Capacités de {self.nom} ({self.specialisation.nom}) ---")
+        print(f"\n--- Capacités de {COULEURS['CYAN']}{self.nom}{COULEURS['RESET']} ({self.specialisation.nom}) ---")
+        print()
         for i, capacite in enumerate(self.capacites_apprises):
             # Pour l'affichage, on peut choisir de montrer toutes les capacités ou seulement celles débloquées.
             if self.niveau >= capacite.niveau_requis:
+                # Couleur pour le coût selon le type de ressource
                 cout_str = ""
+                couleur_cout = COULEURS["CYAN"]
                 if self.specialisation.type_ressource == "Mana" and capacite.cout_mana > 0:
-                    cout_str = f"(Coût : {capacite.cout_mana} Mana)"
+                    couleur_cout = COULEURS["BLEU"]
+                    cout_str = f"{couleur_cout}(Coût : {capacite.cout_mana} Mana){COULEURS['RESET']}"
                 elif self.specialisation.type_ressource == "Energie" and capacite.cout_energie > 0:
-                    cout_str = f"(Coût : {capacite.cout_energie} Énergie)"
+                    couleur_cout = COULEURS["JAUNE"]
+                    cout_str = f"{couleur_cout}(Coût : {capacite.cout_energie} Énergie){COULEURS['RESET']}"
                 elif self.specialisation.type_ressource == "Rage" and capacite.cout_rage > 0:
-                    cout_str = f"(Coût : {capacite.cout_rage} Rage)"
+                    couleur_cout = COULEURS["ROUGE"]
+                    cout_str = f"{couleur_cout}(Coût : {capacite.cout_rage} Rage){COULEURS['RESET']}"
 
-                print(f"{i+1}. {capacite.nom} (Niveau requis: {capacite.niveau_requis})")
-                print(f"   Description: {capacite.description}")
+                print(f"{COULEURS['CYAN']}{i+1}. {COULEURS['MAGENTA']}{capacite.nom}{COULEURS['RESET']} {COULEURS['GRIS']}(Niveau requis: {capacite.niveau_requis}){COULEURS['RESET']}")
+                print()
+                print(f"   {COULEURS['GRIS']}Description: {capacite.description}{COULEURS['RESET']}")
+                print()
                 if cout_str:
                     print(f"   {cout_str}")
+                    print()
                 if capacite.degats_fixes > 0:
-                    print(f"   Dégâts fixes: {capacite.degats_fixes}")
+                    print(f"   {COULEURS['ROUGE']}Dégâts fixes: {capacite.degats_fixes}{COULEURS['RESET']}")
+                    print()
                 if capacite.soin_fixe > 0:
-                    print(f"   Soin fixe: {capacite.soin_fixe}")
+                    print(f"   {COULEURS['VERT']}Soin fixe: {capacite.soin_fixe}{COULEURS['RESET']}")
+                    print()
                 if capacite.effet_data:
-                    print(f"   Applique Effet: {capacite.effet_data['nom']} ({capacite.effet_data.get('duree',1)} tours)")
+                    print(f"   {COULEURS['MAGENTA']}Applique Effet: {capacite.effet_data['nom']} ({capacite.effet_data.get('duree',1)} tours){COULEURS['RESET']}")
+                    print()
                 print("-" * 20)
+                print()
             else:
                 pass # Ne rien afficher si la capacité n'est pas débloquée et qu'on ne veut pas la montrer.
 
 
     def afficher_stats(self):
+        from utils.affichage import COULEURS
+
+        # Codes ANSI pour le gras
+        GRAS = "\033[1m"
+        RESET = COULEURS["RESET"]
+
         print(f"\n--- Statistiques de {self.nom} (Niveau {self.niveau} {self.race} {self.specialisation.nom}) ---")
-        print(f"Vie : {self.vie:.1f}/{self.vie_max:.1f}")
 
+        # Vie avec couleur selon le pourcentage
+        pourcentage_vie = (self.vie / self.vie_max) * 100 if self.vie_max > 0 else 0
+        couleur_vie = COULEURS["VERT"] if pourcentage_vie > 60 else COULEURS["JAUNE"] if pourcentage_vie > 30 else COULEURS["ROUGE"]
+        print(f"{couleur_vie}Vie : {self.vie:.1f}/{self.vie_max:.1f}{RESET}")
+
+        # Ressource avec couleur
         if self.specialisation.type_ressource == "Mana":
-            print(f"Mana : {self.mana:.1f}/{self.mana_max:.1f}")
+            couleur_ressource = COULEURS["BLEU"]
+            print(f"{couleur_ressource}Mana : {self.mana:.1f}/{self.mana_max:.1f}{RESET}")
         elif self.specialisation.type_ressource == "Energie":
-            print(f"Énergie : {self.energie:.1f}/{self.energie_max:.1f}")
+            couleur_ressource = COULEURS["JAUNE"]
+            print(f"{couleur_ressource}Énergie : {self.energie:.1f}/{self.energie_max:.1f}{RESET}")
         elif self.specialisation.type_ressource == "Rage":
-            print(f"Rage : {self.rage:.1f}/{self.rage_max:.1f}")
+            couleur_ressource = COULEURS["ROUGE"]
+            print(f"{couleur_ressource}Rage : {self.rage:.1f}/{self.rage_max:.1f}{RESET}")
 
-        print(f"Attaque : {self.attaque:.1f}")
-        print(f"Défense : {self.defense:.1f}")
-        print(f"Vitesse : {self.vitesse:.1f}")
-        print(f"Chance Critique : {self.chance_critique:.1f}%")
-        print(f"XP : {self.xp}/{self.xp_requise}")
-        print(f"Points d'Attribut : {self.points_attribut}")
+        # Identifier les meilleures et pires stats de combat
+        stats_combat = {
+            "Attaque": self.attaque,
+            "Défense": self.defense,
+            "Vitesse": self.vitesse,
+            "Chance Critique": self.chance_critique
+        }
+
+        # Trouver les meilleures et pires stats
+        stats_triees = sorted(stats_combat.items(), key=lambda x: x[1], reverse=True)
+        meilleure_stat = stats_triees[0][0] if stats_triees else None
+        pire_stat = stats_triees[-1][0] if stats_triees else None
+
+        # Afficher les stats avec couleurs et gras
+        def formater_stat(nom, valeur, suffixe=""):
+            if nom == meilleure_stat:
+                return f"{GRAS}{COULEURS['VERT']}{nom} : {valeur:.1f}{suffixe}{RESET}"
+            elif nom == pire_stat and len(stats_triees) > 1 and stats_triees[0][1] != stats_triees[-1][1]:
+                return f"{GRAS}{COULEURS['ROUGE']}{nom} : {valeur:.1f}{suffixe}{RESET}"
+            else:
+                return f"{COULEURS['CYAN']}{nom} : {valeur:.1f}{suffixe}{RESET}"
+
+        print(formater_stat("Attaque", self.attaque))
+        print(formater_stat("Défense", self.defense))
+        print(formater_stat("Vitesse", self.vitesse))
+        print(formater_stat("Chance Critique", self.chance_critique, "%"))
+
+        print(f"{COULEURS['GRIS']}XP : {self.xp}/{self.xp_requise}{RESET}")
+        print(f"{COULEURS['JAUNE']}Points d'Attribut : {self.points_attribut}{RESET}")
 
         # Codes couleur ANSI pour les raretés
         COULEURS_RARETE = {

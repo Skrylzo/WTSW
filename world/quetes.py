@@ -148,30 +148,44 @@ class Quete:
 
     def afficher(self):
         """Affiche les informations de la quête."""
-        print(f"\n{'='*60}")
-        print(f"QUÊTE : {self.nom}")
-        print(f"{'='*60}")
-        print(f"Type : {self.type_quete.value}")
+        from utils.affichage import COULEURS, afficher_titre_menu_avec_emoji, afficher_separateur
+
+        print()
+        afficher_titre_menu_avec_emoji(f"QUÊTE : {self.nom}", "quetes")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+        print()
         if self.royaume:
             print(f"Royaume : {self.royaume}")
-        print(f"\nDescription :\n{self.description}")
+            print()
+        print(f"Description :")
+        print()
+        print(f"{self.description}")
+        print()
 
         if self.objectifs:
-            print(f"\nObjectifs :")
+            print(f"Objectifs :")
+            print()
             for i, obj in enumerate(self.objectifs, 1):
                 etat = "✓" if obj.est_complete() else "○"
-                print(f"  {etat} {i}. {obj}")
+                couleur_etat = COULEURS["VERT"] if obj.est_complete() else COULEURS["GRIS"]
+                print(f"  {couleur_etat}{etat}{COULEURS['RESET']} {i}. {obj}")
+                print()
 
         if self.recompenses:
-            print(f"\nRécompenses :")
+            print(f"Récompenses :")
+            print()
             if "xp" in self.recompenses:
-                print(f"  - XP : {self.recompenses['xp']}")
+                print(f"  {COULEURS['VERT']}- XP : {self.recompenses['xp']}{COULEURS['RESET']}")
+                print()
             if "or" in self.recompenses:
-                print(f"  - Or : {self.recompenses['or']}")
+                print(f"  {COULEURS['JAUNE']}- Or : {self.recompenses['or']}{COULEURS['RESET']}")
+                print()
             if "objets" in self.recompenses:
-                print(f"  - Objets : {', '.join(self.recompenses['objets'])}")
+                for objet in self.recompenses['objets']:
+                    print(f"  {COULEURS['CYAN']}- Objet : {objet}{COULEURS['RESET']}")
+                    print()
 
-        print(f"{'='*60}\n")
+        print(f"{COULEURS['CYAN']}{'='*60}{COULEURS['RESET']}\n")
 
     def __repr__(self):
         return f"Quete(id='{self.id_quete}', nom='{self.nom}', statut={self.statut.value})"

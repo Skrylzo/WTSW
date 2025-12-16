@@ -66,6 +66,8 @@ def menu_quetes(joueur, hub: HubCapital, features_quetes: List[HubFeature], syst
 
         if choix == '1':
             afficher_quetes_en_cours_details(systeme_quetes, joueur)
+            input("\nAppuyez sur Entrée pour continuer...")
+            effacer_console()
         elif choix == '2':
             afficher_quetes_completees(systeme_quetes, joueur)
         elif choix == '3':
@@ -131,9 +133,11 @@ def afficher_quetes_en_cours_details(systeme_quetes: SystemeQuetes, joueur):
         input("\nAppuyez sur Entrée pour continuer...")
         return
 
-    print(f"\n{'='*60}")
-    print("QUÊTES EN COURS")
-    print(f"{'='*60}")
+    effacer_console()
+    print()
+    afficher_titre_menu_avec_emoji("QUÊTES EN COURS", "quetes")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+    print()
 
     # Afficher la quête principale en cours
     quete_principale = systeme_quetes.obtenir_quete_principale_actuelle()
@@ -162,8 +166,6 @@ def afficher_quetes_en_cours_details(systeme_quetes: SystemeQuetes, joueur):
         print(f"\n📜 QUÊTES SECONDAIRES EN COURS :")
         for quete in quetes_secondaires_en_cours:
             quete.afficher()
-
-    input("\nAppuyez sur Entrée pour continuer...")
 
 
 def accepter_quete_menu(joueur, systeme_quetes: SystemeQuetes):

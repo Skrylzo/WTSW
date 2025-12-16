@@ -11,6 +11,45 @@ from world import (
 from utils.affichage import effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS
 from world.data_loader import attacher_biomes_depuis_valdoria
 from combat import deroulement_combat
+import re
+
+
+def nettoyer_caracteres_mal_encodes(texte):
+    """Remplace les caractères mal encodés par leurs équivalents corrects."""
+    # Essayer de corriger les encodages courants (Windows-1252 mal interprété en utf-8)
+    try:
+        # Si le texte contient des caractères mal encodés, essayer de les corriger
+        # en encodant en latin1 puis décodant en utf-8
+        texte_corrige = texte.encode('latin1', errors='ignore').decode('utf-8', errors='ignore')
+        # Si ça a changé quelque chose, utiliser le texte corrigé
+        if texte_corrige != texte:
+            texte = texte_corrige
+    except:
+        pass
+
+    # Remplacements manuels pour les cas spécifiques
+    # Caractères mal encodés courants (Windows-1252 -> UTF-8)
+    replacements = {
+        '\x82': 'é',  # é mal encodé (Windows-1252)
+        '\x83': 'é',  # é mal encodé (autre)
+        '\x88': 'è',  # è mal encodé
+        '\x89': 'é',  # é mal encodé
+        '\x8a': 'ê',  # ê mal encodé
+        '\x8c': 'î',  # î mal encodé
+        '\x8e': 'î',  # î mal encodé
+        '\x95': '•',  # • mal encodé
+        '\x96': '–',  # – mal encodé
+        '\x97': '—',  # — mal encodé
+        '\xa0': ' ',  # espace insécable
+    }
+    for mal_encode, correct in replacements.items():
+        texte = texte.replace(mal_encode, correct)
+
+    # Remplacement générique pour les caractères de remplacement Unicode (U+FFFD)
+    # qui apparaissent parfois lors de mauvais encodages
+    texte = texte.replace('\ufffd', 'é')  # Caractère de remplacement -> é (le plus courant)
+
+    return texte
 
 
 def menu_exploration_valdoria(joueur):
@@ -40,16 +79,15 @@ def menu_exploration_valdoria(joueur):
         afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
 
         # Afficher les informations du chapitre actuel
-        chapitre_actuel.afficher_info()
-
-        # Afficher l'or du joueur
-        from .monnaie import afficher_or
-        afficher_or(joueur)
+        chapitre_actuel.afficher_info(nom_royaume=royaume_joueur.nom if royaume_joueur else None)
 
         # Afficher les options
         print(f"\n{COULEURS['BLEU']}Que voulez-vous faire ?{COULEURS['RESET']}")
+        print()
         print("1. 🌍 Explorer une zone")
+        print()
         print("2. 📚 Informations sur les royaumes")
+        print()
         print("3. ⬅️  Retour au menu principal (r)")
 
         choix = input(f"\n{COULEURS['BLEU']}Votre choix : {COULEURS['RESET']}").strip().lower()
@@ -68,6 +106,7 @@ def menu_selection_zone(joueur, royaume, systeme_chapitres: SystemeChapitres):
     """
     Menu de sélection de zone à explorer.
     """
+    effacer_console()
     chapitre_actuel = systeme_chapitres.obtenir_chapitre_actuel()
     if not chapitre_actuel:
         print("\nAucune zone disponible pour l'instant.")
@@ -82,14 +121,29 @@ def menu_selection_zone(joueur, royaume, systeme_chapitres: SystemeChapitres):
 
     afficher_titre_menu_avec_emoji("SÉLECTION DE ZONE", "zone")
     afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
-    print(f"\nChapitre actuel : {chapitre_actuel.numero} - {chapitre_actuel.titre}")
-    print(f"Zones disponibles ({len(zones_accessibles)}) :\n")
+    print()
 
     # Afficher les zones avec leurs niveaux recommandés
     zones_liste = []
+
     for i, zone_id in enumerate(zones_accessibles, 1):
         est_completee = zone_id in chapitre_actuel.zones_completees
-        statut = "✓ Complétée" if est_completee else "○ Disponible"
+        statut = "✓" if est_completee else "○"
+
+        # Corriger les caractères mal encodés
+        zone_nom_affichage = nettoyer_caracteres_mal_encodes(zone_id)
+
+        # Extraire le nom phonétique et transformer "(Phonétique suggérée : X)" en "(X)"
+        # Pattern flexible pour détecter "(Phonétique suggérée : ...)" avec ou sans caractères mal encodés
+        # Le pattern accepte n'importe quel caractère entre les lettres pour gérer les encodages
+        pattern_phonetique = r'\([Pp]hon[^\s)]*tique\s+sugg[^\s)]*r[^\s)]*e\s*:\s*([^)]+)\)'
+        match = re.search(pattern_phonetique, zone_nom_affichage, re.IGNORECASE)
+        if match:
+            nom_phonetique = match.group(1).strip()
+            # Corriger aussi les caractères mal encodés dans le nom phonétique
+            nom_phonetique = nettoyer_caracteres_mal_encodes(nom_phonetique)
+            # Remplacer toute la partie "(Phonétique suggérée : X)" par juste "(X)"
+            zone_nom_affichage = re.sub(pattern_phonetique, f'({nom_phonetique})', zone_nom_affichage, flags=re.IGNORECASE)
 
         # Trouver le biome pour afficher le niveau recommandé
         biome_zone = trouver_biome_par_nom(royaume, zone_id)
@@ -97,7 +151,8 @@ def menu_selection_zone(joueur, royaume, systeme_chapitres: SystemeChapitres):
         if biome_zone:
             niveau_info = f" ({biome_zone.afficher_niveau_recommande()})"
 
-        print(f"{i}. {zone_id}{niveau_info} [{statut}]")
+        print(f"{i}. {zone_nom_affichage}{niveau_info} {statut}")
+        print()  # Saut de ligne entre chaque zone
         zones_liste.append(zone_id)
 
     print(f"{len(zones_liste) + 1}. ⬅️  Retour (r)")
@@ -169,10 +224,21 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
 
     # Menu d'actions dans la zone
     while True:
+        # Nettoyer le nom de la zone (enlever "phonétique suggérée" et corriger les caractères mal encodés)
+        zone_nom_affichage = nettoyer_caracteres_mal_encodes(zone_id)
+
+        # Extraire le nom phonétique et transformer "(Phonétique suggérée : X)" en "(X)"
+        pattern_phonetique = r'\([Pp]hon[^\s)]*tique\s+sugg[^\s)]*r[^\s)]*e\s*:\s*([^)]+)\)'
+        match = re.search(pattern_phonetique, zone_nom_affichage, re.IGNORECASE)
+        if match:
+            nom_phonetique = match.group(1).strip()
+            nom_phonetique = nettoyer_caracteres_mal_encodes(nom_phonetique)
+            zone_nom_affichage = re.sub(pattern_phonetique, f'({nom_phonetique})', zone_nom_affichage, flags=re.IGNORECASE)
+
         try:
-            zone_id_upper = zone_id.upper()
+            zone_id_upper = zone_nom_affichage.upper()
         except Exception:
-            zone_id_upper = zone_id
+            zone_id_upper = zone_nom_affichage
         afficher_titre_menu_avec_emoji(zone_id_upper, "zone")
         afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
 
@@ -192,6 +258,7 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
 
         # Option 1 : Combattre
         print(f"{option_num}. ⚔️  Combattre des ennemis")
+        print()  # Saut de ligne
         options.append('combat')
         option_num += 1
 
@@ -200,13 +267,22 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
             from data.cles_donjons import joueur_possede_cle_donjon, donjon_requiert_cle, obtenir_cle_donjon
             from data.objets import DEFINITIONS_OBJETS
 
+            # Nettoyer le nom du donjon
+            donjon_nom_affichage = nettoyer_caracteres_mal_encodes(biome_cible.donjon_nom)
+            match_donjon = re.search(pattern_phonetique, donjon_nom_affichage, re.IGNORECASE)
+            if match_donjon:
+                nom_phonetique_donjon = match_donjon.group(1).strip()
+                nom_phonetique_donjon = nettoyer_caracteres_mal_encodes(nom_phonetique_donjon)
+                donjon_nom_affichage = re.sub(pattern_phonetique, f'({nom_phonetique_donjon})', donjon_nom_affichage, flags=re.IGNORECASE)
+
             # Vérifier si ce donjon nécessite une clé
             if donjon_requiert_cle(biome_cible.donjon_nom):
                 # Ce donjon nécessite une clé, vérifier si le joueur l'a
                 possede_cle = joueur_possede_cle_donjon(joueur, biome_cible.donjon_nom)
 
                 if possede_cle:
-                    print(f"{option_num}. 🏰 Explorer le donjon : {biome_cible.donjon_nom}")
+                    print(f"{option_num}. 🏰 Explorer le donjon : {donjon_nom_affichage}")
+                    print()  # Saut de ligne
                     options.append('donjon')
                     option_num += 1
                 else:
@@ -217,12 +293,14 @@ def explorer_zone(joueur, royaume, zone_id: str, systeme_chapitres: SystemeChapi
                         cle_data = DEFINITIONS_OBJETS.get(cle_id)
                         if cle_data:
                             nom_cle = cle_data.get("nom", "clé")
-                    print(f"{option_num}. 🏰 Explorer le donjon : {biome_cible.donjon_nom} {COULEURS['ROUGE']}🔒{COULEURS['RESET']} (Clé requise : {nom_cle})")
+                    print(f"{option_num}. 🏰 Explorer le donjon : {donjon_nom_affichage} {COULEURS['ROUGE']}🔒{COULEURS['RESET']} (Clé requise : {nom_cle})")
+                    print()  # Saut de ligne
                     options.append('donjon_verrouille')
                     option_num += 1
             else:
                 # Ce donjon ne nécessite pas de clé (donjon non listé dans CLES_DONJONS)
-                print(f"{option_num}. 🏰 Explorer le donjon : {biome_cible.donjon_nom}")
+                print(f"{option_num}. 🏰 Explorer le donjon : {donjon_nom_affichage}")
+                print()  # Saut de ligne
                 options.append('donjon')
                 option_num += 1
 
@@ -278,18 +356,50 @@ def _lancer_combat_zone(joueur, biome_cible, zone_id: str, systeme_chapitres: Sy
 
     # Lancer le combat
     niveau_biome = biome_cible.niveau_min if biome_cible else None
-    deroulement_combat(joueur, ennemis_a_combattre_ids, niveau_biome=niveau_biome)
+    resultat_combat = deroulement_combat(joueur, ennemis_a_combattre_ids, niveau_biome=niveau_biome)
 
-    # Après le combat, vérifier si le joueur a gagné
+    # Après le combat, vérifier si le joueur a gagné ou a fui
     if joueur.est_vivant:
-        print(f"\nVous avez vaincu les ennemis de {zone_id}.")
-        # Note : La zone n'est complétée qu'après avoir battu le boss du donjon
-        # Les combats normaux servent uniquement au farming et à la progression
+        # Si le combat a été quitté volontairement (resultat_combat == False), afficher le message de fuite
+        if resultat_combat is False:
+            print(f"\n{COULEURS['ROUGE']}Vous avez fui le combat comme un lâche...{COULEURS['RESET']}")
+            print()
+            input("Appuyez sur Entrée pour continuer...")
+            effacer_console()
+            return
+
+        # Nettoyer le nom de la zone (enlever "phonétique suggérée" mais garder le nom phonétique)
+        zone_nom_affichage = nettoyer_caracteres_mal_encodes(zone_id)
+
+        # Extraire le nom phonétique et transformer "(Phonétique suggérée : X)" en "(X)"
+        pattern_phonetique = r'\([Pp]hon[^\s)]*tique\s+sugg[^\s)]*r[^\s)]*e\s*:\s*([^)]+)\)'
+        match = re.search(pattern_phonetique, zone_nom_affichage, re.IGNORECASE)
+        if match:
+            nom_phonetique = match.group(1).strip()
+            nom_phonetique = nettoyer_caracteres_mal_encodes(nom_phonetique)
+            zone_nom_affichage = re.sub(pattern_phonetique, f'({nom_phonetique})', zone_nom_affichage, flags=re.IGNORECASE)
+
+        print(f"\nVous avez vaincu les ennemis de {zone_nom_affichage}.")
+        print()
+
+        # Proposer de combattre à nouveau ou retourner au menu
+        print(f"{COULEURS['CYAN']}1. ⚔️  Affronter un autre groupe d'ennemis{COULEURS['RESET']}")
+        print()
+        print(f"{COULEURS['GRIS']}Appuyez sur Entrée pour retourner au menu{COULEURS['RESET']}")
+        print()
+
+        choix = input(f"{COULEURS['BLEU']}Votre choix : {COULEURS['RESET']}").strip()
+
+        if choix == '1':
+            # Relancer un combat
+            _lancer_combat_zone(joueur, biome_cible, zone_id, systeme_chapitres)
+        else:
+            # Retour au menu avec clear
+            effacer_console()
+            return
     else:
         # Le joueur est déjà téléporté à sa capitale par deroulement_combat
         return
-
-    input("\nAppuyez sur Entrée pour continuer...")
 
 
 def _parler_pnj_zone(joueur, pnjs_zone: list):
@@ -305,9 +415,11 @@ def _parler_pnj_zone(joueur, pnjs_zone: list):
     from menus.pnj import parler_a_pnj
 
     while True:
-        print(f"\n{'='*60}")
-        print("--- HABITANTS DE LA ZONE ---")
-        print(f"{'='*60}\n")
+        effacer_console()
+        print()
+        afficher_titre_menu_avec_emoji("HABITANTS DE LA ZONE", "pnj")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+        print()
 
         options = []
         option_num = 1
@@ -446,9 +558,11 @@ def _explorer_donjon(joueur, biome_cible, zone_id: str, systeme_chapitres: Syste
                         else:
                             print("Réponse invalide. Veuillez répondre par 'o' (oui) ou 'n' (non).")
 
-        print(f"\n{'='*60}")
-        print("--- VOUS ATTEIGNEZ LA SALLE DU GARDIEN ---")
-        print(f"{'='*60}\n")
+        effacer_console()
+        print()
+        afficher_titre_menu_avec_emoji("VOUS ATTEIGNEZ LA SALLE DU GARDIEN", "donjon")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+        print()
         print("Vous avez survécu aux épreuves du donjon.")
         print("Le gardien final vous attend dans la salle principale...\n")
         input("Appuyez sur Entrée pour affronter le gardien...")

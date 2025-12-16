@@ -5,7 +5,7 @@ from typing import List, Tuple, Optional, Dict
 from classes.objet import Objet
 from .utiliser_objets import utiliser_potion as utiliser_potion_objet
 from .commerce import calculer_prix_vente
-from utils.affichage import afficher_titre_menu, afficher_separateur, afficher_message_confirmation, formater_nombre, COULEURS, effacer_console
+from utils.affichage import afficher_titre_menu, afficher_titre_menu_avec_emoji, afficher_separateur, afficher_message_confirmation, formater_nombre, COULEURS, effacer_console
 
 # Ordre des raretés pour le tri
 ORDRE_RARETE = {
@@ -184,9 +184,10 @@ def afficher_inventaire_ameliore(joueur, objets_a_afficher: Optional[List[Tuple[
 
     # Menu simplifié
     while True:
-        print(f"\n{'='*60}")
-        print("--- AFFICHAGE DE L'INVENTAIRE ---")
-        print(f"{'='*60}")
+        effacer_console()
+        print()
+        afficher_titre_menu_avec_emoji("AFFICHAGE DE L'INVENTAIRE", "inventaire")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
 
         # Afficher les paramètres actuels
         print(f"\nTri : {critere_tri.capitalize()} ({ordre_tri})")
@@ -242,7 +243,10 @@ def afficher_inventaire_ameliore(joueur, objets_a_afficher: Optional[List[Tuple[
 
 def _choisir_tri() -> Tuple[str, str]:
     """Menu pour choisir le critère et l'ordre de tri."""
-    print("\n--- Choisir le tri ---")
+    from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur
+    print()
+    afficher_titre_menu_avec_emoji("Choisir le tri", "inventaire")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
     print("1. Par nom (A-Z)")
     print("2. Par rareté (Commun → Légendaire)")
     print("3. Par quantité (croissant)")
@@ -324,9 +328,11 @@ def _afficher_inventaire_pagine(joueur, objets: List[Tuple[str, Objet]], page: i
     total_pages = (len(objets) + OBJETS_PAR_PAGE - 1) // OBJETS_PAR_PAGE
 
     while True:
-        print(f"\n{'='*60}")
-        print(f"--- INVENTAIRE (Page {page}/{total_pages}) ---")
-        print(f"{'='*60}\n")
+        effacer_console()
+        print()
+        afficher_titre_menu_avec_emoji(f"INVENTAIRE (Page {page}/{total_pages})", "inventaire")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+        print()
 
         # Calculer les indices pour cette page
         debut = (page - 1) * OBJETS_PAR_PAGE
@@ -409,9 +415,11 @@ def rechercher_objet(joueur):
         input("\nAppuyez sur Entrée pour continuer...")
         return
 
-    print(f"\n{'='*60}")
-    print("--- RECHERCHE D'OBJET ---")
-    print(f"{'='*60}\n")
+    effacer_console()
+    print()
+    afficher_titre_menu_avec_emoji("RECHERCHE D'OBJET", "inventaire")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+    print()
 
     terme = input("Entrez le nom de l'objet à rechercher : ").strip()
 
@@ -442,9 +450,11 @@ def consulter_objet(joueur):
         input("\nAppuyez sur Entrée pour continuer...")
         return
 
-    print(f"\n{'='*60}")
-    print("--- CONSULTER UN OBJET ---")
-    print(f"{'='*60}\n")
+    effacer_console()
+    print()
+    afficher_titre_menu_avec_emoji("CONSULTER UN OBJET", "inventaire")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+    print()
 
     # Afficher la liste des objets disponibles
     objets_liste = list(joueur.inventaire.items())
@@ -465,9 +475,11 @@ def consulter_objet(joueur):
         if 1 <= choix <= len(objets_tries):
             nom_objet, objet = objets_tries[choix - 1]
 
-            print(f"\n{'='*60}")
-            print(f"--- DÉTAILS DE {objet.nom.upper()} ---")
-            print(f"{'='*60}\n")
+            effacer_console()
+            print()
+            afficher_titre_menu_avec_emoji(f"DÉTAILS DE {objet.nom.upper()}", "inventaire")
+            afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+            print()
 
             print(f"Type : {objet.type.capitalize()}")
             if hasattr(objet, 'sous_type') and objet.sous_type:
@@ -512,14 +524,61 @@ def consulter_objet(joueur):
             prix, details = calculer_prix_vente(objet)
             print(f"\n💰 Valeur estimée : {prix:,} pièces (x{objet.quantite} = {prix * objet.quantite:,} pièces)")
 
+            # Proposer d'équiper si c'est un équipement
+            est_equipement = objet.type in ["arme", "armure", "équipement"]
+            if est_equipement:
+                print(f"\n{COULEURS['CYAN']}Options :{COULEURS['RESET']}")
+                print(f"1. {COULEURS['VERT']}⚔️  Équiper cet équipement{COULEURS['RESET']}")
+                print(f"2. {COULEURS['GRIS']}⬅️  Retour (r){COULEURS['RESET']}")
+
+                choix_action = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
+
+                if choix_action == '1':
+                    from .utiliser_objets import menu_equiper_equipement
+                    # Filtrer pour ne montrer que cet objet dans le menu d'équipement
+                    # On va directement équiper depuis la liste
+                    from .utiliser_objets import _filtrer_armes, _filtrer_armures_par_type, _equiper_arme_depuis_liste, _equiper_armure_depuis_liste
+
+                    sous_type = getattr(objet, 'sous_type', None)
+                    if not sous_type and objet.type == "équipement":
+                        from data.recettes import obtenir_recette
+                        recette = obtenir_recette(objet.nom)
+                        if recette:
+                            sous_type = recette.get('sous_type')
+
+                    # Déterminer le type d'équipement
+                    if objet.type == "arme" or (hasattr(objet, 'stats') and objet.stats.get('degats_base')):
+                        armes = [(nom_objet, objet)]
+                        _equiper_arme_depuis_liste(joueur, armes)
+                    elif sous_type == "torse":
+                        armures = [(nom_objet, objet)]
+                        _equiper_armure_depuis_liste(joueur, armures, "armure")
+                    elif sous_type == "casque":
+                        casques = [(nom_objet, objet)]
+                        _equiper_armure_depuis_liste(joueur, casques, "casque")
+                    elif sous_type == "bottes":
+                        bottes = [(nom_objet, objet)]
+                        _equiper_armure_depuis_liste(joueur, bottes, "bottes")
+                    else:
+                        print(f"{COULEURS['ROUGE']}❌ Impossible d'équiper cet objet.{COULEURS['RESET']}")
+                        input("\nAppuyez sur Entrée pour continuer...")
+                elif choix_action == '2' or choix_action == 'r':
+                    pass  # Retour
+                else:
+                    print("Choix invalide.")
+                    input("\nAppuyez sur Entrée pour continuer...")
+            else:
+                input("\nAppuyez sur Entrée pour continuer...")
+
         else:
             print("Numéro invalide.")
+            input("\nAppuyez sur Entrée pour continuer...")
     except ValueError:
         print("Veuillez entrer un nombre valide.")
+        input("\nAppuyez sur Entrée pour continuer...")
     except (IndexError, KeyError):
         print("Erreur lors de la consultation de l'objet.")
-
-    input("\nAppuyez sur Entrée pour continuer...")
+        input("\nAppuyez sur Entrée pour continuer...")
 
 
 def utiliser_potion(joueur):
@@ -643,9 +702,11 @@ def afficher_inventaire_par_type(joueur):
     objets_liste = list(joueur.inventaire.items())
     objets_tries = trier_objets(objets_liste, "type", "croissant")
 
-    print(f"\n{'='*60}")
-    print("--- INVENTAIRE PAR TYPE ---")
-    print(f"{'='*60}\n")
+    effacer_console()
+    print()
+    afficher_titre_menu_avec_emoji("INVENTAIRE PAR TYPE", "inventaire")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+    print()
 
     type_actuel = None
     for nom_objet, objet in objets_tries:

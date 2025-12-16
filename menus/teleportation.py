@@ -8,6 +8,7 @@ from world import (
     HubCapital
 )
 from .exploration import creer_systeme_chapitres_base
+from utils.affichage import effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS
 
 
 def parser_royaumes_depuis_teleportations(teleportations: List[str], royaume_actuel: str = None) -> List[str]:
@@ -123,9 +124,10 @@ def menu_teleportation(joueur, hub: HubCapital):
         print("\nAucun royaume disponible pour la téléportation.")
         return
 
-    print(f"\n{'='*60}")
-    print("--- TÉLÉPORTATION ---")
-    print(f"{'='*60}")
+    effacer_console()
+    print()
+    afficher_titre_menu_avec_emoji("TÉLÉPORTATION", "capitale")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
     print(f"\nDepuis {hub.nom}, vous pouvez vous téléporter vers :\n")
 
     # Afficher les royaumes disponibles

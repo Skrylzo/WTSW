@@ -4,6 +4,7 @@
 from typing import List, Optional
 from world.pnj import PNJS, obtenir_pnj, parler_a_pnj
 from data.pnjs_quetes import initialiser_pnjs
+from utils.affichage import effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS
 
 # S'assurer que les PNJ sont initialisés
 initialiser_pnjs()
@@ -35,9 +36,11 @@ def menu_parler_pnj(joueur):
         return
 
     while True:
-        print(f"\n{'='*60}")
-        print("--- PARLER À UN PNJ ---")
-        print(f"{'='*60}\n")
+        effacer_console()
+        print()
+        afficher_titre_menu_avec_emoji("PARLER À UN PNJ", "pnj")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+        print()
 
         # Afficher les PNJ disponibles
         options = []

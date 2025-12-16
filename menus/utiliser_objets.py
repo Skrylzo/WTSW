@@ -41,6 +41,7 @@ def choisir_objet_combat(joueur) -> bool:
         return False
 
     print(f"\n{COULEURS['VERT']}🧪 Potions disponibles :{COULEURS['RESET']}")
+    print()
     for i, (nom_objet, objet) in enumerate(objets_utilisables, 1):
         # Afficher les effets de la potion
         effets_desc = []
@@ -64,13 +65,16 @@ def choisir_objet_combat(joueur) -> bool:
         effets_str = f" - {', '.join(effets_desc)}" if effets_desc else ""
         quantite = f" (x{objet.quantite})" if objet.quantite > 1 else ""
         print(f"{COULEURS['CYAN']}{i}. {nom_objet}{quantite}{effets_str}{COULEURS['RESET']}")
+        print()
 
-    print(f"{COULEURS['GRIS']}{len(objets_utilisables) + 1}. Annuler (a){COULEURS['RESET']}")
+    print(f"{COULEURS['GRIS']}{len(objets_utilisables) + 1}. Annuler (r){COULEURS['RESET']}")
+    print()
 
     while True:
         try:
-            choix_input = input(f"\n{COULEURS['VERT']}Votre choix : {COULEURS['RESET']}").strip().lower()
-            if choix_input == 'a':
+            choix_input = input(f"{COULEURS['VERT']}Votre choix : {COULEURS['RESET']}").strip().lower()
+            if choix_input == 'r':
+                effacer_console()
                 return False
 
             choix = int(choix_input)
@@ -284,7 +288,10 @@ def _equiper_arme_depuis_liste(joueur, armes_disponibles):
         print("\n❌ Vous n'avez aucune arme dans votre inventaire.")
         return False
 
-    print("\n--- Armes disponibles ---")
+    from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur
+    print()
+    afficher_titre_menu_avec_emoji("Armes disponibles", "equipement")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
     for i, (nom_objet, objet) in enumerate(armes_disponibles, 1):
         _afficher_objet_equipement(objet, i)
 
@@ -351,7 +358,10 @@ def _equiper_armure_depuis_liste(joueur, armures_disponibles, type_nom):
         print(f"\n❌ Vous n'avez aucune {type_nom} dans votre inventaire.")
         return False
 
-    print(f"\n--- {type_nom.capitalize()}s disponibles ---")
+    from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur
+    print()
+    afficher_titre_menu_avec_emoji(f"{type_nom.capitalize()}s disponibles", "equipement")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
     for i, (nom_objet, objet) in enumerate(armures_disponibles, 1):
         _afficher_objet_equipement(objet, i, avec_sous_type=True)
 

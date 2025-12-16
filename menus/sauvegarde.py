@@ -11,6 +11,7 @@ from classes.base_combatant import Personnage
 from classes.arme import Arme
 from data.armes import DEFINITIONS_ARMES
 from world import obtenir_royaume_du_joueur, obtenir_capitale_joueur
+from utils.affichage import effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS
 
 
 # Nombre de slots de sauvegarde par personnage
@@ -291,9 +292,11 @@ def menu_gestion_sauvegardes(nom_personnage: str) -> Optional[Personnage]:
     :return: Instance de Personnage chargée, ou None si aucune action de chargement
     """
     while True:
-        print(f"\n{'='*60}")
-        print(f"--- GESTION DES SAUVEGARDES - {nom_personnage.upper()} ---")
-        print(f"{'='*60}\n")
+        effacer_console()
+        print()
+        afficher_titre_menu_avec_emoji(f"GESTION DES SAUVEGARDES - {nom_personnage.upper()}", "sauvegarde")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+        print()
 
         # Obtenir les sauvegardes disponibles
         sauvegardes = obtenir_sauvegardes_personnage(nom_personnage)
@@ -380,9 +383,11 @@ def menu_sauvegarde_manuelle(joueur):
 
     :param joueur: Instance du personnage joueur
     """
-    print(f"\n{'='*60}")
-    print("--- SAUVEGARDE MANUELLE ---")
-    print(f"{'='*60}\n")
+    effacer_console()
+    print()
+    afficher_titre_menu_avec_emoji("SAUVEGARDE MANUELLE", "sauvegarde")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+    print()
 
     # Afficher les slots existants
     sauvegardes = obtenir_sauvegardes_personnage(joueur.nom)

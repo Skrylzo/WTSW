@@ -118,30 +118,41 @@ class Chapitre:
             return self.chapitre_suivant
         return None
 
-    def afficher_info(self):
-        """Affiche les informations du chapitre."""
-        print(f"\n{'='*50}")
-        print(f"CHAPITRE {self.numero} : {self.titre}")
-        print(f"{'='*50}")
+    def afficher_info(self, nom_royaume=None):
+        """Affiche les informations du chapitre dans un cadre avec bordure."""
+        from utils.affichage import COULEURS, afficher_titre_menu_avec_emoji, afficher_separateur, _longueur_sans_codes_ansi
+
+        # Utiliser une couleur non utilisée : blanc clair (\033[97m)
+        couleur = "\033[97m"  # Blanc clair pour les chapitres
+        reset = COULEURS["RESET"]
+        longueur = 60
+
+        # Créer le titre du chapitre
+        titre_chapitre = f"CHAPITRE {self.numero} : {self.titre}"
+        longueur_titre = _longueur_sans_codes_ansi(titre_chapitre)
+        longueur_necessaire = longueur_titre + 4
+        longueur_finale = max(longueur, longueur_necessaire)
+
+        # Centrer le titre
+        espace_titre = longueur_finale - 2 - longueur_titre
+        espace_gauche_titre = espace_titre // 2
+        espace_droite_titre = espace_titre - espace_gauche_titre
+
+        # Afficher le cadre
+        ligne_haut = f"{couleur}╔{'═' * (longueur_finale - 2)}╗{reset}"
+        ligne_titre = f"{couleur}║{' ' * espace_gauche_titre}{titre_chapitre}{' ' * espace_droite_titre}║{reset}"
+        ligne_bas = f"{couleur}╚{'═' * (longueur_finale - 2)}╝{reset}"
+
+        print()
+        print(ligne_haut)
+        print(ligne_titre)
+        print(ligne_bas)
+        print()
+
+        # Afficher la description si elle existe (elle contient déjà le message d'introduction)
         if self.description:
             print(self.description)
-        print(f"\nType : {self.type_chapitre.value}")
-        if self.zones_accessibles:
-            print(f"\nZones accessibles ({len(self.zones_accessibles)}) :")
-            for i, zone in enumerate(self.zones_accessibles, 1):
-                etat = "✓" if zone in self.zones_completees else "○"
-                print(f"  {etat} {i}. {zone}")
-        if self.choix_narratifs:
-            print(f"\nChoix narratifs disponibles ({len(self.choix_narratifs)}) :")
-            for i, choix in enumerate(self.choix_narratifs, 1):
-                print(f"  {i}. {choix.texte}")
-                if choix.description:
-                    print(f"     {choix.description}")
-        if self.objectifs:
-            print(f"\nObjectifs :")
-            for obj in self.objectifs:
-                print(f"  - {obj}")
-        print(f"{'='*50}\n")
+            print()
 
     def __repr__(self):
         return f"Chapitre({self.numero}, '{self.titre}', type={self.type_chapitre.value})"

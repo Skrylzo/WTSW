@@ -100,9 +100,159 @@ def creer_separateur(longueur: int = 60, style: str = "double") -> str:
         return "=" * longueur
 
 
+def _longueur_sans_codes_ansi(texte: str) -> int:
+    """
+    Calcule la longueur réelle d'un texte sans les codes ANSI.
+    Prend en compte que les emojis prennent généralement 2 caractères de largeur.
+    Ignore les caractères combinants (variation selectors, etc.) qui ne prennent pas de largeur.
+
+    Utilise une méthode robuste qui compte TOUS les emojis comme 2 caractères,
+    indépendamment de leur east_asian_width, car dans les terminaux modernes,
+    tous les emojis prennent 2 colonnes de largeur.
+
+    :param texte: Texte avec potentiellement des codes ANSI
+    :return: Longueur réelle du texte visible (en tenant compte de la largeur des emojis)
+    """
+    import re
+    import unicodedata
+
+    # Supprimer tous les codes ANSI (séquences commençant par \033[ ou \x1b[)
+    texte_sans_ansi = re.sub(r'\033\[[0-9;]*m|\x1b\[[0-9;]*m', '', texte)
+
+    # Calculer la largeur réelle en tenant compte des emojis
+    longueur = 0
+    i = 0
+    while i < len(texte_sans_ansi):
+        char = texte_sans_ansi[i]
+        code_point = ord(char)
+        category = unicodedata.category(char)
+
+        # Vérifier si le caractère suivant est un variation selector
+        # Les emojis avec variation selector peuvent prendre plus de place dans certains terminaux
+        has_variation_selector = False
+        if i + 1 < len(texte_sans_ansi):
+            next_char = texte_sans_ansi[i + 1]
+            if unicodedata.category(next_char) == 'Mn' and ord(next_char) == 0xFE0F:
+                has_variation_selector = True
+
+        # Ignorer les caractères combinants (variation selectors, etc.)
+        # Ces caractères ne prennent pas de largeur visuelle
+        if category == 'Mn':  # Mark, nonspacing (comme VARIATION SELECTOR-16)
+            i += 1
+            continue
+
+        # Détecter les emojis de manière exhaustive
+        # TOUS les emojis prennent 2 caractères de largeur dans les terminaux
+        # Méthode robuste : utiliser à la fois les plages Unicode ET la catégorie 'So'
+        is_emoji = False
+
+        # Vérifier d'abord si c'est dans une plage emoji connue
+        dans_plage_emoji = (
+            # Emojis de base (Miscellaneous Symbols and Pictographs) - 0x1F300-0x1F9FF
+            0x1F300 <= code_point <= 0x1F9FF or
+            # Symboles et pictogrammes supplémentaires - 0x1FA00-0x1FAFF
+            0x1FA00 <= code_point <= 0x1FAFF or
+            # Symboles divers (Miscellaneous Symbols) - 0x2600-0x26FF
+            0x2600 <= code_point <= 0x26FF or
+            # Symboles supplémentaires (Dingbats) - 0x2700-0x27BF
+            0x2700 <= code_point <= 0x27BF or
+            # Symboles et pictogrammes (Emoticons) - 0x1F600-0x1F64F
+            0x1F600 <= code_point <= 0x1F64F or
+            # Symboles de transport et cartes (Transport and Map Symbols) - 0x1F680-0x1F6FF
+            0x1F680 <= code_point <= 0x1F6FF or
+            # Symboles et pictogrammes étendus A - 0x1FA70-0x1FAFF
+            0x1FA70 <= code_point <= 0x1FAFF
+        )
+
+        # Si c'est dans une plage emoji ET que c'est un symbole (So), c'est définitivement un emoji
+        if dans_plage_emoji and category == 'So':
+            is_emoji = True
+        # Sinon, si c'est dans une plage emoji, c'est probablement un emoji aussi
+        elif dans_plage_emoji:
+            is_emoji = True
+
+        # Vérifier si c'est un caractère large (CJK, etc.)
+        east_asian = unicodedata.east_asian_width(char)
+        is_wide = east_asian in ('F', 'W')
+
+        # TOUS les emojis prennent 2 caractères de largeur, même si east_asian_width = 'N'
+        # C'est important car dans les terminaux, les emojis prennent toujours 2 colonnes
+        if is_emoji:
+            longueur += 2  # Emojis prennent 2 caractères
+        elif is_wide:
+            longueur += 2  # Caractères CJK pleine largeur
+        else:
+            longueur += 1  # Caractères normaux
+
+        i += 1
+
+    return longueur
+
+
+def centrer_texte(texte: str, longueur: int = 60) -> str:
+    """
+    Centre un texte en tenant compte de la largeur réelle des emojis.
+    Utile pour les cadres simples avec séparateurs.
+
+    :param texte: Texte à centrer
+    :param longueur: Longueur totale de la ligne
+    :return: Texte centré avec espaces appropriés
+    """
+    longueur_texte_reelle = _longueur_sans_codes_ansi(texte)
+    espace_total = longueur - longueur_texte_reelle
+    espace_gauche = espace_total // 2
+    espace_droite = espace_total - espace_gauche
+    return ' ' * espace_gauche + texte + ' ' * espace_droite
+
+
+def creer_cadre_simple(titre: str, longueur: int = 60, couleur: str = None, style: str = "simple") -> str:
+    """
+    Crée un cadre simple avec séparateurs (--- TITRE --- ou ==== TITRE ====).
+    Prend en compte la largeur réelle des emojis pour un centrage correct.
+
+    :param titre: Titre à afficher
+    :param longueur: Longueur totale du cadre
+    :param couleur: Code couleur ANSI (optionnel)
+    :param style: Style du séparateur ("simple" pour ---, "double" pour ===)
+    :return: String du cadre avec titre centré
+    """
+    if couleur is None:
+        couleur = COULEURS["BLEU"]
+    reset = COULEURS["RESET"]
+
+    # Calculer la longueur réelle du titre (sans codes ANSI)
+    longueur_titre_reelle = _longueur_sans_codes_ansi(titre)
+
+    # Déterminer le séparateur selon le style
+    if style == "double":
+        separateur = "="
+    else:
+        separateur = "-"
+
+    # Calculer l'espacement pour centrer le titre
+    # Format: "--- TITRE ---" ou "==== TITRE ===="
+    # On veut 3 ou 4 caractères de chaque côté
+    prefixe = separateur * 3 if style == "simple" else separateur * 4
+    suffixe = separateur * 3 if style == "simple" else separateur * 4
+
+    # Longueur totale du titre avec séparateurs et espaces
+    longueur_titre_complet = len(prefixe) + 1 + longueur_titre_reelle + 1 + len(suffixe)
+
+    # Calculer l'espacement pour centrer le tout
+    espace_total = longueur - longueur_titre_complet
+    espace_gauche = espace_total // 2
+    espace_droite = espace_total - espace_gauche
+
+    ligne_separateur = f"{couleur}{separateur * longueur}{reset}"
+    ligne_titre = f"{couleur}{' ' * espace_gauche}{prefixe} {titre} {suffixe}{' ' * espace_droite}{reset}"
+
+    return f"{ligne_separateur}\n{ligne_titre}\n{ligne_separateur}"
+
+
 def creer_bordure(titre: str, longueur: int = 60, couleur: str = None) -> str:
     """
     Crée une bordure avec un titre centré pour les menus importants.
+    Ajuste automatiquement la largeur si le titre est trop long.
 
     :param titre: Titre à afficher
     :param longueur: Longueur de la bordure (défaut: 60)
@@ -113,13 +263,23 @@ def creer_bordure(titre: str, longueur: int = 60, couleur: str = None) -> str:
         couleur = COULEURS["BLEU"]
     reset = COULEURS["RESET"]
 
-    # Calculer l'espacement pour centrer le titre
-    espace_gauche = (longueur - len(titre) - 2) // 2
-    espace_droite = longueur - len(titre) - 2 - espace_gauche
+    # Calculer la longueur réelle du titre (sans codes ANSI)
+    longueur_titre_reelle = _longueur_sans_codes_ansi(titre)
 
-    ligne_haut = f"{couleur}╔{'═' * (longueur - 2)}╗{reset}"
+    # Ajuster la longueur du cadre si le titre est trop long
+    # Minimum 60, mais s'adapter si nécessaire (avec marge de 4 caractères pour les bordures)
+    longueur_necessaire = longueur_titre_reelle + 4  # 2 pour les bordures + 2 de marge
+    longueur_finale = max(longueur, longueur_necessaire)
+
+    # Calculer l'espacement pour centrer le titre
+    # longueur - 2 pour les caractères de bordure (║)
+    espace_total = longueur_finale - 2 - longueur_titre_reelle
+    espace_gauche = espace_total // 2
+    espace_droite = espace_total - espace_gauche
+
+    ligne_haut = f"{couleur}╔{'═' * (longueur_finale - 2)}╗{reset}"
     ligne_titre = f"{couleur}║{' ' * espace_gauche}{titre}{' ' * espace_droite}║{reset}"
-    ligne_bas = f"{couleur}╚{'═' * (longueur - 2)}╝{reset}"
+    ligne_bas = f"{couleur}╚{'═' * (longueur_finale - 2)}╝{reset}"
 
     return f"{ligne_haut}\n{ligne_titre}\n{ligne_bas}"
 
@@ -229,14 +389,14 @@ COULEURS_MENUS = {
 
 def afficher_titre_menu_avec_emoji(titre: str, type_menu: str = None, longueur: int = 60):
     """
-    Affiche un titre de menu avec emoji et couleur appropriés.
+    Affiche un titre de menu avec couleur appropriée.
+    Note: Les emojis sont retirés des bordures pour éviter les problèmes d'alignement.
 
     :param titre: Titre du menu
-    :param type_menu: Type de menu pour déterminer emoji et couleur (optionnel)
+    :param type_menu: Type de menu pour déterminer couleur (optionnel)
     :param longueur: Longueur de la bordure (défaut: 60)
     """
-    emoji = EMOJIS_MENUS.get(type_menu, "📋") if type_menu else "📋"
     couleur = COULEURS_MENUS.get(type_menu, COULEURS["BLEU"]) if type_menu else COULEURS["BLEU"]
 
-    titre_complet = f"{emoji} {titre}"
-    afficher_titre_menu(titre_complet, longueur, couleur)
+    # Afficher uniquement le titre dans la bordure, sans emoji
+    afficher_titre_menu(titre, longueur, couleur)

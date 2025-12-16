@@ -11,12 +11,20 @@ def choisir_cible(attaquant, cibles_potentielles):
         print("Il n'y a pas de cibles disponibles.")
         return None
 
-    print(f"\n{attaquant.nom}, choisissez votre cible:")
+    # Couleur pour le joueur (CYAN comme dans le reste du jeu)
+    couleur_joueur = COULEURS["CYAN"]
+    print(f"\n{couleur_joueur}{attaquant.nom}{COULEURS['RESET']}, choisissez votre cible:")
+    print()
     for i, cible in enumerate(cibles_potentielles):
         if cible.est_vivant:
-            print(f"{i+1}. {cible.nom} (Vie: {cible.vie:.1f}/{cible.vie_max:.1f})")
+            # Couleur pour la vie selon le pourcentage
+            pourcentage_vie = (cible.vie / cible.vie_max) * 100 if cible.vie_max > 0 else 0
+            couleur_vie = COULEURS["VERT"] if pourcentage_vie > 60 else COULEURS["JAUNE"] if pourcentage_vie > 30 else COULEURS["ROUGE"]
+            print(f"{i+1}. {COULEURS['ROUGE']}{cible.nom}{COULEURS['RESET']} ({couleur_vie}Vie: {cible.vie:.1f}/{cible.vie_max:.1f}{COULEURS['RESET']})")
+            print()
         else:
-            print(f"{i+1}. {cible.nom} (Vaincu)")
+            print(f"{i+1}. {COULEURS['ROUGE']}{cible.nom}{COULEURS['RESET']} (Vaincu)")
+            print()
 
     while True:
         try:
@@ -40,7 +48,9 @@ def choisir_capacite(personnage):
         print(f"{COULEURS['ROUGE']}❌ {personnage.nom} n'a aucune capacité apprise ou disponible à votre niveau à utiliser.{COULEURS['RESET']}")
         return None
 
-    print(f"\n{COULEURS['MAGENTA']}✨ {personnage.nom}, choisissez une capacité :{COULEURS['RESET']}\n")
+    # Couleur pour le joueur (CYAN comme dans le reste du jeu pour cohérence)
+    couleur_joueur = COULEURS["CYAN"]
+    print(f"\n{couleur_joueur}{personnage.nom}{COULEURS['RESET']}, {COULEURS['MAGENTA']}✨ choisissez une capacité :{COULEURS['RESET']}\n")
     for i, cap in enumerate(capacites_disponibles_au_niveau):
         # Déterminer la couleur selon le type de ressource
         couleur_ressource = COULEURS["CYAN"]
@@ -85,8 +95,10 @@ def choisir_capacite(personnage):
 
     while True:
         try:
-            choix = input(f"{COULEURS['MAGENTA']}Entrez le numéro de la capacité (ou 'a' pour annuler) : {COULEURS['RESET']}")
-            if choix.lower() == 'a':
+            choix = input(f"{COULEURS['MAGENTA']}Entrez le numéro de la capacité (ou 'r' pour annuler) : {COULEURS['RESET']}")
+            if choix.lower() == 'r':
+                from utils.affichage import effacer_console
+                effacer_console()
                 return None
 
             choix = int(choix) - 1

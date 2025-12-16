@@ -16,36 +16,45 @@ from utils.affichage import effacer_console
 import signal
 import sys
 
-def signal_handler(sig, frame):
-    """Gère les signaux d'interruption (CTRL+C, CTRL+D)"""
-    print("\n\nInterruption détectée. Fermeture propre du jeu...")
-    sys.exit(0)
-
-# Enregistrer les gestionnaires de signaux
-signal.signal(signal.SIGINT, signal_handler)  # CTRL+C
-signal.signal(signal.SIGTERM, signal_handler)  # Terminaison
-
 if __name__ == "__main__":
+    def signal_handler(sig, frame):
+        """Gère les signaux d'interruption (CTRL+C, CTRL+D)"""
+        print("\n\nInterruption détectée. Fermeture propre du jeu...")
+        sys.exit(0)
+
+    # Enregistrer les gestionnaires de signaux uniquement quand le script est exécuté directement
+    signal.signal(signal.SIGINT, signal_handler)  # CTRL+C
+    signal.signal(signal.SIGTERM, signal_handler)  # Terminaison
+
     joueur_principal = None
     try:
         joueur_principal = menu_principal() # menu_principal retourne le joueur créé/chargé ou None si on quitte
 
         if joueur_principal: # S'assurer qu'un joueur a bien été créé ou chargé
             effacer_console()
-            print("\n--- DÉBUT DE L'AVENTURE ---")
+            from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS as COULEURS_DISPLAY
+            print()
+            afficher_titre_menu_avec_emoji("DÉBUT DE L'AVENTURE", "principal")
+            afficher_separateur(style="simple", couleur=COULEURS_DISPLAY["GRIS"])
 
             while joueur_principal.est_vivant:
                 try:
                     effacer_console()
-                    print("\n" + "="*60)
-                    print("--- MENU PRINCIPAL ---")
-                    print("="*60)
-                    print("\nQue voulez-vous faire ?")
-                    print("1. Explorer Valdoria")  # Nouveau : exploration avec chapitres
-                    print("2. Accéder à votre Capitale")  # Nouveau : menu de la capitale
-                    print("3. Accéder au Menu Personnage")
-                    print("4. Sauvegarder la partie")
-                    print("5. Quitter le jeu")
+                    from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS as COULEURS_DISPLAY
+                    print()
+                    afficher_titre_menu_avec_emoji("MENU PRINCIPAL", "principal")
+                    afficher_separateur(style="simple", couleur=COULEURS_DISPLAY["GRIS"])
+                    print(f"\n{COULEURS_DISPLAY['CYAN']}Que voulez-vous faire ?{COULEURS_DISPLAY['RESET']}")
+                    print()
+                    print(f"1. {COULEURS_DISPLAY['VERT']}🌍 Explorer Valdoria{COULEURS_DISPLAY['RESET']}")
+                    print()
+                    print(f"2. {COULEURS_DISPLAY['BLEU']}🏛️  Accéder à votre Capitale{COULEURS_DISPLAY['RESET']}")
+                    print()
+                    print(f"3. {COULEURS_DISPLAY['MAGENTA']}👤 Accéder au Menu Personnage{COULEURS_DISPLAY['RESET']}")
+                    print()
+                    print(f"4. {COULEURS_DISPLAY['JAUNE']}💾 Sauvegarder la partie{COULEURS_DISPLAY['RESET']}")
+                    print()
+                    print(f"5. {COULEURS_DISPLAY['ROUGE']}🚪 Quitter le jeu{COULEURS_DISPLAY['RESET']}")
 
                     choix_aventure = input("\nVotre choix : ")
 

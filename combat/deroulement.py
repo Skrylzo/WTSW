@@ -46,11 +46,11 @@ def calculer_or_ennemi(ennemi_data, xp_a_donner):
     return max(1, or_par_defaut)  # Minimum 1 pièce d'or
 
 def debut_combat(joueur, ennemis):
-    from utils.affichage import COULEURS, effacer_console
+    from utils.affichage import COULEURS, effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur
     effacer_console()
-    print(f"\n{COULEURS['MAGENTA']}{'='*60}{COULEURS['RESET']}")
-    print(f"{COULEURS['MAGENTA']}--- DEBUT DU COMBAT ---{COULEURS['RESET']}")
-    print(f"{COULEURS['MAGENTA']}{'='*60}{COULEURS['RESET']}")
+    print()
+    afficher_titre_menu_avec_emoji("DEBUT DU COMBAT", "combat")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
     # Appliquer les effets avec condition "debut"
     joueur.appliquer_effets(phase='debut')
     for ennemi in ennemis:
@@ -93,7 +93,7 @@ def tour_joueur(joueur, ennemis):
     while not action_choisie:
         # Affichage du menu (séparé de la logique)
         afficher_menu_actions()
-        choix = input("Votre action : ")  # Garde input() pour compatibilité solo
+        choix = input("Votre action : ").strip().lower()  # Garde input() pour compatibilité solo
 
         if choix == '1':
             # Attaque : utilise la fonction pure
@@ -156,9 +156,35 @@ def tour_joueur(joueur, ennemis):
                 action_choisie = True
 
         elif choix == '4':
+            from utils.affichage import effacer_console
+            effacer_console()
             joueur.afficher_stats()
+            input("\nAppuyez sur Entrée pour continuer...")
+            # Réafficher le tour du joueur pour garder l'affichage du combat
+            afficher_tour_joueur(joueur, ennemis)
         elif choix == '5':
+            from utils.affichage import effacer_console
+            effacer_console()
             joueur.afficher_capacites()
+            input("\nAppuyez sur Entrée pour continuer...")
+            # Réafficher le tour du joueur pour garder l'affichage du combat
+            afficher_tour_joueur(joueur, ennemis)
+        elif choix == '6':
+            # Afficher les quêtes en cours
+            if hasattr(joueur, 'systeme_quetes'):
+                from menus.quetes import afficher_quetes_en_cours_details
+                from utils.affichage import effacer_console
+                afficher_quetes_en_cours_details(joueur.systeme_quetes, joueur)
+                input("\nAppuyez sur Entrée pour continuer...")
+                effacer_console()
+                # Réafficher le tour du joueur pour garder l'affichage du combat
+                afficher_tour_joueur(joueur, ennemis)
+            else:
+                print("Aucun système de quêtes disponible.")
+                input("\nAppuyez sur Entrée pour continuer...")
+        elif choix == '7' or choix == 'r':
+            # Retour : quitter le combat
+            return False
         else:
             afficher_message_erreur("Action invalide. Veuillez réessayer.")
     return True
@@ -170,7 +196,10 @@ def tour_ennemis(joueur, ennemis):
     :param ennemis: Liste des ennemis (doit déjà être filtrée pour ne contenir que les vivants)
     :return: True si le joueur est toujours vivant, False sinon
     """
-    print("\n--- TOUR DES ENNEMIS ---")
+    from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS as COULEURS_DISPLAY
+    print()
+    afficher_titre_menu_avec_emoji("TOUR DES ENNEMIS", "combat")
+    afficher_separateur(style="simple", couleur=COULEURS_DISPLAY["GRIS"])
 
     # Filtrer une dernière fois pour s'assurer qu'on ne traite que les ennemis vivants
     ennemis_vivants = [e for e in ennemis if e.est_vivant]
@@ -301,9 +330,11 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
     ennemis_actuels = [e for e in ennemis_actuels if e.est_vivant]
 
     while joueur.est_vivant and ennemis_actuels:
-        from utils.affichage import effacer_console
+        from utils.affichage import effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS as COULEURS_DISPLAY
         effacer_console()
-        print(f"\n===== TOUR {tour_numero} =====")
+        print()
+        afficher_titre_menu_avec_emoji(f"TOUR {tour_numero}", "combat")
+        afficher_separateur(style="simple", couleur=COULEURS_DISPLAY["GRIS"])
 
         # Tour du joueur
         if not tour_joueur(joueur, ennemis_actuels):
@@ -312,7 +343,14 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
         # Filtrer les ennemis morts après le tour du joueur
         ennemis_actuels = [e for e in ennemis_actuels if e.est_vivant]
         if not ennemis_actuels:
-            print("\nTous les ennemis ont été vaincus !")
+            print()
+            print("Tous les ennemis ont été vaincus !")
+            print()
+            print("-" * 30)
+            print()
+            # Clear avant d'afficher "Fin du combat"
+            from utils.affichage import effacer_console
+            effacer_console()
             break
 
         # Tour des ennemis (seuls les vivants attaquent)
@@ -327,7 +365,18 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
 
         tour_numero += 1
 
+    # Vérifier si le combat a été quitté volontairement (joueur vivant mais ennemis encore vivants)
+    combat_quitte = joueur.est_vivant and any(e.est_vivant for e in ennemis_actuels)
+
+    if combat_quitte:
+        # Le joueur a quitté le combat volontairement, on retourne False pour indiquer la fuite
+        return False
+
     # Affichage de la fin du combat (séparé de la logique)
+    # Clear avant d'afficher "Fin du combat" si victoire
+    if joueur.est_vivant:
+        from utils.affichage import effacer_console
+        effacer_console()
     afficher_fin_combat(joueur, victoire=joueur.est_vivant)
 
     if joueur.est_vivant:
@@ -337,7 +386,10 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
         total_or_gagne = 0
         objets_obtenus = []  # Liste pour stocker les objets obtenus
 
-        print("\n--- Récompenses ---")
+        from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS as COULEURS_DISPLAY
+        print()
+        afficher_titre_menu_avec_emoji("Récompenses", "combat")
+        afficher_separateur(style="simple", couleur=COULEURS_DISPLAY["GRIS"])
 
         # Détail par ennemi
         for ennemi in ennemis_vaincus:
@@ -472,28 +524,32 @@ def deroulement_combat(joueur, ennemis_a_combattre_ids, reinitialiser_vie=False,
             for ennemi in ennemis_vaincus:
                 progresser_quetes_tuer_ennemi(joueur, ennemi.id_ennemi, 1)
 
-        # Afficher le total
-        print(f"\n{'='*40}")
-        print("--- RÉSUMÉ DES RÉCOMPENSES ---")
-        print(f"{'='*40}")
-        print(f"Total XP gagnée : {total_xp_gagnee}")
-        print(f"Total or gagné : {total_or_gagne} pièces")
-        # Import local pour éviter la dépendance circulaire
-        from menus.monnaie import obtenir_or_joueur
-        print(f"Or actuel : {obtenir_or_joueur(joueur)} pièces")
+        # Afficher le total dans un cadre avec couleurs
+        from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS as COULEURS_DISPLAY, formater_nombre
+        print()
+        afficher_titre_menu_avec_emoji("RÉSUMÉ DES RÉCOMPENSES", "combat")
+        afficher_separateur(style="simple", couleur=COULEURS_DISPLAY["GRIS"])
+        print()
+        print(f"{COULEURS_DISPLAY['VERT']}Total XP gagnée : {formater_nombre(total_xp_gagnee)}{COULEURS_DISPLAY['RESET']}")
+        print()
+        print(f"{COULEURS_DISPLAY['JAUNE']}Total or gagné : {formater_nombre(total_or_gagne)} pièces{COULEURS_DISPLAY['RESET']}")
+        print()
         if objets_obtenus:
             objets_unique = {}
             for obj in objets_obtenus:
                 objets_unique[obj] = objets_unique.get(obj, 0) + 1
-            print(f"Objets obtenus : {len(objets_obtenus)} objet(s)")
+            print(f"{COULEURS_DISPLAY['CYAN']}Objets obtenus : {len(objets_obtenus)} objet(s){COULEURS_DISPLAY['RESET']}")
+            print()
             for nom_obj, qte in objets_unique.items():
                 if qte > 1:
-                    print(f"  - {nom_obj} x{qte}")
+                    print(f"  {COULEURS_DISPLAY['CYAN']}- {nom_obj} x{qte}{COULEURS_DISPLAY['RESET']}")
+                    print()
                 else:
-                    print(f"  - {nom_obj}")
+                    print(f"  {COULEURS_DISPLAY['CYAN']}- {nom_obj}{COULEURS_DISPLAY['RESET']}")
+                    print()
         else:
-            print("Aucun objet obtenu.")
-        print(f"{'='*40}")
+            print(f"{COULEURS_DISPLAY['GRIS']}Aucun objet obtenu.{COULEURS_DISPLAY['RESET']}")
+            print()
     else:
         # Le joueur a été vaincu (même après vérification des effets de réincarnation)
         print(f"{joueur.nom} a été vaincu...")

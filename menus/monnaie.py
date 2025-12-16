@@ -26,4 +26,4 @@ def retirer_or(joueur, montant: int) -> bool:
 def afficher_or(joueur):
     """Affiche l'or du joueur."""
     or_actuel = obtenir_or_joueur(joueur)
-    print(f"Or : {or_actuel} pièces")
+    print(f"{or_actuel} pièces")

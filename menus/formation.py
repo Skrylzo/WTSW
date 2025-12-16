@@ -5,6 +5,7 @@ from typing import List
 
 from world import HubFeature, HubCapital
 from .monnaie import obtenir_or_joueur, retirer_or, afficher_or
+from utils.affichage import effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS
 
 
 def calculer_prix_apprentissage_capacite(niveau_requis: int) -> int:
@@ -552,9 +553,10 @@ def menu_formation_specialisee(joueur):
         joueur.bonus_formation_achetes = []
 
     while True:
-        print(f"\n{'='*60}")
-        print(f"--- FORMATION SPÉCIALISÉE : {classe_nom.upper()} ---")
-        print(f"{'='*60}")
+        effacer_console()
+        print()
+        afficher_titre_menu_avec_emoji(f"FORMATION SPÉCIALISÉE : {classe_nom.upper()}", "formation")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
         afficher_or(joueur)
 
         print(f"\n📖 Bonus disponibles pour votre classe :\n")
@@ -660,21 +662,22 @@ def menu_formation(joueur, hub: HubCapital, features_formation: List[HubFeature]
     Permet d'apprendre de nouvelles capacités, améliorer les existantes, et accéder à la formation spécialisée.
     """
     while True:
-        print(f"\n{'='*60}")
-        print("--- FORMATION ---")
-        print(f"{'='*60}")
+        effacer_console()
+        print()
+        afficher_titre_menu_avec_emoji("FORMATION", "formation")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
         afficher_or(joueur)
-        print(f"Niveau : {joueur.niveau}")
-        print(f"Classe : {joueur.specialisation.nom}")
+        print(f"\n{COULEURS['CYAN']}Niveau :{COULEURS['RESET']} {COULEURS['BLEU']}{joueur.niveau}{COULEURS['RESET']}")
+        print(f"{COULEURS['CYAN']}Classe :{COULEURS['RESET']} {COULEURS['MAGENTA']}{joueur.specialisation.nom}{COULEURS['RESET']}")
 
-        print("\nQue souhaitez-vous faire ?")
-        print("1. Apprendre une nouvelle capacité")
-        print("2. Améliorer une capacité existante")
-        print("3. Formation spécialisée par classe")
-        print("4. ⬅️  Retour (r)")
+        print(f"\n{COULEURS['BLEU']}Que souhaitez-vous faire ?{COULEURS['RESET']}")
+        print(f"1. {COULEURS['VERT']}📚 Apprendre une nouvelle capacité{COULEURS['RESET']}")
+        print(f"2. {COULEURS['JAUNE']}⚡ Améliorer une capacité existante{COULEURS['RESET']}")
+        print(f"3. {COULEURS['MAGENTA']}✨ Formation spécialisée par classe{COULEURS['RESET']}")
+        print(f"4. {COULEURS['GRIS']}⬅️  Retour (r){COULEURS['RESET']}")
 
         try:
-            choix_menu = input(f"\nVotre choix : ").strip().lower()
+            choix_menu = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
             if choix_menu == '1':
                 # Menu d'apprentissage de nouvelles capacités
@@ -686,19 +689,23 @@ def menu_formation(joueur, hub: HubCapital, features_formation: List[HubFeature]
                     input("\nAppuyez sur Entrée pour continuer...")
                     continue
 
-                print(f"\n📚 Capacités disponibles ({len(capacites_disponibles)}) :\n")
+                print(f"\n{COULEURS['VERT']}📚 Capacités disponibles ({len(capacites_disponibles)}) :{COULEURS['RESET']}\n")
 
                 for i, cap in enumerate(capacites_disponibles, 1):
-                    niveau_info = f"Niveau {cap['niveau_requis']}"
-                    prix_info = f"{cap['prix']} or"
-                    print(f"{i}. {cap['nom']} ({niveau_info}) - {prix_info}")
+                    niveau_info = f"{COULEURS['BLEU']}Niveau {cap['niveau_requis']}{COULEURS['RESET']}"
+                    prix_info = f"{COULEURS['JAUNE']}{cap['prix']} or{COULEURS['RESET']}"
+                    print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {COULEURS['MAGENTA']}{cap['nom']}{COULEURS['RESET']} ({niveau_info}) - {prix_info}")
                     if cap['description']:
-                        print(f"   {cap['description']}")
+                        print(f"   {COULEURS['GRIS']}{cap['description']}{COULEURS['RESET']}")
+                    print()  # Espace entre chaque capacité
 
-                print(f"{len(capacites_disponibles) + 1}. Retour")
+                print(f"{COULEURS['GRIS']}{len(capacites_disponibles) + 1}. ⬅️  Retour (r){COULEURS['RESET']}")
 
                 try:
-                    choix = int(input("\nVotre choix : "))
+                    choix_input = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
+                    if choix_input == 'r':
+                        continue
+                    choix = int(choix_input)
                     if 1 <= choix <= len(capacites_disponibles):
                         cap_choisie = capacites_disponibles[choix - 1]
 
@@ -730,23 +737,24 @@ def menu_formation(joueur, hub: HubCapital, features_formation: List[HubFeature]
                     input("\nAppuyez sur Entrée pour continuer...")
                     continue
 
-                print(f"\n⚡ Capacités améliorables ({len(capacites_ameliorables)}) :\n")
+                print(f"\n{COULEURS['JAUNE']}⚡ Capacités améliorables ({len(capacites_ameliorables)}) :{COULEURS['RESET']}\n")
 
                 for i, cap_info in enumerate(capacites_ameliorables, 1):
                     cap = cap_info['capacite']
-                    niveau_info = f"Niveau {cap_info['niveau_actuel']}"
-                    prix_info = f"{cap_info['prix']} or"
+                    niveau_info = f"{COULEURS['BLEU']}Niveau {cap_info['niveau_actuel']}{COULEURS['RESET']}"
+                    prix_info = f"{COULEURS['JAUNE']}{cap_info['prix']} or{COULEURS['RESET']}"
 
-                    print(f"{i}. {cap.obtenir_nom_avec_niveau()} - {prix_info}")
-                    print(f"   {cap.description}")
+                    print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {COULEURS['MAGENTA']}{cap.obtenir_nom_avec_niveau()}{COULEURS['RESET']} - {prix_info}")
+                    print(f"   {COULEURS['GRIS']}{cap.description}{COULEURS['RESET']}")
 
                     # Afficher les améliorations
                     if cap_info['bonus_degats'] > 0:
-                        print(f"   Dégâts actuels : {cap.degats_fixes} (prochaine amélioration : +{int(cap._degats_base * 0.20)})")
+                        print(f"   {COULEURS['CYAN']}Dégâts actuels :{COULEURS['RESET']} {COULEURS['VERT']}{cap.degats_fixes}{COULEURS['RESET']} {COULEURS['GRIS']}(prochaine amélioration : +{int(cap._degats_base * 0.20)}){COULEURS['RESET']}")
                     if cap_info['bonus_soin'] > 0:
-                        print(f"   Soin actuel : {cap.soin_fixe} (prochaine amélioration : +{int(cap._soin_base * 0.20)})")
+                        print(f"   {COULEURS['CYAN']}Soin actuel :{COULEURS['RESET']} {COULEURS['VERT']}{cap.soin_fixe}{COULEURS['RESET']} {COULEURS['GRIS']}(prochaine amélioration : +{int(cap._soin_base * 0.20)}){COULEURS['RESET']}")
+                    print()  # Espace entre chaque capacité
 
-                print(f"{len(capacites_ameliorables) + 1}. ⬅️  Retour (r)")
+                print(f"{COULEURS['GRIS']}{len(capacites_ameliorables) + 1}. ⬅️  Retour (r){COULEURS['RESET']}")
 
                 try:
                     choix_input = input(f"\nVotre choix : ").strip().lower()

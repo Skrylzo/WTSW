@@ -173,6 +173,7 @@ def menu_achat(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
     for i, (nom, data) in enumerate(objets_disponibles.items(), 1):
         emoji_objet = "🧪" if "potion" in nom.lower() else "💎" if "ingredient" in nom.lower() or "eau" in nom.lower() else "📦"
         print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {emoji_objet} {COULEURS['BLEU']}{nom}{COULEURS['RESET']} - {COULEURS['JAUNE']}{data['prix']} pièces{COULEURS['RESET']}")
+        print()  # Espace entre chaque objet
 
     print(f"\n{COULEURS['GRIS']}{len(objets_disponibles) + 1}. ⬅️  Retour (r){COULEURS['RESET']}")
 
@@ -252,6 +253,19 @@ def menu_vente(joueur):
         print("\nVotre inventaire est vide.")
         return
 
+    # Codes couleur ANSI pour les raretés
+    COULEURS_RARETE = {
+        "commun": "\033[0m",           # Blanc/par défaut
+        "peu commun": "\033[92m",      # Vert clair
+        "rare": "\033[94m",             # Bleu
+        "épique": "\033[95m",           # Magenta/Violet
+        "légendaire": "\033[93m"        # Jaune/Doré
+    }
+    RESET_COULEUR = "\033[0m"
+
+    # Couleur ocre/dorée pour les prix (jaune foncé)
+    COULEUR_OR = "\033[33m"  # Jaune foncé/ocre
+
     print(f"\n{COULEURS['JAUNE']}💵 Objets à vendre :{COULEURS['RESET']}")
     objets_liste = list(joueur.inventaire.items())
     for i, (nom, objet) in enumerate(objets_liste, 1):
@@ -260,21 +274,14 @@ def menu_vente(joueur):
         # Emoji selon le type d'objet
         emoji_objet = "🧪" if objet.type == "potion" else "⚔️" if objet.type == "arme" else "🛡️" if objet.type == "armure" or objet.type == "équipement" else "💎"
 
-        # Couleur selon la valeur
-        couleur_prix = COULEURS["JAUNE"]
-        emoji_valeur = ""
-        if prix_vente >= 500:
-            couleur_prix = COULEURS["MAGENTA"]
-            emoji_valeur = " 💎"
-        elif prix_vente >= 200:
-            couleur_prix = COULEURS["BLEU"]
-            emoji_valeur = " ⭐"
-        elif prix_vente >= 100:
-            couleur_prix = COULEURS["VERT"]
-            emoji_valeur = " ✨"
+        # Couleur de l'objet selon sa rareté
+        couleur_objet = RESET_COULEUR
+        if hasattr(objet, 'rarete') and objet.rarete:
+            rarete_lower = str(objet.rarete).lower().strip()
+            couleur_objet = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
 
-        print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {emoji_objet} {COULEURS['BLEU']}{objet}{COULEURS['RESET']}{emoji_valeur}")
-        print(f"   {COULEURS['GRIS']}Prix :{COULEURS['RESET']} {couleur_prix}{prix_vente} pièces{COULEURS['RESET']}", end="")
+        print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {emoji_objet} {couleur_objet}{objet}{RESET_COULEUR}")
+        print(f"   {COULEURS['GRIS']}Prix :{COULEURS['RESET']} {COULEUR_OR}{prix_vente} pièces{RESET_COULEUR}", end="")
 
         # Afficher les détails du calcul si l'objet a des stats/effets ou un niveau_biome
         if details["bonus_stats"] > 0 or details["bonus_niveau"] > 0:
@@ -292,6 +299,8 @@ def menu_vente(joueur):
             print(")")
         else:
             print()
+
+        print()  # Espace entre chaque objet
 
     print(f"{len(objets_liste) + 1}. ⬅️  Retour (r)")
 
