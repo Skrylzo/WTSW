@@ -140,7 +140,9 @@ def menu_teleportation(joueur, hub: HubCapital):
         royaume = obtenir_royaume_par_nom(royaume_nom)
         if royaume and royaume.hub_capital:
             hub_dest = royaume.hub_capital
-            print(f"{len(royaumes_affiches) + 1}. {hub_dest.nom} ({royaume_nom})")
+            GRAS = "\033[1m"
+            print(f"{len(royaumes_affiches) + 1}. {GRAS}{hub_dest.nom}{COULEURS['RESET']} ({royaume_nom})")
+            print()
             royaumes_affiches.append(royaume_nom)
 
     if not royaumes_affiches:

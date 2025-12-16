@@ -54,13 +54,20 @@ def menu_craft(joueur, hub, features_craft: List):
         niveau_craft = joueur.niveau
         from utils.affichage import COULEURS
         print(f"{COULEURS['CYAN']}Niveau de craft : {COULEURS['JAUNE']}{niveau_craft}{COULEURS['RESET']}")
-        print(f"{COULEURS['CYAN']}Royaume : {COULEURS['MAGENTA']}{royaume_nom}{COULEURS['RESET']}\n")
+        print()
+        print(f"{COULEURS['CYAN']}Royaume : {COULEURS['MAGENTA']}{royaume_nom}{COULEURS['RESET']}")
+        print()
 
         print("Que souhaitez-vous craft ?")
-        print("1. Potions")
-        print("2. Armes")
-        print("3. Armures")
-        print("4. ⬅️  Retour (r)")
+        print()
+        print(f"1. {COULEURS['VERT']}🧪 Potions{COULEURS['RESET']}")
+        print()
+        print(f"2. {COULEURS['ROUGE']}⚔️  Armes{COULEURS['RESET']}")
+        print()
+        print(f"3. {COULEURS['BLEU']}🛡️  Armures{COULEURS['RESET']}")
+        print()
+        print(f"4. {COULEURS['GRIS']}⬅️  Retour (r){COULEURS['RESET']}")
+        print()
 
         choix = input(f"\nVotre choix : ").strip().lower()
 
@@ -103,6 +110,7 @@ def menu_craft_potions(joueur, royaume_nom: str, niveau_craft: int):
             sous_types[sous_type].append(rec)
 
         print("Types de potions disponibles :")
+        print()
         options = []
         option_num = 1
 
@@ -116,9 +124,21 @@ def menu_craft_potions(joueur, royaume_nom: str, niveau_craft: int):
             'boost_critique': 'Potions de Précision'
         }
 
+        emojis_potions = {
+            'soin': '💚',
+            'mana': '💙',
+            'energie': '💛',
+            'boost_force': '💪',
+            'boost_defense': '🛡️',
+            'boost_vitesse': '⚡',
+            'boost_critique': '🎯'
+        }
+
         for sous_type, recettes in sorted(sous_types.items()):
             nom_type = type_names.get(sous_type, sous_type)
-            print(f"{option_num}. {nom_type} ({len(recettes)} recettes)")
+            emoji = emojis_potions.get(sous_type, '🧪')
+            print(f"{option_num}. {emoji} {nom_type} ({len(recettes)} recettes)")
+            print()
             options.append(sous_type)
             option_num += 1
 
@@ -252,6 +272,7 @@ def menu_craft_armes(joueur, royaume_nom: str, niveau_craft: int):
             sous_types[sous_type].append(rec)
 
         print("Types d'armes disponibles :")
+        print()
         options = []
         option_num = 1
 
@@ -262,9 +283,18 @@ def menu_craft_armes(joueur, royaume_nom: str, niveau_craft: int):
             'baton': 'Bâtons'
         }
 
+        emojis_armes = {
+            'epee': '⚔️',
+            'hache': '🪓',
+            'dague': '🗡️',
+            'baton': '🪄'
+        }
+
         for sous_type, recettes in sorted(sous_types.items()):
             nom_type = type_names.get(sous_type, sous_type)
-            print(f"{option_num}. {nom_type} ({len(recettes)} recettes)")
+            emoji = emojis_armes.get(sous_type, '⚔️')
+            print(f"{option_num}. {emoji} {nom_type} ({len(recettes)} recettes)")
+            print()
             options.append(sous_type)
             option_num += 1
 
@@ -398,6 +428,7 @@ def menu_craft_armures(joueur, royaume_nom: str, niveau_craft: int):
             sous_types[sous_type].append(rec)
 
         print("Types d'armures disponibles :")
+        print()
         options = []
         option_num = 1
 
@@ -407,9 +438,17 @@ def menu_craft_armures(joueur, royaume_nom: str, niveau_craft: int):
             'bottes': 'Bottes'
         }
 
+        emojis_armures = {
+            'torse': '🛡️',
+            'casque': '🪖',
+            'bottes': '👢'
+        }
+
         for sous_type, recettes in sorted(sous_types.items()):
             nom_type = type_names.get(sous_type, sous_type)
-            print(f"{option_num}. {nom_type} ({len(recettes)} recettes)")
+            emoji = emojis_armures.get(sous_type, '🛡️')
+            print(f"{option_num}. {emoji} {nom_type} ({len(recettes)} recettes)")
+            print()
             options.append(sous_type)
             option_num += 1
 

@@ -566,28 +566,31 @@ def menu_formation_specialisee(joueur):
             deja_achete = bonus['id'] in joueur.bonus_formation_achetes
 
             if deja_achete:
-                print(f"{i}. ✅ {bonus['nom']} (DÉJÀ ACHETÉ)")
+                print(f"{i}. {COULEURS['VERT']}✅ {bonus['nom']} (DÉJÀ ACHETÉ){COULEURS['RESET']}")
             else:
-                print(f"{i}. {bonus['nom']} - {bonus['prix']} or")
+                print(f"{i}. {COULEURS['CYAN']}{bonus['nom']}{COULEURS['RESET']} - {COULEURS['JAUNE']}{bonus['prix']} or{COULEURS['RESET']}")
                 bonus_a_afficher.append((i, bonus))
+            print()
 
-            print(f"   {bonus['description']}")
+            print(f"   {COULEURS['GRIS']}{bonus['description']}{COULEURS['RESET']}")
+            print()
 
             # Afficher les bonus détaillés
             bonus_details = []
             if "force" in bonus['bonus']:
-                bonus_details.append(f"Force +{bonus['bonus']['force']}")
+                bonus_details.append(f"{COULEURS['ROUGE']}Force +{bonus['bonus']['force']}{COULEURS['RESET']}")
             if "agilite" in bonus['bonus']:
-                bonus_details.append(f"Agilité +{bonus['bonus']['agilite']}")
+                bonus_details.append(f"{COULEURS['CYAN']}Agilité +{bonus['bonus']['agilite']}{COULEURS['RESET']}")
             if "vitalite" in bonus['bonus']:
-                bonus_details.append(f"Vitalité +{bonus['bonus']['vitalite']}")
+                bonus_details.append(f"{COULEURS['VERT']}Vitalité +{bonus['bonus']['vitalite']}{COULEURS['RESET']}")
             if "intelligence" in bonus['bonus']:
-                bonus_details.append(f"Intelligence +{bonus['bonus']['intelligence']}")
+                bonus_details.append(f"{COULEURS['MAGENTA']}Intelligence +{bonus['bonus']['intelligence']}{COULEURS['RESET']}")
             if "defense" in bonus['bonus']:
-                bonus_details.append(f"Défense +{bonus['bonus']['defense']}")
+                bonus_details.append(f"{COULEURS['BLEU']}Défense +{bonus['bonus']['defense']}{COULEURS['RESET']}")
 
             if bonus_details:
                 print(f"   Bonus : {', '.join(bonus_details)}")
+            print()
 
         print(f"{len(bonus_disponibles) + 1}. ⬅️  Retour (r)")
 
@@ -671,10 +674,15 @@ def menu_formation(joueur, hub: HubCapital, features_formation: List[HubFeature]
         print(f"{COULEURS['CYAN']}Classe :{COULEURS['RESET']} {COULEURS['MAGENTA']}{joueur.specialisation.nom}{COULEURS['RESET']}")
 
         print(f"\n{COULEURS['BLEU']}Que souhaitez-vous faire ?{COULEURS['RESET']}")
+        print()
         print(f"1. {COULEURS['VERT']}📚 Apprendre une nouvelle capacité{COULEURS['RESET']}")
+        print()
         print(f"2. {COULEURS['JAUNE']}⚡ Améliorer une capacité existante{COULEURS['RESET']}")
+        print()
         print(f"3. {COULEURS['MAGENTA']}✨ Formation spécialisée par classe{COULEURS['RESET']}")
+        print()
         print(f"4. {COULEURS['GRIS']}⬅️  Retour (r){COULEURS['RESET']}")
+        print()
 
         try:
             choix_menu = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()

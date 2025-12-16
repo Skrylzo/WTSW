@@ -57,10 +57,15 @@ def menu_quetes(joueur, hub: HubCapital, features_quetes: List[HubFeature], syst
 
         # Menu d'actions
         print(f"\n{COULEURS['VERT']}Options disponibles :{COULEURS['RESET']}")
+        print()
         print("1. 📋 Voir les quêtes en cours")
+        print()
         print("2. ✅ Voir les quêtes complétées")
+        print()
         print("3. 📖 Voir l'histoire principale")
+        print()
         print("4. ⬅️  Retour (r)")
+        print()
 
         choix = input(f"\n{COULEURS['VERT']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
@@ -129,8 +134,12 @@ def afficher_quetes_en_cours_details(systeme_quetes: SystemeQuetes, joueur):
     quetes_en_cours = systeme_quetes.obtenir_quetes_en_cours()
 
     if not quetes_en_cours:
+        effacer_console()
+        print()
+        afficher_titre_menu_avec_emoji("QUÊTES EN COURS", "quetes")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+        print()
         print("\nAucune quête en cours.")
-        input("\nAppuyez sur Entrée pour continuer...")
         return
 
     effacer_console()

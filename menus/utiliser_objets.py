@@ -289,17 +289,22 @@ def _equiper_arme_depuis_liste(joueur, armes_disponibles):
         return False
 
     from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur
+    effacer_console()
     print()
     afficher_titre_menu_avec_emoji("Armes disponibles", "equipement")
     afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+    print()
     for i, (nom_objet, objet) in enumerate(armes_disponibles, 1):
         _afficher_objet_equipement(objet, i)
+        print()
 
     print(f"{len(armes_disponibles) + 1}. ⬅️  Retour (r)")
+    print()
 
     try:
         choix_input = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
         if choix_input == 'r':
+            effacer_console()
             return False
         choix = int(choix_input)
         if 1 <= choix <= len(armes_disponibles):
@@ -356,20 +361,26 @@ def _equiper_armure_depuis_liste(joueur, armures_disponibles, type_nom):
     """Équipe une armure depuis une liste d'armures disponibles"""
     if not armures_disponibles:
         print(f"\n❌ Vous n'avez aucune {type_nom} dans votre inventaire.")
+        input("\nAppuyez sur Entrée pour continuer...")
         return False
 
     from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur
+    effacer_console()
     print()
     afficher_titre_menu_avec_emoji(f"{type_nom.capitalize()}s disponibles", "equipement")
     afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+    print()
     for i, (nom_objet, objet) in enumerate(armures_disponibles, 1):
         _afficher_objet_equipement(objet, i, avec_sous_type=True)
+        print()
 
     print(f"{len(armures_disponibles) + 1}. ⬅️  Retour (r)")
+    print()
 
     try:
         choix_input = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
         if choix_input == 'r':
+            effacer_console()
             return False
         choix = int(choix_input)
         if 1 <= choix <= len(armures_disponibles):
@@ -484,13 +495,21 @@ def menu_equiper_equipement(joueur):
         else:
             print(f"  👢 Bottes : Aucunes")
 
-        print(f"\n{'='*60}")
+        print()
+        print(f"{'='*60}")
+        print()
         print("Choisissez une catégorie :")
+        print()
         print("1. ⚔️  Armes")
+        print()
         print("2. 🛡️  Armures (Torse)")
+        print()
         print("3. 🪖 Casques")
+        print()
         print("4. 👢 Bottes")
+        print()
         print("5. ⬅️  Retour au menu inventaire (r)")
+        print()
 
         choix = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
 

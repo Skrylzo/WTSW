@@ -38,7 +38,7 @@ def menu_parler_pnj(joueur):
     while True:
         effacer_console()
         print()
-        afficher_titre_menu_avec_emoji("PARLER À UN PNJ", "pnj")
+        afficher_titre_menu_avec_emoji("PARLER À UN HABITANT", "pnj")
         afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
         print()
 
@@ -50,12 +50,15 @@ def menu_parler_pnj(joueur):
             pnj = obtenir_pnj(pnj_id)
             if pnj:
                 print(f"{option_num}. {pnj.nom}")
+                print()
                 if pnj.description:
                     print(f"   {pnj.description}")
+                    print()
                 options.append(pnj_id)
                 option_num += 1
 
         print(f"{option_num}. ⬅️  Retour (r)")
+        print()
 
         choix = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
 

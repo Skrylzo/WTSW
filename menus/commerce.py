@@ -127,9 +127,13 @@ def menu_commerce(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
         afficher_or(joueur)
         afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
         print("\nOptions disponibles :")
+        print()
         print(f"1. {COULEURS['VERT']}🛒 Acheter des objets{COULEURS['RESET']}")
+        print()
         print(f"2. {COULEURS['JAUNE']}💵 Vendre des objets{COULEURS['RESET']}")
+        print()
         print(f"3. {COULEURS['GRIS']}⬅️  Retour (r){COULEURS['RESET']}")
+        print()
 
         choix = input(f"\n{COULEURS['CYAN']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
@@ -170,6 +174,7 @@ def menu_achat(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
             }
 
     print(f"\n{COULEURS['VERT']}🛒 Objets disponibles :{COULEURS['RESET']}")
+    print()
     for i, (nom, data) in enumerate(objets_disponibles.items(), 1):
         emoji_objet = "🧪" if "potion" in nom.lower() else "💎" if "ingredient" in nom.lower() or "eau" in nom.lower() else "📦"
         print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {emoji_objet} {COULEURS['BLEU']}{nom}{COULEURS['RESET']} - {COULEURS['JAUNE']}{data['prix']} pièces{COULEURS['RESET']}")
@@ -267,6 +272,7 @@ def menu_vente(joueur):
     COULEUR_OR = "\033[33m"  # Jaune foncé/ocre
 
     print(f"\n{COULEURS['JAUNE']}💵 Objets à vendre :{COULEURS['RESET']}")
+    print()
     objets_liste = list(joueur.inventaire.items())
     for i, (nom, objet) in enumerate(objets_liste, 1):
         prix_vente, details = calculer_prix_vente(objet)
@@ -281,24 +287,7 @@ def menu_vente(joueur):
             couleur_objet = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
 
         print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {emoji_objet} {couleur_objet}{objet}{RESET_COULEUR}")
-        print(f"   {COULEURS['GRIS']}Prix :{COULEURS['RESET']} {COULEUR_OR}{prix_vente} pièces{RESET_COULEUR}", end="")
-
-        # Afficher les détails du calcul si l'objet a des stats/effets ou un niveau_biome
-        if details["bonus_stats"] > 0 or details["bonus_niveau"] > 0:
-            print(" (", end="")
-            details_affichage = []
-            if details["prix_base"] > 0:
-                details_affichage.append(f"Base: {details['prix_base']}")
-            if details["bonus_stats"] > 0:
-                details_affichage.append(f"+Stats: {details['bonus_stats']}")
-            if details["bonus_niveau"] > 0:
-                details_affichage.append(f"+Niveau: {details['bonus_niveau']}")
-            if details["multiplicateur_type"] != 1.0:
-                details_affichage.append(f"x{details['multiplicateur_type']}")
-            print(" + ".join(details_affichage), end="")
-            print(")")
-        else:
-            print()
+        print(f"   {COULEURS['GRIS']}Prix :{COULEURS['RESET']} {COULEUR_OR}{prix_vente} pièces{RESET_COULEUR}")
 
         print()  # Espace entre chaque objet
 

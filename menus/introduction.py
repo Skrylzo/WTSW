@@ -12,17 +12,15 @@ def afficher_introduction_globale():
     print()
 
     # Créer un cadre combiné pour VALDORIA et L'ÉVEIL DES OMBRES
+    # Utiliser une largeur fixe pour que les bordures s'alignent
     couleur = COULEURS["BLEU"]
     reset = COULEURS["RESET"]
-    longueur = 60
+    longueur_finale = 70
 
     # Calculer les longueurs réelles des titres
     from utils.affichage import _longueur_sans_codes_ansi
     longueur_valdoria = _longueur_sans_codes_ansi("VALDORIA")
     longueur_eveil = _longueur_sans_codes_ansi("L'ÉVEIL DES OMBRES")
-    longueur_max = max(longueur_valdoria, longueur_eveil)
-    longueur_necessaire = longueur_max + 4
-    longueur_finale = max(longueur, longueur_necessaire)
 
     # Centrer chaque ligne
     espace_valdoria = longueur_finale - 2 - longueur_valdoria
@@ -44,10 +42,9 @@ def afficher_introduction_globale():
     print(ligne_eveil)
     print(ligne_bas)
 
-    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
     print()
+    # Afficher le texte d'introduction sans cadre
     print(INTRODUCTION_HISTOIRE_PRINCIPALE)
-    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
     print()
 
 
@@ -59,8 +56,27 @@ def afficher_introduction_royaume(joueur):
         return
 
     print()
-    afficher_titre_menu_avec_emoji(f"VOTRE ROYAUME : {royaume_joueur.nom.upper()}", "principal")
-    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+    # Utiliser la même couleur BLEU que l'intro
+    couleur = COULEURS["BLEU"]
+    reset = COULEURS["RESET"]
+    from utils.affichage import _longueur_sans_codes_ansi
+
+    # Utiliser une largeur fixe pour que les bordures s'alignent
+    longueur_finale = 70
+    titre_royaume = f"VOTRE ROYAUME : {royaume_joueur.nom.upper()}"
+    longueur_titre = _longueur_sans_codes_ansi(titre_royaume)
+
+    espace_titre = longueur_finale - 2 - longueur_titre
+    espace_gauche_titre = espace_titre // 2
+    espace_droite_titre = espace_titre - espace_gauche_titre
+
+    ligne_haut = f"{couleur}╔{'═' * (longueur_finale - 2)}╗{reset}"
+    ligne_titre = f"{couleur}║{' ' * espace_gauche_titre}{titre_royaume}{' ' * espace_droite_titre}║{reset}"
+    ligne_bas = f"{couleur}╚{'═' * (longueur_finale - 2)}╝{reset}"
+
+    print(ligne_haut)
+    print(ligne_titre)
+    print(ligne_bas)
     print()
 
     # Introduction spécifique selon le royaume
@@ -110,9 +126,8 @@ démons les plus anciens.
 
     introduction = introductions_royaumes.get(royaume_joueur.nom, "")
     if introduction:
+        # Afficher le texte d'introduction du royaume sans cadre
         print(introduction.strip())
-        print()
-        print("="*70)
         print()
 
 
@@ -141,16 +156,39 @@ def donner_premiere_quete(joueur):
     if quete_a_presenter:
         effacer_console()
         print()
-        afficher_titre_menu_avec_emoji("VOTRE PREMIÈRE MISSION", "principal")
-        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
-        # Remplacer "Les Ombres qui Grandissent" par "📖 Les Ombres qui Grandissent"
+        # Utiliser la même couleur BLEU que l'intro
+        couleur = COULEURS["BLEU"]
+        reset = COULEURS["RESET"]
+        from utils.affichage import _longueur_sans_codes_ansi
+
+        # Utiliser une largeur fixe pour que les bordures s'alignent
+        longueur_finale = 70
+        titre_mission = "VOTRE PREMIÈRE MISSION"
+        longueur_titre = _longueur_sans_codes_ansi(titre_mission)
+
+        espace_titre = longueur_finale - 2 - longueur_titre
+        espace_gauche_titre = espace_titre // 2
+        espace_droite_titre = espace_titre - espace_gauche_titre
+
+        ligne_haut = f"{couleur}╔{'═' * (longueur_finale - 2)}╗{reset}"
+        ligne_titre = f"{couleur}║{' ' * espace_gauche_titre}{titre_mission}{' ' * espace_droite_titre}║{reset}"
+        ligne_bas = f"{couleur}╚{'═' * (longueur_finale - 2)}╝{reset}"
+
+        print(ligne_haut)
+        print(ligne_titre)
+        print(ligne_bas)
+        print()
+
+        # Afficher le texte de la mission sans cadre
         nom_quete = quete_a_presenter.nom
         if "Ombres qui Grandissent" in nom_quete or "ombres qui grandissent" in nom_quete.lower():
             nom_quete = nom_quete.replace("Les Ombres qui Grandissent", "📖  Les Ombres qui Grandissent")
             nom_quete = nom_quete.replace("les Ombres qui Grandissent", "📖  Les Ombres qui Grandissent")
-        print(f"\n{nom_quete}")
-        print(f"\n{quete_a_presenter.description}")
-        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+
+        print(f"{nom_quete}")
+        print()
+        print(f"{quete_a_presenter.description}")
+        print()
 
         # Informer le joueur qu'il doit aller voir son mentor pour la première quête de royaume
         from world import obtenir_royaume_du_joueur

@@ -131,6 +131,7 @@ def menu_capitale(joueur):
         # Afficher les options
         for option_text in options_display:
             print(option_text)
+            print()
 
         choix = input(f"\n{COULEURS['MAGENTA']}Votre choix : {COULEURS['RESET']}").strip().lower()
 
