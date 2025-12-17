@@ -38,7 +38,6 @@ def menu_craft(joueur, hub, features_craft: List):
     """
     Menu principal de craft : fabrication d'objets à partir de matériaux.
     """
-    from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS
     while True:
         effacer_console()
         print()
@@ -52,7 +51,6 @@ def menu_craft(joueur, hub, features_craft: List):
 
         # Afficher le niveau de craft du joueur (pour l'instant = niveau du joueur)
         niveau_craft = joueur.niveau
-        from utils.affichage import COULEURS
         print(f"{COULEURS['CYAN']}Niveau de craft : {COULEURS['JAUNE']}{niveau_craft}{COULEURS['RESET']}")
         print()
         print(f"{COULEURS['CYAN']}Royaume : {COULEURS['MAGENTA']}{royaume_nom}{COULEURS['RESET']}")
@@ -90,7 +88,7 @@ def menu_craft_potions(joueur, royaume_nom: str, niveau_craft: int):
         print()
         afficher_titre_menu_avec_emoji("CRAFT DE POTIONS", "craft")
         afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
-        print(f"{'='*60}\n")
+        print()
 
         # Obtenir les recettes de potions disponibles
         recettes_potions = [r for r in obtenir_recettes_disponibles(niveau_craft)
@@ -168,7 +166,7 @@ def afficher_recettes_potions(joueur, royaume_nom: str, recettes: List[Dict]):
         print()
         afficher_titre_menu_avec_emoji("RECETTES DE POTIONS", "craft")
         afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
-        print(f"{'='*60}\n")
+        print()
 
         # Trier par rareté (ordre défini)
         ordre_rarete = {r: i for i, r in enumerate(RARETES)}
@@ -252,7 +250,7 @@ def menu_craft_armes(joueur, royaume_nom: str, niveau_craft: int):
         print()
         afficher_titre_menu_avec_emoji("CRAFT D'ARMES", "craft")
         afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
-        print(f"{'='*60}\n")
+        print()
 
         # Obtenir les recettes d'armes disponibles
         recettes_armes = [r for r in obtenir_recettes_disponibles(niveau_craft)
@@ -324,7 +322,7 @@ def afficher_recettes_armes(joueur, royaume_nom: str, recettes: List[Dict]):
         print()
         afficher_titre_menu_avec_emoji("RECETTES D'ARMES", "craft")
         afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
-        print(f"{'='*60}\n")
+        print()
 
         # Trier par rareté (ordre défini)
         ordre_rarete = {r: i for i, r in enumerate(RARETES)}
@@ -408,7 +406,7 @@ def menu_craft_armures(joueur, royaume_nom: str, niveau_craft: int):
         print()
         afficher_titre_menu_avec_emoji("CRAFT D'ARMURES", "craft")
         afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
-        print(f"{'='*60}\n")
+        print()
 
         # Obtenir les recettes d'armures disponibles
         recettes_armures = [r for r in obtenir_recettes_disponibles(niveau_craft)
@@ -478,7 +476,7 @@ def afficher_recettes_armures(joueur, royaume_nom: str, recettes: List[Dict]):
         print()
         afficher_titre_menu_avec_emoji("RECETTES D'ARMURES", "craft")
         afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
-        print(f"{'='*60}\n")
+        print()
 
         # Trier par rareté (ordre défini)
         ordre_rarete = {r: i for i, r in enumerate(RARETES)}
@@ -626,9 +624,11 @@ def executer_craft(joueur, recette: Dict, royaume_nom: str) -> bool:
         return False
 
     # Demander confirmation
-    print(f"\n{'='*60}")
+    print()
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
     print(f"Confirmation de craft : {recette['nom']}")
-    print(f"{'='*60}\n")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+    print()
 
     print("Ingrédients nécessaires :")
     ingredients_requis = recette.get('ingredients', {})

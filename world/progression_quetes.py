@@ -285,28 +285,25 @@ def _appliquer_recompenses(joueur, quete, recompenses: dict):
     :param quete: La quête complétée
     :param recompenses: Dictionnaire des récompenses
     """
-    from utils.affichage import COULEURS, formater_nombre
+    from utils.affichage import COULEURS, formater_nombre, COULEUR_OR
 
-    VERT = COULEURS["VERT"]
-    RESET = COULEURS["RESET"]
-
-    print(f"\n{VERT}{'='*60}{RESET}")
-    print(f"{VERT}🎉 QUÊTE COMPLÉTÉE : {quete.nom}{RESET}")
-    print(f"{VERT}{'='*60}{RESET}")
-    print(f"{VERT}Récompenses obtenues :{RESET}")
+    print(f"\n{COULEURS['VERT']}{'='*60}{COULEURS['RESET']}")
+    print(f"{COULEURS['VERT']}🎉 QUÊTE COMPLÉTÉE : {quete.nom}{COULEURS['RESET']}")
+    print(f"{COULEURS['VERT']}{'='*60}{COULEURS['RESET']}")
+    print(f"{COULEURS['VERT']}Récompenses obtenues :{COULEURS['RESET']}")
 
     # XP
     if "xp" in recompenses and recompenses["xp"] > 0:
         xp_gagnee = recompenses["xp"]
         joueur.gagner_xp(xp_gagnee)
-        print(f"  {VERT}✓ +{formater_nombre(xp_gagnee)} XP{RESET}")
+        print(f"  {COULEURS['VERT']}✓ +{formater_nombre(xp_gagnee)} XP{COULEURS['RESET']}")
 
     # Or
     if "or" in recompenses and recompenses["or"] > 0:
         or_gagne = recompenses["or"]
         from menus.monnaie import ajouter_or
         ajouter_or(joueur, or_gagne)
-        print(f"  {VERT}✓ +{formater_nombre(or_gagne)} pièces d'or{RESET}")
+        print(f"  {COULEUR_OR}✓ +{formater_nombre(or_gagne)} pièces d'or{COULEURS['RESET']}")
 
     # Objets
     if "objets" in recompenses and recompenses["objets"]:
@@ -335,21 +332,17 @@ def _appliquer_recompenses(joueur, quete, recompenses: dict):
                 joueur.ajouter_objet(objet)
                 objets_obtenus.append(nom_objet)
                 # Afficher avec couleur selon la rareté
-                from menus.inventaire import COULEURS_RARETE, RESET_COULEUR
-                couleur_rarete = COULEURS_RARETE.get(rarete.lower() if rarete else "commun", RESET_COULEUR)
-                print(f"  {VERT}✓ {couleur_rarete}{nom_objet}{RESET_COULEUR}{RESET}")
+                from utils.affichage import COULEURS_RARETE
+                couleur_rarete = COULEURS_RARETE.get(rarete.lower() if rarete else "commun", COULEURS["RESET"])
+                print(f"  {COULEURS['VERT']}✓ {couleur_rarete}{nom_objet}{COULEURS['RESET']} ajouté à l'inventaire")
             else:
                 # Fallback : créer un objet par défaut si non trouvé
                 objet = Objet(nom=objet_id, type_objet="matériau", quantite=1)
                 joueur.ajouter_objet(objet)
                 objets_obtenus.append(objet_id)
-                print(f"  {VERT}✓ {objet_id}{RESET}")
+                print(f"  {COULEURS['VERT']}✓ {objet_id}{COULEURS['RESET']}")
 
         if objets_obtenus:
             print(f"\n{len(objets_obtenus)} objet(s) ajouté(s) à votre inventaire.")
-
-        # Message générique pour guider le joueur vers la suite
-        VERT = "\033[92m"
-        RESET = "\033[0m"
-        print(f"\n{VERT}Retournez parler au donneur de quête pour découvrir la suite de l'histoire.{RESET}")
-        print(f"{VERT}{'='*60}{RESET}\n")
+        print(f"\n{COULEURS['VERT']}Retournez parler au donneur de quête pour découvrir la suite de l'histoire.{COULEURS['RESET']}")
+        print(f"{COULEURS['VERT']}{'='*60}{COULEURS['RESET']}\n")

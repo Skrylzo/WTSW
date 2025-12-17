@@ -49,9 +49,9 @@ class BaseCombatant:
         self.vie = min(self.vie, self.vie_max) # Ne pas dépasser la vie max
         vie_recuperee = self.vie - vie_avant
         if afficher_message and vie_recuperee > 0:
-            from utils.affichage import COULEURS, formater_nombre
+            from utils.affichage import COULEURS, COULEURS_STATS, formater_nombre
             vie_recuperee_int = int(vie_recuperee)
-            print(f"{COULEURS['VERT']}💚 {self.nom} récupère {formater_nombre(vie_recuperee_int)} points de vie. Vie actuelle : {int(self.vie)}/{int(self.vie_max)}{COULEURS['RESET']}")
+            print(f"{COULEURS_STATS['vie']}💚 {self.nom} récupère {formater_nombre(vie_recuperee_int)} points de vie. Vie actuelle : {int(self.vie)}/{int(self.vie_max)}{COULEURS['RESET']}")
         return vie_recuperee
 
     def attaquer(self, cible):
@@ -481,17 +481,18 @@ class Personnage(BaseCombatant):
         for i, capacite in enumerate(self.capacites_apprises):
             # Pour l'affichage, on peut choisir de montrer toutes les capacités ou seulement celles débloquées.
             if self.niveau >= capacite.niveau_requis:
-                # Couleur pour le coût selon le type de ressource
+                # Couleur pour le coût selon le type de ressource (utiliser COULEURS_STATS pour cohérence)
+                from utils.affichage import COULEURS_STATS
                 cout_str = ""
                 couleur_cout = COULEURS["CYAN"]
                 if self.specialisation.type_ressource == "Mana" and capacite.cout_mana > 0:
-                    couleur_cout = COULEURS["BLEU"]
+                    couleur_cout = COULEURS_STATS["mana"]
                     cout_str = f"{couleur_cout}(Coût : {capacite.cout_mana} Mana){COULEURS['RESET']}"
                 elif self.specialisation.type_ressource == "Energie" and capacite.cout_energie > 0:
-                    couleur_cout = COULEURS["JAUNE"]
+                    couleur_cout = COULEURS_STATS["energie"]
                     cout_str = f"{couleur_cout}(Coût : {capacite.cout_energie} Énergie){COULEURS['RESET']}"
                 elif self.specialisation.type_ressource == "Rage" and capacite.cout_rage > 0:
-                    couleur_cout = COULEURS["ROUGE"]
+                    couleur_cout = COULEURS_STATS["rage"]
                     cout_str = f"{couleur_cout}(Coût : {capacite.cout_rage} Rage){COULEURS['RESET']}"
 
                 print(f"{COULEURS['CYAN']}{i+1}. {COULEURS['MAGENTA']}{capacite.nom}{COULEURS['RESET']} {COULEURS['GRIS']}(Niveau requis: {capacite.niveau_requis}){COULEURS['RESET']}")
@@ -530,15 +531,16 @@ class Personnage(BaseCombatant):
         couleur_vie = COULEURS["VERT"] if pourcentage_vie > 60 else COULEURS["JAUNE"] if pourcentage_vie > 30 else COULEURS["ROUGE"]
         print(f"{couleur_vie}Vie : {self.vie:.1f}/{self.vie_max:.1f}{RESET}")
 
-        # Ressource avec couleur
+        # Ressource avec couleur (utiliser COULEURS_STATS pour cohérence)
+        from utils.affichage import COULEURS_STATS
         if self.specialisation.type_ressource == "Mana":
-            couleur_ressource = COULEURS["BLEU"]
+            couleur_ressource = COULEURS_STATS["mana"]
             print(f"{couleur_ressource}Mana : {self.mana:.1f}/{self.mana_max:.1f}{RESET}")
         elif self.specialisation.type_ressource == "Energie":
-            couleur_ressource = COULEURS["JAUNE"]
+            couleur_ressource = COULEURS_STATS["energie"]
             print(f"{couleur_ressource}Énergie : {self.energie:.1f}/{self.energie_max:.1f}{RESET}")
         elif self.specialisation.type_ressource == "Rage":
-            couleur_ressource = COULEURS["ROUGE"]
+            couleur_ressource = COULEURS_STATS["rage"]
             print(f"{couleur_ressource}Rage : {self.rage:.1f}/{self.rage_max:.1f}{RESET}")
 
         # Identifier les meilleures et pires stats de combat
@@ -571,15 +573,7 @@ class Personnage(BaseCombatant):
         print(f"{COULEURS['GRIS']}XP : {self.xp}/{self.xp_requise}{RESET}")
         print(f"{COULEURS['JAUNE']}Points d'Attribut : {self.points_attribut}{RESET}")
 
-        # Codes couleur ANSI pour les raretés
-        COULEURS_RARETE = {
-            "commun": "\033[0m",
-            "peu commun": "\033[92m",
-            "rare": "\033[94m",
-            "épique": "\033[95m",
-            "légendaire": "\033[93m"
-        }
-        RESET_COULEUR = "\033[0m"
+        from utils.affichage import COULEURS_RARETE
 
         # Afficher les équipements
         print("\n--- Équipements ---")
@@ -589,8 +583,8 @@ class Personnage(BaseCombatant):
             affichage_arme = f"Arme : {self.arme.nom} (Dégâts: {self.arme.degats_base})"
             if self.arme.rarete:
                 rarete_lower = str(self.arme.rarete).lower().strip()
-                couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
-                affichage_arme += f" [{couleur}{self.arme.rarete.upper()}{RESET_COULEUR}]"
+                couleur = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
+                affichage_arme += f" [{couleur}{self.arme.rarete.upper()}{COULEURS['RESET']}]"
             print(affichage_arme)
             bonus_arme = []
             if self.arme.bonus_force > 0: bonus_arme.append(f"Force: +{self.arme.bonus_force}")
@@ -610,8 +604,8 @@ class Personnage(BaseCombatant):
             affichage_torse = f"Torse : {self.armure_torse.nom} (Défense: +{self.armure_torse.bonus_defense})"
             if self.armure_torse.rarete:
                 rarete_lower = str(self.armure_torse.rarete).lower().strip()
-                couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
-                affichage_torse += f" [{couleur}{self.armure_torse.rarete.upper()}{RESET_COULEUR}]"
+                couleur = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
+                affichage_torse += f" [{couleur}{self.armure_torse.rarete.upper()}{COULEURS['RESET']}]"
             print(affichage_torse)
         else:
             print("Torse : Aucune")
@@ -621,8 +615,8 @@ class Personnage(BaseCombatant):
             affichage_casque = f"Casque : {self.armure_casque.nom} (Défense: +{self.armure_casque.bonus_defense})"
             if self.armure_casque.rarete:
                 rarete_lower = str(self.armure_casque.rarete).lower().strip()
-                couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
-                affichage_casque += f" [{couleur}{self.armure_casque.rarete.upper()}{RESET_COULEUR}]"
+                couleur = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
+                affichage_casque += f" [{couleur}{self.armure_casque.rarete.upper()}{COULEURS['RESET']}]"
             print(affichage_casque)
         else:
             print("Casque : Aucun")
@@ -632,8 +626,8 @@ class Personnage(BaseCombatant):
             affichage_bottes = f"Bottes : {self.armure_bottes.nom} (Défense: +{self.armure_bottes.bonus_defense})"
             if self.armure_bottes.rarete:
                 rarete_lower = str(self.armure_bottes.rarete).lower().strip()
-                couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
-                affichage_bottes += f" [{couleur}{self.armure_bottes.rarete.upper()}{RESET_COULEUR}]"
+                couleur = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
+                affichage_bottes += f" [{couleur}{self.armure_bottes.rarete.upper()}{COULEURS['RESET']}]"
             print(affichage_bottes)
         else:
             print("Bottes : Aucunes")

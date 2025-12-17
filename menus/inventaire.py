@@ -5,7 +5,11 @@ from typing import List, Tuple, Optional, Dict
 from classes.objet import Objet
 from .utiliser_objets import utiliser_potion as utiliser_potion_objet
 from .commerce import calculer_prix_vente
-from utils.affichage import afficher_titre_menu, afficher_titre_menu_avec_emoji, afficher_separateur, afficher_message_confirmation, formater_nombre, COULEURS, effacer_console
+from utils.affichage import (
+    afficher_titre_menu, afficher_titre_menu_avec_emoji, afficher_separateur,
+    afficher_message_confirmation, formater_nombre, COULEURS, effacer_console,
+    COULEURS_RARETE, COULEURS_STATS, COULEUR_OR
+)
 
 # Ordre des raretés pour le tri
 ORDRE_RARETE = {
@@ -16,15 +20,6 @@ ORDRE_RARETE = {
     "légendaire": 4
 }
 
-# Codes couleur ANSI pour les raretés
-COULEURS_RARETE = {
-    "commun": "\033[0m",           # Blanc/par défaut
-    "peu commun": "\033[92m",      # Vert clair
-    "rare": "\033[94m",             # Bleu
-    "épique": "\033[95m",           # Magenta/Violet
-    "légendaire": "\033[93m"        # Jaune/Doré
-}
-RESET_COULEUR = "\033[0m"
 
 # Nombre d'objets par page pour la pagination
 OBJETS_PAR_PAGE = 15
@@ -93,7 +88,7 @@ def _afficher_stats_rapides(joueur):
         prix, _ = calculer_prix_vente(objet)
         valeur_totale += prix * objet.quantite
 
-    print(f"📦 {total_types} type(s) d'objets | {total_objets} objet(s) au total | 💰 Valeur estimée : {valeur_totale:,} pièces")
+    print(f"📦 {total_types} type(s) d'objets | {total_objets} objet(s) au total | 💰 Valeur estimée : {COULEUR_OR}{valeur_totale:,} pièces{COULEURS['RESET']}")
 
 
 def trier_objets(objets: List[Tuple[str, Objet]], critere: str = "nom", ordre: str = "croissant") -> List[Tuple[str, Objet]]:
@@ -205,8 +200,8 @@ def afficher_inventaire_ameliore(joueur, objets_a_afficher: Optional[List[Tuple[
             filtres_actifs.append(f"{COULEURS['MAGENTA']}Type: {filtre_type}{COULEURS['RESET']}")
         if filtre_rarete:
             rarete_lower = filtre_rarete.lower()
-            couleur_rarete = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
-            filtres_actifs.append(f"{couleur_rarete}Rareté: {filtre_rarete}{RESET_COULEUR}")
+            couleur_rarete = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
+            filtres_actifs.append(f"{couleur_rarete}Rareté: {filtre_rarete}{COULEURS["RESET"]}")
         if filtres_actifs:
             print(f"{COULEURS['CYAN']}Filtres :{COULEURS['RESET']} {', '.join(filtres_actifs)}")
         else:
@@ -262,7 +257,6 @@ def afficher_inventaire_ameliore(joueur, objets_a_afficher: Optional[List[Tuple[
 
 def _choisir_tri() -> Tuple[str, str]:
     """Menu pour choisir le critère et l'ordre de tri."""
-    from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur, effacer_console
     effacer_console()
     print()
     afficher_titre_menu_avec_emoji("Choisir le tri", "inventaire")
@@ -298,7 +292,6 @@ def _choisir_tri() -> Tuple[str, str]:
 
 def _choisir_filtre_type() -> Optional[str]:
     """Menu pour choisir un filtre de type."""
-    from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur, effacer_console
     effacer_console()
     print()
     afficher_titre_menu_avec_emoji("Filtrer par type", "inventaire")
@@ -329,7 +322,6 @@ def _choisir_filtre_type() -> Optional[str]:
 
 def _choisir_filtre_rarete() -> Optional[str]:
     """Menu pour choisir un filtre de rareté."""
-    from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur, effacer_console
     effacer_console()
     print()
     afficher_titre_menu_avec_emoji("Filtrer par rareté", "inventaire")
@@ -337,7 +329,7 @@ def _choisir_filtre_rarete() -> Optional[str]:
     print()
     print("Raretés disponibles :")
     print()
-    print(f"1. {RESET_COULEUR}Commun{COULEURS['RESET']}")
+    print(f"1. Commun")
     print()
     print(f"2. {COULEURS['VERT']}Peu Commun{COULEURS['RESET']}")
     print()
@@ -396,8 +388,8 @@ def _afficher_inventaire_pagine(joueur, objets: List[Tuple[str, Objet]], page: i
             rarete_affichage = ""
             if hasattr(objet, 'rarete') and objet.rarete:
                 rarete_lower = str(objet.rarete).lower().strip()
-                couleur_rarete = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
-                rarete_affichage = f" [{couleur_rarete}{objet.rarete.upper()}{RESET_COULEUR}]"
+                couleur_rarete = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
+                rarete_affichage = f" [{couleur_rarete}{objet.rarete.upper()}{COULEURS["RESET"]}]"
             print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {COULEURS['MAGENTA']}{objet.nom}{COULEURS['RESET']}{rarete_affichage} {COULEURS['GRIS']}(x{objet.quantite}){COULEURS['RESET']}")
             print()
 
@@ -448,8 +440,8 @@ def _formater_objet_affichage(objet: Objet, joueur) -> str:
 
     # Indicateur de rareté avec couleur
     if objet.rarete:
-        couleur = COULEURS_RARETE.get(objet.rarete.lower(), RESET_COULEUR)
-        affichage += f" [{couleur}{objet.rarete}{RESET_COULEUR}]"
+        couleur = COULEURS_RARETE.get(objet.rarete.lower(), COULEURS["RESET"])
+        affichage += f" [{couleur}{objet.rarete}{COULEURS["RESET"]}]"
 
     # Indicateur si équipé
     if objet.type == "équipement":
@@ -504,8 +496,8 @@ def rechercher_objet(joueur):
         rarete_affichage = ""
         if hasattr(objet, 'rarete') and objet.rarete:
             rarete_lower = str(objet.rarete).lower().strip()
-            couleur_rarete = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
-            rarete_affichage = f" [{couleur_rarete}{objet.rarete.upper()}{RESET_COULEUR}]"
+            couleur_rarete = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
+            rarete_affichage = f" [{couleur_rarete}{objet.rarete.upper()}{COULEURS["RESET"]}]"
         print(f"  {COULEURS['CYAN']}•{COULEURS['RESET']} {COULEURS['MAGENTA']}{objet.nom}{COULEURS['RESET']}{rarete_affichage} {COULEURS['GRIS']}(x{objet.quantite}){COULEURS['RESET']}")
         print()
 
@@ -534,9 +526,9 @@ def consulter_objet(joueur):
         # Ajouter la rareté avec couleur si disponible
         if hasattr(objet, 'rarete') and objet.rarete:
             rarete_lower = str(objet.rarete).lower().strip()
-            couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
+            couleur = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
             rarete_upper = str(objet.rarete).strip().upper()
-            affichage += f" [{couleur}{rarete_upper}{RESET_COULEUR}]"
+            affichage += f" [{couleur}{rarete_upper}{COULEURS["RESET"]}]"
         print(affichage)
         print()
 
@@ -568,9 +560,9 @@ def consulter_objet(joueur):
             # Afficher la rareté avec couleur (toujours afficher)
             if hasattr(objet, 'rarete') and objet.rarete:
                 rarete_lower = str(objet.rarete).lower().strip()
-                couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
+                couleur = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
                 rarete_upper = str(objet.rarete).strip().upper()
-                print(f"{COULEURS['CYAN']}Rareté :{COULEURS['RESET']} {couleur}{rarete_upper}{RESET_COULEUR}")
+                print(f"{COULEURS['CYAN']}Rareté :{COULEURS['RESET']} {couleur}{rarete_upper}{COULEURS["RESET"]}")
             else:
                 print(f"{COULEURS['CYAN']}Rareté :{COULEURS['RESET']} {COULEURS['GRIS']}Aucune{COULEURS['RESET']}")
             print()
@@ -586,7 +578,9 @@ def consulter_objet(joueur):
                 print()
                 for effet_nom, valeur in effets.items():
                     if valeur is not None and effet_nom != 'duree_tours':
-                        couleur_effet = COULEURS['VERT'] if 'vie' in effet_nom.lower() else COULEURS['BLEU'] if 'mana' in effet_nom.lower() else COULEURS['JAUNE'] if 'energie' in effet_nom.lower() else COULEURS['MAGENTA']
+                        # Utiliser COULEURS_STATS pour standardiser
+                        effet_key = effet_nom.lower().replace('_', '')
+                        couleur_effet = COULEURS_STATS.get(effet_key, COULEURS['MAGENTA'])
                         print(f"  {COULEURS['CYAN']}•{COULEURS['RESET']} {couleur_effet}{effet_nom}: {valeur}{COULEURS['RESET']}")
                         print()
                     elif effet_nom == 'duree_tours' and valeur:
@@ -601,7 +595,8 @@ def consulter_objet(joueur):
                 for stat_nom, valeur in stats.items():
                     if valeur is not None:
                         nom_affiche = stat_nom.replace('_', ' ').title()
-                        couleur_stat = COULEURS['ROUGE'] if 'degats' in stat_nom.lower() or 'force' in stat_nom.lower() else COULEURS['CYAN'] if 'agilite' in stat_nom.lower() else COULEURS['VERT'] if 'vitalite' in stat_nom.lower() else COULEURS['MAGENTA'] if 'intelligence' in stat_nom.lower() else COULEURS['BLEU'] if 'defense' in stat_nom.lower() else COULEURS['JAUNE']
+                        # Utiliser COULEURS_STATS pour standardiser
+                        couleur_stat = COULEURS_STATS.get(stat_nom.lower(), COULEURS['CYAN'])
                         print(f"  {COULEURS['CYAN']}•{COULEURS['RESET']} {couleur_stat}{nom_affiche}: {valeur}{COULEURS['RESET']}")
                         print()
             elif objet.description:
@@ -613,7 +608,7 @@ def consulter_objet(joueur):
 
             # Afficher la valeur estimée
             prix, details = calculer_prix_vente(objet)
-            print(f"{COULEURS['JAUNE']}💰 Valeur estimée :{COULEURS['RESET']} {COULEURS['JAUNE']}{prix:,} pièces{COULEURS['RESET']} {COULEURS['GRIS']}(x{objet.quantite} = {prix * objet.quantite:,} pièces){COULEURS['RESET']}")
+            print(f"{COULEUR_OR}💰 Valeur estimée :{COULEURS['RESET']} {COULEUR_OR}{prix:,} pièces{COULEURS['RESET']} {COULEURS['GRIS']}(x{objet.quantite} = {prix * objet.quantite:,} pièces){COULEURS['RESET']}")
             print()
 
             # Proposer d'équiper si c'est un équipement
@@ -709,17 +704,17 @@ def utiliser_potion(joueur):
         if hasattr(objet, 'effets') and objet.effets:
             effets = objet.effets
             if effets.get('vie'):
-                effets_desc.append(f"{COULEURS['VERT']}+{effets['vie']:.0f} PV{COULEURS['RESET']}")
+                effets_desc.append(f"{COULEURS_STATS['vie']}+{effets['vie']:.0f} PV{COULEURS['RESET']}")
             if effets.get('mana'):
-                effets_desc.append(f"{COULEURS['BLEU']}+{effets['mana']:.0f} Mana{COULEURS['RESET']}")
+                effets_desc.append(f"{COULEURS_STATS['mana']}+{effets['mana']:.0f} Mana{COULEURS['RESET']}")
             if effets.get('energie'):
-                effets_desc.append(f"{COULEURS['JAUNE']}+{effets['energie']:.0f} Énergie{COULEURS['RESET']}")
+                effets_desc.append(f"{COULEURS_STATS['energie']}+{effets['energie']:.0f} Énergie{COULEURS['RESET']}")
             if effets.get('duree_tours', 0) > 0:
                 boosts = []
                 if effets.get('boost_attaque'):
-                    boosts.append(f"{COULEURS['ROUGE']}+{effets['boost_attaque']} Att{COULEURS['RESET']}")
+                    boosts.append(f"{COULEURS_STATS['degats']}+{effets['boost_attaque']} Att{COULEURS['RESET']}")
                 if effets.get('boost_defense'):
-                    boosts.append(f"{COULEURS['CYAN']}+{effets['boost_defense']} Déf{COULEURS['RESET']}")
+                    boosts.append(f"{COULEURS_STATS['defense']}+{effets['boost_defense']} Déf{COULEURS['RESET']}")
                 if boosts:
                     effets_desc.append(f"{', '.join(boosts)} ({effets['duree_tours']} tours)")
 
@@ -728,8 +723,8 @@ def utiliser_potion(joueur):
         rarete_affichage = ""
         if hasattr(objet, 'rarete') and objet.rarete:
             rarete_lower = str(objet.rarete).lower().strip()
-            couleur_rarete = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
-            rarete_affichage = f" [{couleur_rarete}{objet.rarete.upper()}{RESET_COULEUR}]"
+            couleur_rarete = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
+            rarete_affichage = f" [{couleur_rarete}{objet.rarete.upper()}{COULEURS["RESET"]}]"
         print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {objet.nom}{quantite}{rarete_affichage}{effets_str}")
         print()
 
@@ -776,8 +771,8 @@ def jeter_objet(joueur):
         rarete_affichage = ""
         if hasattr(objet, 'rarete') and objet.rarete:
             rarete_lower = str(objet.rarete).lower().strip()
-            couleur_rarete = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
-            rarete_affichage = f" [{couleur_rarete}{objet.rarete.upper()}{RESET_COULEUR}]"
+            couleur_rarete = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
+            rarete_affichage = f" [{couleur_rarete}{objet.rarete.upper()}{COULEURS["RESET"]}]"
         print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {objet.nom}{rarete_affichage} {COULEURS['GRIS']}(x{objet.quantite}){COULEURS['RESET']}")
         print()
 

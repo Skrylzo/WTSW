@@ -1,6 +1,8 @@
 # menus/monnaie.py
 # Système de gestion de l'or du joueur
 
+from utils.affichage import COULEUR_OR, COULEURS
+
 def obtenir_or_joueur(joueur) -> int:
     """Retourne l'or du joueur (ajoute l'attribut si nécessaire)."""
     if not hasattr(joueur, 'or_'):
@@ -26,4 +28,4 @@ def retirer_or(joueur, montant: int) -> bool:
 def afficher_or(joueur):
     """Affiche l'or du joueur."""
     or_actuel = obtenir_or_joueur(joueur)
-    print(f"{or_actuel} pièces")
+    print(f"{COULEUR_OR}{or_actuel} pièces{COULEURS['RESET']}")

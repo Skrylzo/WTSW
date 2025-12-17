@@ -7,7 +7,7 @@ from world import (
     obtenir_capitale_joueur, obtenir_royaume_du_joueur,
     FeatureType, HubFeature, HubCapital
 )
-from utils.affichage import effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS
+from utils.affichage import effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS, COULEUR_OR
 from .craft import menu_craft
 from .exploration import creer_systeme_chapitres_base
 from .monnaie import afficher_or, retirer_or
@@ -163,7 +163,7 @@ def menu_capitale(joueur):
                 elif option_type == 'soin':
                     cout = 100
                     if getattr(joueur, "or_", 0) < cout:
-                        print(f"\n{COULEURS['ROUGE']}❌ Vous n'avez pas assez d'or. Il vous manque {cout - joueur.or_} pièces.{COULEURS['RESET']}")
+                        print(f"\n{COULEURS['ROUGE']}❌ Vous n'avez pas assez d'or. Il vous manque {COULEUR_OR}{cout - joueur.or_} pièces{COULEURS['RESET']}.")
                     else:
                         retirer_or(joueur, cout)
                         joueur.vie = joueur.vie_max
@@ -174,7 +174,7 @@ def menu_capitale(joueur):
                             joueur.energie = getattr(joueur, 'energie_max', joueur.energie)
                         if hasattr(joueur, 'rage_max'):
                             joueur.rage = 0
-                        print(f"\n{COULEURS['VERT']}💚 Vous êtes entièrement soigné pour {cout} or.{COULEURS['RESET']}")
+                        print(f"\n{COULEURS['VERT']}💚 Vous êtes entièrement soigné pour {COULEUR_OR}{cout} or{COULEURS['RESET']}.")
                     input("\nAppuyez sur Entrée pour continuer...")
                 elif option_type == 'retour':
                     break
@@ -186,9 +186,9 @@ def menu_capitale(joueur):
 
 def afficher_services_capitale(hub: HubCapital):
     """Affiche tous les services disponibles dans la capitale."""
-    print(f"\n{'='*60}")
-    print(f"SERVICES DE {hub.nom.upper()}")
-    print(f"{'='*60}")
+    print()
+    afficher_titre_menu_avec_emoji(f"SERVICES DE {hub.nom.upper()}", "capitale")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
 
     services = hub.lister_services()
     for type_service, liste_features in services.items():
@@ -207,4 +207,5 @@ def afficher_services_capitale(hub: HubCapital):
                 if feature and feature.description:
                     print(f"    {feature.description}")
 
-    print(f"{'='*60}\n")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
+    print()

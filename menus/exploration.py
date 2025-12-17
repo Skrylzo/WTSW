@@ -612,7 +612,6 @@ def afficher_infos_royaumes(joueur):
     """
     Affiche des informations sur les royaumes.
     """
-    from utils.affichage import COULEURS, afficher_titre_menu_avec_emoji, afficher_separateur
     royaume_joueur = obtenir_royaume_du_joueur(joueur.race)
     hub_joueur = obtenir_hub_du_joueur(joueur.race)
 

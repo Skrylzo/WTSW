@@ -7,13 +7,10 @@ from classes.arme import Arme
 from data.races_classes import DEFINITIONS_RACES_CLASSES
 from data.armes import DEFINITIONS_ARMES
 from .debug import appliquer_bonus_debug
-# choisir_arme_depart est défini dans ce fichier
+from utils.affichage import COULEURS, afficher_titre_menu_avec_emoji, afficher_separateur, effacer_console
 
 # --- Nouvelle fonction pour choisir l'arme de départ ---
 def choisir_arme_depart(joueur):
-    from utils.affichage import COULEURS
-
-    from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur
     print()
     afficher_titre_menu_avec_emoji("Choisissez votre Arme de Départ", "personnage")
     afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
@@ -58,7 +55,6 @@ def choisir_arme_depart(joueur):
 # --- Fonctions de Création de Personnage ---
 
 def creer_personnage():
-    from utils.affichage import effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS
     from .sauvegarde import obtenir_sauvegardes_personnage, charger_jeu
 
     effacer_console()
@@ -98,8 +94,6 @@ def creer_personnage():
 
         # Nom valide et unique, continuer la création
         break
-
-    from utils.affichage import COULEURS
 
     # Codes ANSI pour le gras
     GRAS = "\033[1m"

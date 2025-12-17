@@ -7,17 +7,10 @@ from classes.arme import Arme
 from classes.armure import Armure
 from data.craft_bonus import calculer_effet_avec_bonus
 from data.recettes import obtenir_recette
-from utils.affichage import afficher_message_confirmation, effacer_console, afficher_titre_menu, afficher_separateur, COULEURS
-
-# Codes couleur ANSI pour les raretés
-COULEURS_RARETE = {
-    "commun": "\033[0m",           # Blanc/par défaut
-    "peu commun": "\033[92m",      # Vert clair
-    "rare": "\033[94m",             # Bleu
-    "épique": "\033[95m",           # Magenta/Violet
-    "légendaire": "\033[93m"        # Jaune/Doré
-}
-RESET_COULEUR = "\033[0m"
+from utils.affichage import (
+    afficher_message_confirmation, effacer_console, afficher_titre_menu,
+    afficher_separateur, COULEURS, COULEURS_RARETE, afficher_titre_menu_avec_emoji
+)
 
 
 def choisir_objet_combat(joueur) -> bool:
@@ -27,7 +20,6 @@ def choisir_objet_combat(joueur) -> bool:
     :param joueur: Le personnage joueur
     :return: True si un objet a été utilisé, False sinon
     """
-    from utils.affichage import COULEURS
 
     # Filtrer les objets utilisables (potions)
     objets_utilisables = []
@@ -244,9 +236,9 @@ def _afficher_objet_equipement(objet, index, avec_sous_type=False):
     # Ajouter la rareté avec couleur
     if hasattr(objet, 'rarete') and objet.rarete:
         rarete_lower = str(objet.rarete).lower().strip()
-        couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
+        couleur = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
         rarete_upper = str(objet.rarete).strip().upper()
-        affichage += f" [{couleur}{rarete_upper}{RESET_COULEUR}]"
+        affichage += f" [{couleur}{rarete_upper}{COULEURS["RESET"]}]"
 
     # Ajouter le sous-type si demandé
     if avec_sous_type:
@@ -288,7 +280,6 @@ def _equiper_arme_depuis_liste(joueur, armes_disponibles):
         print("\n❌ Vous n'avez aucune arme dans votre inventaire.")
         return False
 
-    from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur
     effacer_console()
     print()
     afficher_titre_menu_avec_emoji("Armes disponibles", "equipement")
@@ -364,7 +355,6 @@ def _equiper_armure_depuis_liste(joueur, armures_disponibles, type_nom):
         input("\nAppuyez sur Entrée pour continuer...")
         return False
 
-    from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur
     effacer_console()
     print()
     afficher_titre_menu_avec_emoji(f"{type_nom.capitalize()}s disponibles", "equipement")
@@ -459,8 +449,8 @@ def menu_equiper_equipement(joueur):
             rarete_affichage = ""
             if joueur.arme.rarete:
                 rarete_lower = str(joueur.arme.rarete).lower().strip()
-                couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
-                rarete_affichage = f" [{couleur}{joueur.arme.rarete.upper()}{RESET_COULEUR}]"
+                couleur = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
+                rarete_affichage = f" [{couleur}{joueur.arme.rarete.upper()}{COULEURS["RESET"]}]"
             print(f"  ⚔️  Arme : {joueur.arme.nom}{rarete_affichage}")
         else:
             print(f"  ⚔️  Arme : Aucune")
@@ -469,8 +459,8 @@ def menu_equiper_equipement(joueur):
             rarete_affichage = ""
             if joueur.armure_torse.rarete:
                 rarete_lower = str(joueur.armure_torse.rarete).lower().strip()
-                couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
-                rarete_affichage = f" [{couleur}{joueur.armure_torse.rarete.upper()}{RESET_COULEUR}]"
+                couleur = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
+                rarete_affichage = f" [{couleur}{joueur.armure_torse.rarete.upper()}{COULEURS["RESET"]}]"
             print(f"  🛡️  Torse : {joueur.armure_torse.nom}{rarete_affichage}")
         else:
             print(f"  🛡️  Torse : Aucune")
@@ -479,8 +469,8 @@ def menu_equiper_equipement(joueur):
             rarete_affichage = ""
             if joueur.armure_casque.rarete:
                 rarete_lower = str(joueur.armure_casque.rarete).lower().strip()
-                couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
-                rarete_affichage = f" [{couleur}{joueur.armure_casque.rarete.upper()}{RESET_COULEUR}]"
+                couleur = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
+                rarete_affichage = f" [{couleur}{joueur.armure_casque.rarete.upper()}{COULEURS["RESET"]}]"
             print(f"  🪖 Casque : {joueur.armure_casque.nom}{rarete_affichage}")
         else:
             print(f"  🪖 Casque : Aucun")
@@ -489,14 +479,14 @@ def menu_equiper_equipement(joueur):
             rarete_affichage = ""
             if joueur.armure_bottes.rarete:
                 rarete_lower = str(joueur.armure_bottes.rarete).lower().strip()
-                couleur = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
-                rarete_affichage = f" [{couleur}{joueur.armure_bottes.rarete.upper()}{RESET_COULEUR}]"
+                couleur = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
+                rarete_affichage = f" [{couleur}{joueur.armure_bottes.rarete.upper()}{COULEURS["RESET"]}]"
             print(f"  👢 Bottes : {joueur.armure_bottes.nom}{rarete_affichage}")
         else:
             print(f"  👢 Bottes : Aucunes")
 
         print()
-        print(f"{'='*60}")
+        afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
         print()
         print("Choisissez une catégorie :")
         print()

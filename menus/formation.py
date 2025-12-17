@@ -5,7 +5,10 @@ from typing import List
 
 from world import HubFeature, HubCapital
 from .monnaie import obtenir_or_joueur, retirer_or, afficher_or
-from utils.affichage import effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS
+from utils.affichage import (
+    effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur,
+    COULEURS, COULEUR_OR, COULEURS_STATS
+)
 
 
 def calculer_prix_apprentissage_capacite(niveau_requis: int) -> int:
@@ -125,7 +128,7 @@ def apprendre_capacite(joueur, cap_id: str) -> bool:
     # Vérifier que le joueur a assez d'or
     or_actuel = obtenir_or_joueur(joueur)
     if or_actuel < prix:
-        print(f"❌ Vous n'avez pas assez d'or. Prix : {prix} or, Vous avez : {or_actuel} or.")
+        print(f"❌ Vous n'avez pas assez d'or. Prix : {COULEUR_OR}{prix} or{COULEURS['RESET']}, Vous avez : {COULEUR_OR}{or_actuel} or{COULEURS['RESET']}.")
         return False
 
     # Retirer l'or
@@ -148,7 +151,7 @@ def apprendre_capacite(joueur, cap_id: str) -> bool:
     )
 
     joueur.capacites_apprises.append(capacite)
-    print(f"✅ Vous avez appris '{capacite.nom}' pour {prix} or !")
+    print(f"✅ Vous avez appris '{capacite.nom}' pour {COULEUR_OR}{prix} or{COULEURS['RESET']} !")
     print(f"   {capacite.description}")
     return True
 
@@ -227,7 +230,7 @@ def ameliorer_capacite(joueur, capacite) -> bool:
     # Vérifier que le joueur a assez d'or
     or_actuel = obtenir_or_joueur(joueur)
     if or_actuel < prix:
-        print(f"❌ Vous n'avez pas assez d'or. Prix : {prix} or, Vous avez : {or_actuel} or.")
+        print(f"❌ Vous n'avez pas assez d'or. Prix : {COULEUR_OR}{prix} or{COULEURS['RESET']}, Vous avez : {COULEUR_OR}{or_actuel} or{COULEURS['RESET']}.")
         return False
 
     # Retirer l'or
@@ -236,7 +239,7 @@ def ameliorer_capacite(joueur, capacite) -> bool:
     # Améliorer la capacité
     capacite.ameliorer()
 
-    print(f"✅ '{capacite.obtenir_nom_avec_niveau()}' a été améliorée pour {prix} or !")
+    print(f"✅ '{capacite.obtenir_nom_avec_niveau()}' a été améliorée pour {COULEUR_OR}{prix} or{COULEURS['RESET']} !")
 
     # Afficher les nouvelles stats
     if capacite.degats_fixes > 0:
@@ -568,25 +571,25 @@ def menu_formation_specialisee(joueur):
             if deja_achete:
                 print(f"{i}. {COULEURS['VERT']}✅ {bonus['nom']} (DÉJÀ ACHETÉ){COULEURS['RESET']}")
             else:
-                print(f"{i}. {COULEURS['CYAN']}{bonus['nom']}{COULEURS['RESET']} - {COULEURS['JAUNE']}{bonus['prix']} or{COULEURS['RESET']}")
+                print(f"{i}. {COULEURS['CYAN']}{bonus['nom']}{COULEURS['RESET']} - {COULEUR_OR}{bonus['prix']} or{COULEURS['RESET']}")
                 bonus_a_afficher.append((i, bonus))
             print()
 
             print(f"   {COULEURS['GRIS']}{bonus['description']}{COULEURS['RESET']}")
             print()
 
-            # Afficher les bonus détaillés
+            # Afficher les bonus détaillés (utiliser COULEURS_STATS pour standardiser)
             bonus_details = []
             if "force" in bonus['bonus']:
-                bonus_details.append(f"{COULEURS['ROUGE']}Force +{bonus['bonus']['force']}{COULEURS['RESET']}")
+                bonus_details.append(f"{COULEURS_STATS['force']}Force +{bonus['bonus']['force']}{COULEURS['RESET']}")
             if "agilite" in bonus['bonus']:
-                bonus_details.append(f"{COULEURS['CYAN']}Agilité +{bonus['bonus']['agilite']}{COULEURS['RESET']}")
+                bonus_details.append(f"{COULEURS_STATS['agilite']}Agilité +{bonus['bonus']['agilite']}{COULEURS['RESET']}")
             if "vitalite" in bonus['bonus']:
-                bonus_details.append(f"{COULEURS['VERT']}Vitalité +{bonus['bonus']['vitalite']}{COULEURS['RESET']}")
+                bonus_details.append(f"{COULEURS_STATS['vitalite']}Vitalité +{bonus['bonus']['vitalite']}{COULEURS['RESET']}")
             if "intelligence" in bonus['bonus']:
-                bonus_details.append(f"{COULEURS['MAGENTA']}Intelligence +{bonus['bonus']['intelligence']}{COULEURS['RESET']}")
+                bonus_details.append(f"{COULEURS_STATS['intelligence']}Intelligence +{bonus['bonus']['intelligence']}{COULEURS['RESET']}")
             if "defense" in bonus['bonus']:
-                bonus_details.append(f"{COULEURS['BLEU']}Défense +{bonus['bonus']['defense']}{COULEURS['RESET']}")
+                bonus_details.append(f"{COULEURS_STATS['defense']}Défense +{bonus['bonus']['defense']}{COULEURS['RESET']}")
 
             if bonus_details:
                 print(f"   Bonus : {', '.join(bonus_details)}")
@@ -610,14 +613,14 @@ def menu_formation_specialisee(joueur):
                     continue
 
                 # Demander confirmation
-                print(f"\nAcheter '{bonus_choisi['nom']}' pour {bonus_choisi['prix']} or ?")
+                print(f"\nAcheter '{bonus_choisi['nom']}' pour {COULEUR_OR}{bonus_choisi['prix']} or{COULEURS['RESET']} ?")
                 confirmation = input("Confirmer (o/n) : ").strip().lower()
 
                 if confirmation == 'o':
                     # Vérifier l'or
                     or_actuel = obtenir_or_joueur(joueur)
                     if or_actuel < bonus_choisi['prix']:
-                        print(f"❌ Vous n'avez pas assez d'or. Prix : {bonus_choisi['prix']} or, Vous avez : {or_actuel} or.")
+                        print(f"❌ Vous n'avez pas assez d'or. Prix : {COULEUR_OR}{bonus_choisi['prix']} or{COULEURS['RESET']}, Vous avez : {COULEUR_OR}{or_actuel} or{COULEURS['RESET']}.")
                         input("\nAppuyez sur Entrée pour continuer...")
                         continue
 
@@ -643,7 +646,7 @@ def menu_formation_specialisee(joueur):
                     # Recalculer les stats
                     joueur.mettre_a_jour_stats_apres_attributs()
 
-                    print(f"✅ Vous avez acheté '{bonus_choisi['nom']}' pour {bonus_choisi['prix']} or !")
+                    print(f"✅ Vous avez acheté '{bonus_choisi['nom']}' pour {COULEUR_OR}{bonus_choisi['prix']} or{COULEURS['RESET']} !")
                     print(f"   Les bonus ont été appliqués à vos attributs.")
                     input("\nAppuyez sur Entrée pour continuer...")
                 else:
@@ -701,7 +704,7 @@ def menu_formation(joueur, hub: HubCapital, features_formation: List[HubFeature]
 
                 for i, cap in enumerate(capacites_disponibles, 1):
                     niveau_info = f"{COULEURS['BLEU']}Niveau {cap['niveau_requis']}{COULEURS['RESET']}"
-                    prix_info = f"{COULEURS['JAUNE']}{cap['prix']} or{COULEURS['RESET']}"
+                    prix_info = f"{COULEUR_OR}{cap['prix']} or{COULEURS['RESET']}"
                     print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {COULEURS['MAGENTA']}{cap['nom']}{COULEURS['RESET']} ({niveau_info}) - {prix_info}")
                     if cap['description']:
                         print(f"   {COULEURS['GRIS']}{cap['description']}{COULEURS['RESET']}")
@@ -717,7 +720,7 @@ def menu_formation(joueur, hub: HubCapital, features_formation: List[HubFeature]
                     if 1 <= choix <= len(capacites_disponibles):
                         cap_choisie = capacites_disponibles[choix - 1]
 
-                        print(f"\nApprendre '{cap_choisie['nom']}' pour {cap_choisie['prix']} or ?")
+                        print(f"\nApprendre '{cap_choisie['nom']}' pour {COULEUR_OR}{cap_choisie['prix']} or{COULEURS['RESET']} ?")
                         confirmation = input("Confirmer (o/n) : ").strip().lower()
 
                         if confirmation == 'o':
@@ -750,14 +753,14 @@ def menu_formation(joueur, hub: HubCapital, features_formation: List[HubFeature]
                 for i, cap_info in enumerate(capacites_ameliorables, 1):
                     cap = cap_info['capacite']
                     niveau_info = f"{COULEURS['BLEU']}Niveau {cap_info['niveau_actuel']}{COULEURS['RESET']}"
-                    prix_info = f"{COULEURS['JAUNE']}{cap_info['prix']} or{COULEURS['RESET']}"
+                    prix_info = f"{COULEUR_OR}{cap_info['prix']} or{COULEURS['RESET']}"
 
                     print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {COULEURS['MAGENTA']}{cap.obtenir_nom_avec_niveau()}{COULEURS['RESET']} - {prix_info}")
                     print(f"   {COULEURS['GRIS']}{cap.description}{COULEURS['RESET']}")
 
                     # Afficher les améliorations
                     if cap_info['bonus_degats'] > 0:
-                        print(f"   {COULEURS['CYAN']}Dégâts actuels :{COULEURS['RESET']} {COULEURS['VERT']}{cap.degats_fixes}{COULEURS['RESET']} {COULEURS['GRIS']}(prochaine amélioration : +{int(cap._degats_base * 0.20)}){COULEURS['RESET']}")
+                        print(f"   {COULEURS['CYAN']}Dégâts actuels :{COULEURS['RESET']} {COULEURS_STATS['degats']}{cap.degats_fixes}{COULEURS['RESET']} {COULEURS['GRIS']}(prochaine amélioration : +{int(cap._degats_base * 0.20)}){COULEURS['RESET']}")
                     if cap_info['bonus_soin'] > 0:
                         print(f"   {COULEURS['CYAN']}Soin actuel :{COULEURS['RESET']} {COULEURS['VERT']}{cap.soin_fixe}{COULEURS['RESET']} {COULEURS['GRIS']}(prochaine amélioration : +{int(cap._soin_base * 0.20)}){COULEURS['RESET']}")
                     print()  # Espace entre chaque capacité
@@ -773,7 +776,7 @@ def menu_formation(joueur, hub: HubCapital, features_formation: List[HubFeature]
                         cap_info = capacites_ameliorables[choix - 1]
                         cap = cap_info['capacite']
 
-                        print(f"\nAmeliorer '{cap.obtenir_nom_avec_niveau()}' pour {cap_info['prix']} or ?")
+                        print(f"\nAmeliorer '{cap.obtenir_nom_avec_niveau()}' pour {COULEUR_OR}{cap_info['prix']} or{COULEURS['RESET']} ?")
                         confirmation = input("Confirmer (o/n) : ").strip().lower()
 
                         if confirmation == 'o':

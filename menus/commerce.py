@@ -8,7 +8,10 @@ from classes.objet import Objet
 from data.objets import DEFINITIONS_OBJETS
 from data.categories_ingredients import INGREDIENTS_SPECIAUX
 from .monnaie import obtenir_or_joueur, ajouter_or, retirer_or, afficher_or
-from utils.affichage import effacer_console, afficher_titre_menu, afficher_separateur, afficher_message_confirmation, formater_nombre, COULEURS
+from utils.affichage import (
+    effacer_console, afficher_titre_menu, afficher_separateur,
+    afficher_message_confirmation, formater_nombre, COULEURS, COULEURS_RARETE, COULEUR_OR
+)
 
 
 def calculer_prix_vente(objet: Objet) -> tuple[int, dict]:
@@ -177,7 +180,7 @@ def menu_achat(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
     print()
     for i, (nom, data) in enumerate(objets_disponibles.items(), 1):
         emoji_objet = "🧪" if "potion" in nom.lower() else "💎" if "ingredient" in nom.lower() or "eau" in nom.lower() else "📦"
-        print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {emoji_objet} {COULEURS['BLEU']}{nom}{COULEURS['RESET']} - {COULEURS['JAUNE']}{data['prix']} pièces{COULEURS['RESET']}")
+        print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {emoji_objet} {COULEURS['BLEU']}{nom}{COULEURS['RESET']} - {COULEUR_OR}{data['prix']} pièces{COULEURS['RESET']}")
         print()  # Espace entre chaque objet
 
     print(f"\n{COULEURS['GRIS']}{len(objets_disponibles) + 1}. ⬅️  Retour (r){COULEURS['RESET']}")
@@ -217,7 +220,7 @@ def menu_achat(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
                     joueur.ajouter_objet(nouvel_objet)
                     retirer_or(joueur, prix_total)
                     afficher_message_confirmation(f"Vous avez acheté {quantite}x {nom_objet} pour {formater_nombre(prix_total)} pièces.", "succes")
-                    print(f"Or restant : {formater_nombre(obtenir_or_joueur(joueur))} pièces")
+                    print(f"{COULEUR_OR}Or restant : {formater_nombre(obtenir_or_joueur(joueur))} pièces{COULEURS['RESET']}")
                     input("\nAppuyez sur Entrée pour continuer...")
                 elif obj_id and obj_id in DEFINITIONS_OBJETS:
                     obj_def = DEFINITIONS_OBJETS[obj_id]
@@ -231,7 +234,7 @@ def menu_achat(joueur, hub: HubCapital, features_commerce: List[HubFeature]):
                     joueur.ajouter_objet(nouvel_objet)
                     retirer_or(joueur, prix_total)
                     print(f"\n✓ Vous avez acheté {quantite}x {nom_objet} pour {prix_total} pièces.")
-                    print(f"Or restant : {obtenir_or_joueur(joueur)} pièces")
+                    print(f"{COULEUR_OR}Or restant : {obtenir_or_joueur(joueur)} pièces{COULEURS['RESET']}")
                 else:
                     print("Erreur : Objet introuvable dans les définitions.")
             else:
@@ -258,18 +261,6 @@ def menu_vente(joueur):
         print("\nVotre inventaire est vide.")
         return
 
-    # Codes couleur ANSI pour les raretés
-    COULEURS_RARETE = {
-        "commun": "\033[0m",           # Blanc/par défaut
-        "peu commun": "\033[92m",      # Vert clair
-        "rare": "\033[94m",             # Bleu
-        "épique": "\033[95m",           # Magenta/Violet
-        "légendaire": "\033[93m"        # Jaune/Doré
-    }
-    RESET_COULEUR = "\033[0m"
-
-    # Couleur ocre/dorée pour les prix (jaune foncé)
-    COULEUR_OR = "\033[33m"  # Jaune foncé/ocre
 
     print(f"\n{COULEURS['JAUNE']}💵 Objets à vendre :{COULEURS['RESET']}")
     print()
@@ -281,13 +272,13 @@ def menu_vente(joueur):
         emoji_objet = "🧪" if objet.type == "potion" else "⚔️" if objet.type == "arme" else "🛡️" if objet.type == "armure" or objet.type == "équipement" else "💎"
 
         # Couleur de l'objet selon sa rareté
-        couleur_objet = RESET_COULEUR
+        couleur_objet = COULEURS["RESET"]
         if hasattr(objet, 'rarete') and objet.rarete:
             rarete_lower = str(objet.rarete).lower().strip()
-            couleur_objet = COULEURS_RARETE.get(rarete_lower, RESET_COULEUR)
+            couleur_objet = COULEURS_RARETE.get(rarete_lower, COULEURS["RESET"])
 
-        print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {emoji_objet} {couleur_objet}{objet}{RESET_COULEUR}")
-        print(f"   {COULEURS['GRIS']}Prix :{COULEURS['RESET']} {COULEUR_OR}{prix_vente} pièces{RESET_COULEUR}")
+        print(f"{COULEURS['CYAN']}{i}.{COULEURS['RESET']} {emoji_objet} {couleur_objet}{objet}{COULEURS["RESET"]}")
+        print(f"   {COULEURS['GRIS']}Prix :{COULEURS['RESET']} {COULEUR_OR}{prix_vente} pièces{COULEURS["RESET"]}")
 
         print()  # Espace entre chaque objet
 
@@ -326,7 +317,7 @@ def menu_vente(joueur):
                 if details["bonus_niveau"] > 0:
                     print(f"  • Bonus niveau biome ({objet.niveau_biome}) : +{details['bonus_niveau']} pièces")
                 print(f"  • Multiplicateur type ({objet.type}) : x{details['multiplicateur_type']}")
-            print(f"\n{COULEURS['VERT']}Prix total : {formater_nombre(prix_total)} pièces{COULEURS['RESET']}")
+            print(f"\n{COULEUR_OR}Prix total : {formater_nombre(prix_total)} pièces{COULEURS['RESET']}")
             afficher_separateur(couleur=COULEURS["CYAN"])
 
             confirmation = input(f"\n{COULEURS['JAUNE']}Confirmer la vente ? (o/n) : {COULEURS['RESET']}").strip().lower()
@@ -342,7 +333,7 @@ def menu_vente(joueur):
             ajouter_or(joueur, prix_total)
 
             afficher_message_confirmation(f"Vous avez vendu {quantite}x {nom_objet} pour {formater_nombre(prix_total)} pièces.", "succes")
-            print(f"Or actuel : {formater_nombre(obtenir_or_joueur(joueur))} pièces")
+            print(f"{COULEUR_OR}Or actuel : {formater_nombre(obtenir_or_joueur(joueur))} pièces{COULEURS['RESET']}")
             input("\nAppuyez sur Entrée pour continuer...")
         elif choix == len(objets_liste) + 1:
             return

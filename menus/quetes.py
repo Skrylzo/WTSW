@@ -9,7 +9,10 @@ from data.histoire_principale import QUETES_PRINCIPALES, INTRODUCTION_HISTOIRE_P
 from data.quetes_royaume import TOUTES_LES_QUETES_ROYAUME
 from data.quetes_secondaires import TOUTES_LES_QUETES_SECONDAIRES
 from data.pnjs_quetes import initialiser_pnjs
-from utils.affichage import effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur, COULEURS
+from utils.affichage import (
+    effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur,
+    COULEURS, COULEUR_OR
+)
 
 # Initialiser les PNJ au chargement du module
 initialiser_pnjs()
@@ -92,9 +95,9 @@ def afficher_quetes_disponibles(joueur, systeme_quetes: SystemeQuetes):
         input("\nAppuyez sur Entrée pour continuer...")
         return
 
-    print(f"\n{'='*60}")
-    print("QUÊTES DISPONIBLES")
-    print(f"{'='*60}")
+    print()
+    afficher_titre_menu_avec_emoji("QUÊTES DISPONIBLES", "quetes")
+    afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
 
     # Séparer par type
     principales = [q for q in disponibles if q.type_quete == TypeQuete.PRINCIPALE]
@@ -265,7 +268,7 @@ def afficher_quetes_completees(systeme_quetes: SystemeQuetes, joueur):
                 if "xp" in quete.recompenses:
                     print(f"      - {quete.recompenses['xp']} XP")
                 if "or" in quete.recompenses:
-                    print(f"      - {quete.recompenses['or']} pièces d'or")
+                    print(f"      - {COULEUR_OR}{quete.recompenses['or']} pièces d'or{COULEURS['RESET']}")
                 if "objets" in quete.recompenses:
                     from data.objets import DEFINITIONS_OBJETS
                     for objet_id in quete.recompenses["objets"]:
@@ -291,7 +294,7 @@ def afficher_quetes_completees(systeme_quetes: SystemeQuetes, joueur):
                 if "xp" in quete.recompenses:
                     print(f"      - {quete.recompenses['xp']} XP")
                 if "or" in quete.recompenses:
-                    print(f"      - {quete.recompenses['or']} pièces d'or")
+                    print(f"      - {COULEUR_OR}{quete.recompenses['or']} pièces d'or{COULEURS['RESET']}")
                 if "objets" in quete.recompenses:
                     from data.objets import DEFINITIONS_OBJETS
                     for objet_id in quete.recompenses["objets"]:
@@ -311,7 +314,7 @@ def afficher_quetes_completees(systeme_quetes: SystemeQuetes, joueur):
                 if "xp" in quete.recompenses:
                     print(f"      - {quete.recompenses['xp']} XP")
                 if "or" in quete.recompenses:
-                    print(f"      - {quete.recompenses['or']} pièces d'or")
+                    print(f"      - {COULEUR_OR}{quete.recompenses['or']} pièces d'or{COULEURS['RESET']}")
                 if "objets" in quete.recompenses:
                     from data.objets import DEFINITIONS_OBJETS
                     for objet_id in quete.recompenses["objets"]:

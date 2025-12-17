@@ -148,7 +148,7 @@ class Quete:
 
     def afficher(self):
         """Affiche les informations de la quête."""
-        from utils.affichage import COULEURS, afficher_titre_menu_avec_emoji, afficher_separateur
+        from utils.affichage import COULEURS, afficher_titre_menu_avec_emoji, afficher_separateur, COULEUR_OR
 
         print()
         afficher_titre_menu_avec_emoji(f"QUÊTE : {self.nom}", "quetes")
@@ -178,7 +178,7 @@ class Quete:
                 print(f"  {COULEURS['VERT']}- XP : {self.recompenses['xp']}{COULEURS['RESET']}")
                 print()
             if "or" in self.recompenses:
-                print(f"  {COULEURS['JAUNE']}- Or : {self.recompenses['or']}{COULEURS['RESET']}")
+                print(f"  {COULEUR_OR}- Or : {self.recompenses['or']}{COULEURS['RESET']}")
                 print()
             if "objets" in self.recompenses:
                 for objet in self.recompenses['objets']:

@@ -6,7 +6,10 @@ from typing import Dict, Any, List
 from classes.base_combatant import Personnage, Ennemi
 from classes.capacite import Capacite
 from .calculs import creer_barre_vie
-from utils.affichage import COULEURS, formater_nombre
+from utils.affichage import (
+    COULEURS, COULEURS_STATS, formater_nombre,
+    effacer_console, afficher_titre_menu_avec_emoji, afficher_separateur
+)
 
 
 def afficher_tour_joueur(joueur: Personnage, ennemis: List[Ennemi]) -> None:
@@ -16,23 +19,21 @@ def afficher_tour_joueur(joueur: Personnage, ennemis: List[Ennemi]) -> None:
     :param joueur: Le joueur
     :param ennemis: Liste des ennemis
     """
-    from utils.affichage import effacer_console
     effacer_console()
 
     resource_display = ""
     couleur_ressource = COULEURS["CYAN"]
     if joueur.specialisation.type_ressource == "Mana":
         resource_display = f"Mana: {int(joueur.mana)}/{int(joueur.mana_max)}"
-        couleur_ressource = COULEURS["BLEU"]
+        couleur_ressource = COULEURS_STATS["mana"]
     elif joueur.specialisation.type_ressource == "Energie":
         resource_display = f"Energie: {int(joueur.energie)}/{int(joueur.energie_max)}"
-        couleur_ressource = COULEURS["JAUNE"]
+        couleur_ressource = COULEURS_STATS["energie"]
     elif joueur.specialisation.type_ressource == "Rage":
         resource_display = f"Rage: {int(joueur.rage)}/{int(joueur.rage_max)}"
-        couleur_ressource = COULEURS["ROUGE"]
+        couleur_ressource = COULEURS_STATS["rage"]
 
     barre_vie_joueur = creer_barre_vie(joueur.vie, joueur.vie_max)
-    from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur
     print()
     afficher_titre_menu_avec_emoji(f"TOUR DE {joueur.nom}", "combat")
     afficher_separateur(style="simple", couleur=COULEURS["GRIS"])
@@ -144,7 +145,6 @@ def afficher_fin_combat(joueur: Personnage, victoire: bool) -> None:
     :param victoire: True si le joueur a gagné
     """
     if victoire:
-        from utils.affichage import afficher_titre_menu_avec_emoji, afficher_separateur
         print("-" * 30)
         print()
         afficher_titre_menu_avec_emoji("FIN DU COMBAT", "combat")

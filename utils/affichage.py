@@ -20,6 +20,32 @@ COULEUR_VIE_HAUTE = COULEURS["VERT"]      # > 60%
 COULEUR_VIE_MOYENNE = COULEURS["JAUNE"]   # 30-60%
 COULEUR_VIE_BASSE = COULEURS["ROUGE"]     # < 30%
 
+# Couleurs pour les raretés d'objets (centralisé)
+COULEURS_RARETE = {
+    "commun": "\033[0m",           # Blanc/par défaut
+    "peu commun": "\033[92m",      # Vert clair
+    "rare": "\033[94m",             # Bleu
+    "épique": "\033[95m",           # Magenta/Violet
+    "légendaire": "\033[93m"        # Jaune/Doré
+}
+
+# Couleur ocre/dorée pour les prix (jaune foncé)
+COULEUR_OR = "\033[33m"  # Jaune foncé/ocre
+
+# Couleurs standardisées pour les stats
+COULEURS_STATS = {
+    "force": COULEURS["ROUGE"],
+    "agilite": COULEURS["CYAN"],
+    "vitalite": COULEURS["VERT"],
+    "intelligence": COULEURS["MAGENTA"],
+    "defense": COULEURS["BLEU"],
+    "degats": COULEURS["ROUGE"],
+    "vie": COULEURS["VERT"],
+    "mana": COULEURS["BLEU"],
+    "energie": COULEURS["JAUNE"],
+    "rage": COULEURS["ROUGE"]
+}
+
 
 def formater_nombre(nombre: int) -> str:
     """

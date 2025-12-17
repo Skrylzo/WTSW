@@ -3,7 +3,7 @@
 
 from classes.base_combatant import Personnage
 from classes.capacite import Capacite
-from utils.affichage import COULEURS
+from utils.affichage import COULEURS, COULEURS_STATS, effacer_console
 
 def choisir_cible(attaquant, cibles_potentielles):
     """Permet à l'attaquant de choisir une cible parmi une liste."""
@@ -58,20 +58,20 @@ def choisir_capacite(personnage):
         cost_info = ""
 
         if personnage.specialisation.type_ressource == "Mana" and cap.cout_mana > 0:
-            couleur_ressource = COULEURS["BLEU"]
+            couleur_ressource = COULEURS_STATS["mana"]
             emoji_ressource = "🔵"
             cost_info = f"{couleur_ressource}(Coût: {cap.cout_mana} Mana){COULEURS['RESET']}"
             # Vérifier si assez de ressources
             if personnage.mana < cap.cout_mana:
                 couleur_ressource = COULEURS["ROUGE"]
         elif personnage.specialisation.type_ressource == "Energie" and cap.cout_energie > 0:
-            couleur_ressource = COULEURS["JAUNE"]
+            couleur_ressource = COULEURS_STATS["energie"]
             emoji_ressource = "⚡"
             cost_info = f"{couleur_ressource}(Coût: {cap.cout_energie} Énergie){COULEURS['RESET']}"
             if personnage.energie < cap.cout_energie:
                 couleur_ressource = COULEURS["ROUGE"]
         elif personnage.specialisation.type_ressource == "Rage" and cap.cout_rage > 0:
-            couleur_ressource = COULEURS["ROUGE"]
+            couleur_ressource = COULEURS_STATS["rage"]
             emoji_ressource = "🔥"
             cost_info = f"{couleur_ressource}(Coût: {cap.cout_rage} Rage){COULEURS['RESET']}"
             if personnage.rage < cap.cout_rage:
@@ -97,7 +97,6 @@ def choisir_capacite(personnage):
         try:
             choix = input(f"{COULEURS['MAGENTA']}Entrez le numéro de la capacité (ou 'r' pour annuler) : {COULEURS['RESET']}")
             if choix.lower() == 'r':
-                from utils.affichage import effacer_console
                 effacer_console()
                 return None
 
